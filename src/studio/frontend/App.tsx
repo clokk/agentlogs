@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   fetchProject,
   fetchProjects,
@@ -11,6 +11,72 @@ import Header from "./components/Header";
 import CommitList from "./components/CommitList";
 import CommitDetail from "./components/CommitDetail";
 
+// localStorage keys
+const SIDEBAR_WIDTH_KEY = "agentlogs-sidebar-width";
+const SIDEBAR_COLLAPSED_KEY = "agentlogs-sidebar-collapsed";
+
+// Default and constraint values
+const DEFAULT_SIDEBAR_WIDTH = 384;
+const MIN_SIDEBAR_WIDTH = 200;
+const MAX_SIDEBAR_WIDTH = 600;
+const COLLAPSED_WIDTH = 48;
+
+/**
+ * Custom hook for resizable panel
+ */
+function useResizable(
+  initialWidth: number,
+  minWidth: number,
+  maxWidth: number,
+  storageKey: string
+) {
+  const [width, setWidth] = useState(() => {
+    const stored = localStorage.getItem(storageKey);
+    return stored ? Math.max(minWidth, Math.min(maxWidth, parseInt(stored, 10))) : initialWidth;
+  });
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const newWidth = Math.max(minWidth, Math.min(maxWidth, e.clientX));
+      setWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      localStorage.setItem(storageKey, width.toString());
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+  }, [isDragging, minWidth, maxWidth, storageKey, width]);
+
+  // Persist width changes
+  useEffect(() => {
+    if (!isDragging) {
+      localStorage.setItem(storageKey, width.toString());
+    }
+  }, [width, isDragging, storageKey]);
+
+  return { width, setWidth, isDragging, handleMouseDown };
+}
+
 export default function App() {
   const [project, setProject] = useState<ProjectInfo | null>(null);
   const [commits, setCommits] = useState<CognitiveCommit[]>([]);
@@ -22,6 +88,28 @@ export default function App() {
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+  // Sidebar collapse state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
+  });
+
+  // Resizable sidebar
+  const { width: sidebarWidth, isDragging, handleMouseDown } = useResizable(
+    DEFAULT_SIDEBAR_WIDTH,
+    MIN_SIDEBAR_WIDTH,
+    MAX_SIDEBAR_WIDTH,
+    SIDEBAR_WIDTH_KEY
+  );
+
+  // Persist collapsed state
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next.toString());
+      return next;
+    });
+  }, []);
 
   // Load initial data
   useEffect(() => {
@@ -125,14 +213,100 @@ export default function App() {
 
       <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
         {/* Left Panel - Commit List */}
-        <div className="w-96 bg-panel border-r border-zinc-800 overflow-y-auto">
-          <CommitList
-            commits={commits}
-            selectedCommitId={selectedCommitId}
-            onSelectCommit={setSelectedCommitId}
-            showProjectBadges={showProjectBadges}
-          />
+        <div
+          className="bg-panel border-r border-zinc-800 flex flex-col transition-[width] duration-200"
+          style={{ width: sidebarCollapsed ? COLLAPSED_WIDTH : sidebarWidth }}
+        >
+          {sidebarCollapsed ? (
+            // Collapsed mini view
+            <div className="flex flex-col h-full">
+              <button
+                onClick={toggleSidebar}
+                className="p-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                title="Expand sidebar"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+              <div className="flex-1 flex flex-col items-center pt-2 gap-1 overflow-y-auto">
+                {commits.slice(0, 20).map((commit) => (
+                  <button
+                    key={commit.id}
+                    onClick={() => setSelectedCommitId(commit.id)}
+                    className={`w-8 h-8 rounded flex items-center justify-center text-xs font-mono transition-colors ${
+                      selectedCommitId === commit.id
+                        ? "bg-chronicle-blue text-black"
+                        : commit.gitHash
+                        ? "bg-chronicle-green/20 text-chronicle-green hover:bg-chronicle-green/30"
+                        : "bg-chronicle-amber/20 text-chronicle-amber hover:bg-chronicle-amber/30"
+                    }`}
+                    title={commit.title || commit.gitHash || "Uncommitted"}
+                  >
+                    {commit.gitHash ? commit.gitHash.slice(0, 2) : "?"}
+                  </button>
+                ))}
+                {commits.length > 20 && (
+                  <span className="text-xs text-zinc-500 mt-1">+{commits.length - 20}</span>
+                )}
+              </div>
+            </div>
+          ) : (
+            // Expanded view with collapse button
+            <div className="flex flex-col h-full">
+              <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800">
+                <span className="text-sm font-medium text-zinc-400">Commits</span>
+                <button
+                  onClick={toggleSidebar}
+                  className="p-1 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded transition-colors"
+                  title="Collapse sidebar"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <CommitList
+                  commits={commits}
+                  selectedCommitId={selectedCommitId}
+                  onSelectCommit={setSelectedCommitId}
+                  showProjectBadges={showProjectBadges}
+                />
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* Resizer */}
+        {!sidebarCollapsed && (
+          <div
+            onMouseDown={handleMouseDown}
+            className={`w-1 cursor-col-resize transition-colors flex-shrink-0 ${
+              isDragging ? "bg-chronicle-blue" : "bg-zinc-800 hover:bg-chronicle-blue"
+            }`}
+          />
+        )}
 
         {/* Right Panel - Commit Detail */}
         <div className="flex-1 bg-panel-alt overflow-hidden">

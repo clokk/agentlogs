@@ -14,6 +14,12 @@ interface CommitDetailProps {
   onDelete: (id: string) => void;
 }
 
+// Font size settings
+const FONT_SIZE_KEY = "agentlogs-font-size";
+const FONT_SIZES = [12, 14, 16, 18, 20] as const;
+type FontSize = (typeof FONT_SIZES)[number];
+const DEFAULT_FONT_SIZE: FontSize = 16;
+
 /**
  * Generate a consistent color for a project name
  */
@@ -87,6 +93,33 @@ export default function CommitDetail({
   const [searchTerm, setSearchTerm] = useState("");
   const [searchMatchIndices, setSearchMatchIndices] = useState<number[]>([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+
+  // Font size state
+  const [fontSize, setFontSize] = useState<FontSize>(() => {
+    const stored = localStorage.getItem(FONT_SIZE_KEY);
+    if (stored && FONT_SIZES.includes(parseInt(stored, 10) as FontSize)) {
+      return parseInt(stored, 10) as FontSize;
+    }
+    return DEFAULT_FONT_SIZE;
+  });
+
+  const increaseFontSize = useCallback(() => {
+    setFontSize((current) => {
+      const idx = FONT_SIZES.indexOf(current);
+      const next = FONT_SIZES[Math.min(idx + 1, FONT_SIZES.length - 1)];
+      localStorage.setItem(FONT_SIZE_KEY, next.toString());
+      return next;
+    });
+  }, []);
+
+  const decreaseFontSize = useCallback(() => {
+    setFontSize((current) => {
+      const idx = FONT_SIZES.indexOf(current);
+      const next = FONT_SIZES[Math.max(idx - 1, 0)];
+      localStorage.setItem(FONT_SIZE_KEY, next.toString());
+      return next;
+    });
+  }, []);
 
   const conversationRef = useRef<HTMLDivElement>(null);
   const turnRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -290,109 +323,57 @@ export default function CommitDetail({
 
   return (
     <div className="h-full flex flex-col animate-slide-in" style={{ minHeight: 0 }}>
-      {/* Fixed Header Section */}
-      <div className="flex-shrink-0 p-6 pb-4 border-b border-zinc-800 bg-panel-alt">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            {/* Project badge + Git hash */}
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              {commit.projectName && projectColor && (
-                <span
-                  className={`px-2 py-0.5 text-xs font-medium rounded ${projectColor.bg} ${projectColor.text}`}
-                >
-                  {commit.projectName}
-                </span>
-              )}
-              {commit.gitHash ? (
-                <span className="font-mono text-chronicle-green">
-                  [{commit.gitHash}]
-                </span>
-              ) : (
-                <span className="font-mono text-chronicle-amber">
-                  [uncommitted]
-                </span>
-              )}
-              <span className="text-zinc-500">
-                closed by {commit.closedBy.replace("_", " ")}
-              </span>
-            </div>
-
-            {/* Editable title */}
-            {editingTitle ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={titleValue}
-                  onChange={(e) => setTitleValue(e.target.value)}
-                  placeholder="Enter a title..."
-                  className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white focus:border-chronicle-blue focus:outline-none"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSaveTitle();
-                    if (e.key === "Escape") setEditingTitle(false);
-                  }}
-                />
-                <button
-                  onClick={handleSaveTitle}
-                  className="px-3 py-2 bg-chronicle-blue text-black rounded font-medium text-sm hover:bg-chronicle-blue/90"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setEditingTitle(false)}
-                  className="px-3 py-2 bg-zinc-700 text-white rounded font-medium text-sm hover:bg-zinc-600"
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <h2
-                onClick={() => setEditingTitle(true)}
-                className="text-xl font-medium text-white cursor-pointer hover:text-chronicle-blue transition-colors"
-              >
-                {commit.title || (
-                  <span className="text-zinc-500 italic">Click to add title...</span>
-                )}
-              </h2>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="px-3 py-1.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors"
+      {/* Compact Header Section */}
+      <div className="flex-shrink-0 p-4 border-b border-zinc-800 bg-panel-alt">
+        {/* Row 1: Metadata + Stats + Search + Actions */}
+        <div className="flex items-center gap-3 text-sm">
+          {/* Project badge */}
+          {commit.projectName && projectColor && (
+            <span
+              className={`px-2 py-0.5 text-xs font-medium rounded ${projectColor.bg} ${projectColor.text}`}
             >
-              Delete
-            </button>
-          </div>
-        </div>
+              {commit.projectName}
+            </span>
+          )}
 
-        {/* Stats row with search */}
-        <div className="flex items-center gap-4 mt-3 text-sm text-zinc-500">
-          <span>{turnCount} turns</span>
-          <span>{commit.sessions.length} session{commit.sessions.length !== 1 ? "s" : ""}</span>
+          {/* Git hash */}
+          {commit.gitHash ? (
+            <span className="font-mono text-chronicle-green text-xs">
+              [{commit.gitHash}]
+            </span>
+          ) : (
+            <span className="font-mono text-chronicle-amber text-xs">
+              [uncommitted]
+            </span>
+          )}
+
+          {/* Stats - compact with separators */}
+          <span className="text-zinc-600">·</span>
+          <span className="text-zinc-500">{turnCount} turns</span>
+          <span className="text-zinc-600">·</span>
           {commit.filesChanged.length > 0 ? (
             <button
               onClick={() => setShowFilesModal(true)}
               className="text-chronicle-amber hover:text-chronicle-amber/80 transition-colors"
             >
-              {commit.filesChanged.length} files changed
+              {commit.filesChanged.length} files
             </button>
           ) : (
-            <span>0 files changed</span>
+            <span className="text-zinc-500">0 files</span>
           )}
 
-          {/* Search input */}
+          {/* Spacer */}
           <div className="flex-1" />
+
+          {/* Search input */}
           <div className="relative">
             <input
               type="text"
               data-search-input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search... (press /)"
-              className="w-48 bg-zinc-800 border border-zinc-700 rounded px-3 py-1 text-sm text-white placeholder-zinc-500 focus:border-chronicle-blue focus:outline-none"
+              placeholder="/ search"
+              className="w-36 bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white placeholder-zinc-500 focus:border-chronicle-blue focus:outline-none focus:w-48 transition-all"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   if (e.shiftKey) goToPrevMatch();
@@ -427,10 +408,59 @@ export default function CommitDetail({
             )}
             {searchTerm && searchMatchIndices.length === 0 && (
               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-zinc-500">
-                No matches
+                0
               </span>
             )}
           </div>
+
+          {/* Delete button */}
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-2 py-1 text-xs text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+
+        {/* Row 2: Editable title */}
+        <div className="mt-2">
+          {editingTitle ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={titleValue}
+                onChange={(e) => setTitleValue(e.target.value)}
+                placeholder="Enter a title..."
+                className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-3 py-1.5 text-white text-sm focus:border-chronicle-blue focus:outline-none"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSaveTitle();
+                  if (e.key === "Escape") setEditingTitle(false);
+                }}
+              />
+              <button
+                onClick={handleSaveTitle}
+                className="px-2 py-1.5 bg-chronicle-blue text-black rounded font-medium text-xs hover:bg-chronicle-blue/90"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setEditingTitle(false)}
+                className="px-2 py-1.5 bg-zinc-700 text-white rounded font-medium text-xs hover:bg-zinc-600"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <h2
+              onClick={() => setEditingTitle(true)}
+              className="text-base font-medium text-white cursor-pointer hover:text-chronicle-blue transition-colors"
+            >
+              {commit.title || (
+                <span className="text-zinc-500 italic text-sm">Click to add title...</span>
+              )}
+            </h2>
+          )}
         </div>
       </div>
 
@@ -458,6 +488,7 @@ export default function CommitDetail({
                 turn={turn}
                 searchTerm={searchTerm}
                 isMatch={isMatch}
+                fontSize={fontSize}
               />
             </React.Fragment>
           ))}
@@ -492,6 +523,27 @@ export default function CommitDetail({
         </button>
 
         <div className="flex-1" />
+
+        {/* Font size controls */}
+        <div className="flex items-center gap-1 border border-zinc-700 rounded">
+          <button
+            onClick={decreaseFontSize}
+            disabled={fontSize === FONT_SIZES[0]}
+            className="px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-l"
+            title="Decrease font size"
+          >
+            <span className="text-xs font-bold">A</span>
+          </button>
+          <span className="px-2 text-xs text-zinc-500 font-mono">{fontSize}</span>
+          <button
+            onClick={increaseFontSize}
+            disabled={fontSize === FONT_SIZES[FONT_SIZES.length - 1]}
+            className="px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-r"
+            title="Increase font size"
+          >
+            <span className="text-sm font-bold">A</span>
+          </button>
+        </div>
 
         <span className="text-xs text-zinc-600">
           j/k: turns · J/K: user only · /: search

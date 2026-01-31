@@ -5,6 +5,7 @@ interface TurnViewProps {
   turn: Turn;
   searchTerm?: string;
   isMatch?: boolean;
+  fontSize?: number;
 }
 
 const COLLAPSE_THRESHOLD = 500;
@@ -108,7 +109,7 @@ function formatAbsoluteTime(iso: string): string {
 }
 
 const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
-  function TurnView({ turn, searchTerm, isMatch }, ref) {
+  function TurnView({ turn, searchTerm, isMatch, fontSize = 16 }, ref) {
     const [expanded, setExpanded] = useState(false);
     const [expandedToolId, setExpandedToolId] = useState<string | null>(null);
 
@@ -149,7 +150,10 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
         {/* Content */}
         {turn.content && (
           <div className="relative">
-            <div className="text-zinc-300 whitespace-pre-wrap text-sm leading-relaxed">
+            <div
+              className="text-zinc-300 whitespace-pre-wrap leading-relaxed"
+              style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
+            >
               {searchTerm
                 ? highlightMatches(displayContent, searchTerm)
                 : displayContent}
