@@ -22,6 +22,26 @@ type FontSize = (typeof FONT_SIZES)[number];
 const DEFAULT_FONT_SIZE: FontSize = 16;
 
 /**
+ * Get styling for conversation source badge
+ */
+function getSourceStyle(source?: string): { bg: string; text: string; label: string } {
+  switch (source) {
+    case "claude_code":
+      return { bg: "bg-blue-500/20", text: "text-blue-400", label: "Claude" };
+    case "cursor":
+      return { bg: "bg-purple-500/20", text: "text-purple-400", label: "Cursor" };
+    case "antigravity":
+      return { bg: "bg-cyan-500/20", text: "text-cyan-400", label: "Antigravity" };
+    case "codex":
+      return { bg: "bg-emerald-500/20", text: "text-emerald-400", label: "Codex" };
+    case "opencode":
+      return { bg: "bg-orange-500/20", text: "text-orange-400", label: "OpenCode" };
+    default:
+      return { bg: "bg-zinc-500/20", text: "text-zinc-400", label: "Unknown" };
+  }
+}
+
+/**
  * Generate a consistent color for a project name
  */
 function getProjectColor(name: string): { bg: string; text: string } {
@@ -405,6 +425,7 @@ export default function CommitDetail({
 
   const turnCount = commit.sessions.reduce((sum, s) => sum + s.turns.length, 0);
   const projectColor = commit.projectName ? getProjectColor(commit.projectName) : null;
+  const sourceStyle = getSourceStyle(commit.source);
   const currentItem = renderItems[currentItemIndex];
 
   return (
@@ -413,6 +434,11 @@ export default function CommitDetail({
       <div className="flex-shrink-0 p-4 border-b border-zinc-800 bg-panel-alt">
         {/* Row 1: Metadata + Stats + Search + Actions */}
         <div className="flex items-center gap-3 text-sm">
+          {/* Source badge */}
+          <span className={`px-2 py-0.5 text-xs font-medium rounded ${sourceStyle.bg} ${sourceStyle.text}`}>
+            {sourceStyle.label}
+          </span>
+
           {/* Project badge */}
           {commit.projectName && projectColor && (
             <span
