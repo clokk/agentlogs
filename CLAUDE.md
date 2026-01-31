@@ -112,6 +112,11 @@ Using `min-h-screen` on the root allows content to expand beyond viewport, causi
 - Navigation bar shows item position with fixed-width counter
 - Raw turn count still shown in header stats for accuracy
 
+### Export Features
+- **Per-turn copy**: Hover over any turn to reveal copy button, copies turn content + tool summaries
+- **Export dropdown**: In header, offers Download as Markdown, Download as Plain Text, Copy to Clipboard
+- Utilities in `src/studio/frontend/utils/export.ts`
+
 ---
 
 ## Key Files
@@ -126,6 +131,7 @@ Using `min-h-screen` on the root allows content to expand beyond viewport, causi
 | `src/studio/frontend/components/CommitDetail.tsx` | Detail view — item navigation, tool grouping |
 | `src/studio/frontend/components/CommitList.tsx` | Left sidebar commit list |
 | `src/studio/frontend/components/ToolOnlyGroup.tsx` | Grouped display for consecutive tool-only turns |
+| `src/studio/frontend/utils/export.ts` | Export formatters + clipboard/download helpers |
 | `src/studio/server.ts` | Hono API server |
 | `src/index.ts` | CLI entry point with all commands |
 | `docs/style-guide.md` | Design system + known UI fixes |

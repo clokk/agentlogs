@@ -8,6 +8,12 @@ import {
 } from "../api";
 import TurnView from "./TurnView";
 import ToolOnlyGroup from "./ToolOnlyGroup";
+import {
+  formatCommitAsMarkdown,
+  formatCommitAsPlainText,
+  downloadFile,
+  copyToClipboard,
+} from "../utils/export";
 
 interface CommitDetailProps {
   commitId: string;
@@ -118,6 +124,9 @@ export default function CommitDetail({
   const [titleValue, setTitleValue] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showFilesModal, setShowFilesModal] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [exportCopied, setExportCopied] = useState(false);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
 
   // Item navigation state (navigates by visual items, not raw turns)
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
@@ -154,8 +163,50 @@ export default function CommitDetail({
     });
   }, []);
 
+  // Export handlers
+  const handleExportMarkdown = useCallback(() => {
+    if (!commit) return;
+    const content = formatCommitAsMarkdown(commit);
+    const filename = `${commit.title || "conversation"}-${commit.id.slice(0, 8)}.md`;
+    downloadFile(content, filename, "text/markdown");
+    setShowExportMenu(false);
+  }, [commit]);
+
+  const handleExportPlainText = useCallback(() => {
+    if (!commit) return;
+    const content = formatCommitAsPlainText(commit);
+    const filename = `${commit.title || "conversation"}-${commit.id.slice(0, 8)}.txt`;
+    downloadFile(content, filename, "text/plain");
+    setShowExportMenu(false);
+  }, [commit]);
+
+  const handleCopyConversation = useCallback(async () => {
+    if (!commit) return;
+    const content = formatCommitAsMarkdown(commit);
+    const success = await copyToClipboard(content);
+    if (success) {
+      setExportCopied(true);
+      setTimeout(() => setExportCopied(false), 1500);
+    }
+    setShowExportMenu(false);
+  }, [commit]);
+
+  // Close export menu when clicking outside
+  useEffect(() => {
+    if (!showExportMenu) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target as Node)) {
+        setShowExportMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showExportMenu]);
+
   const conversationRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const isScrollingProgrammatically = useRef(false);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Flatten all turns for stats
   const allTurns = useMemo(() => {
@@ -240,7 +291,18 @@ export default function CommitDetail({
   const scrollToItem = useCallback((index: number) => {
     const ref = itemRefs.current.get(index);
     if (ref) {
+      // Clear any pending timeout from previous scroll
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      // Block scroll listener from overriding during animation
+      isScrollingProgrammatically.current = true;
       ref.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Re-enable after animation completes (smooth scroll ~300-500ms)
+      scrollTimeoutRef.current = setTimeout(() => {
+        isScrollingProgrammatically.current = false;
+        scrollTimeoutRef.current = null;
+      }, 500);
     }
     setCurrentItemIndex(index);
   }, []);
@@ -285,6 +347,9 @@ export default function CommitDetail({
     if (!container || renderItems.length === 0) return;
 
     const handleScroll = () => {
+      // Skip if we're doing programmatic scrolling (from arrow clicks)
+      if (isScrollingProgrammatically.current) return;
+
       const containerRect = container.getBoundingClientRect();
       const containerTop = containerRect.top;
 
@@ -522,6 +587,49 @@ export default function CommitDetail({
               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-zinc-500">
                 0
               </span>
+            )}
+          </div>
+
+          {/* Export dropdown */}
+          <div className="relative" ref={exportMenuRef}>
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              className="px-2 py-1 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800 rounded transition-colors flex items-center gap-1"
+            >
+              {exportCopied ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-chronicle-green">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              )}
+              Export
+            </button>
+            {showExportMenu && (
+              <div className="absolute right-0 mt-1 bg-zinc-800 border border-zinc-700 rounded shadow-lg z-10 py-1 min-w-[160px]">
+                <button
+                  onClick={handleExportMarkdown}
+                  className="block w-full text-left px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+                >
+                  Download as Markdown
+                </button>
+                <button
+                  onClick={handleExportPlainText}
+                  className="block w-full text-left px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+                >
+                  Download as Plain Text
+                </button>
+                <button
+                  onClick={handleCopyConversation}
+                  className="block w-full text-left px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+                >
+                  Copy to Clipboard
+                </button>
+              </div>
             )}
           </div>
 

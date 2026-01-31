@@ -1,5 +1,6 @@
 import React, { useState, forwardRef } from "react";
 import { type Turn } from "../api";
+import { copyToClipboard, formatTurnAsPlainText } from "../utils/export";
 
 interface TurnViewProps {
   turn: Turn;
@@ -112,6 +113,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
   function TurnView({ turn, searchTerm, isMatch, fontSize = 16 }, ref) {
     const [expanded, setExpanded] = useState(false);
     const [expandedToolId, setExpandedToolId] = useState<string | null>(null);
+    const [copied, setCopied] = useState(false);
 
     const isUser = turn.role === "user";
     const hasToolCalls = turn.toolCalls && turn.toolCalls.length > 0;
@@ -121,10 +123,19 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
       ? turn.content.slice(0, PREVIEW_LENGTH)
       : turn.content;
 
+    const handleCopy = async () => {
+      const text = formatTurnAsPlainText(turn);
+      const success = await copyToClipboard(text);
+      if (success) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }
+    };
+
     return (
       <div
         ref={ref}
-        className={`rounded-lg p-4 border-l-2 transition-opacity ${
+        className={`group rounded-lg p-4 border-l-2 transition-opacity ${
           isUser
             ? "bg-chronicle-blue/5 border-chronicle-blue"
             : "bg-zinc-900/50 border-zinc-700"
@@ -145,6 +156,23 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
           >
             {formatRelativeTime(turn.timestamp)}
           </span>
+          {/* Copy button */}
+          <button
+            onClick={handleCopy}
+            className="ml-auto p-1 text-zinc-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+            title="Copy turn"
+          >
+            {copied ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-chronicle-green">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            )}
+          </button>
         </div>
 
         {/* Content */}
