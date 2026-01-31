@@ -92,9 +92,21 @@ Using `min-h-screen` on the root allows content to expand beyond viewport, causi
 - State persisted to `localStorage` key: `agentlogs-sidebar-collapsed`
 
 ### Font Size Controls
-- Located in turn navigation bar at bottom of conversation
+- Located in navigation bar at bottom of conversation
 - Sizes: 12, 14, 16, 18, 20px (default: 16px)
 - Persisted to `localStorage` key: `agentlogs-font-size`
+
+### Tool-Only Groups
+- Consecutive assistant turns with only tool calls (no text) are grouped
+- Displayed as a single compact row with all tools as clickable pills
+- Click any tool to expand its input/result details
+- Component: `src/studio/frontend/components/ToolOnlyGroup.tsx`
+
+### Item-Based Navigation
+- `j/k` navigates by visual "items" (tool groups count as 1)
+- `J/K` skips to next/prev user message
+- Navigation bar shows item position with fixed-width counter
+- Raw turn count still shown in header stats for accuracy
 
 ---
 
@@ -107,8 +119,9 @@ Using `min-h-screen` on the root allows content to expand beyond viewport, causi
 | `src/storage/schema.ts` | Database schema + migrations (check `SCHEMA_VERSION`) |
 | `src/storage/db.ts` | Database operations, handles global vs project mode |
 | `src/studio/frontend/App.tsx` | Main React app layout with split pane |
-| `src/studio/frontend/components/CommitDetail.tsx` | Detail view — careful with scroll handling |
+| `src/studio/frontend/components/CommitDetail.tsx` | Detail view — item navigation, tool grouping |
 | `src/studio/frontend/components/CommitList.tsx` | Left sidebar commit list |
+| `src/studio/frontend/components/ToolOnlyGroup.tsx` | Grouped display for consecutive tool-only turns |
 | `src/studio/server.ts` | Hono API server |
 | `src/index.ts` | CLI entry point with all commands |
 | `docs/style-guide.md` | Design system + known UI fixes |

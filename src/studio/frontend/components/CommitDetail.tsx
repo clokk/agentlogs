@@ -7,6 +7,7 @@ import {
   type Turn,
 } from "../api";
 import TurnView from "./TurnView";
+import ToolOnlyGroup from "./ToolOnlyGroup";
 
 interface CommitDetailProps {
   commitId: string;
@@ -74,6 +75,18 @@ function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * Check if a turn is tool-only (no text content, only tool calls)
+ */
+function isToolOnlyTurn(turn: Turn): boolean {
+  return (
+    turn.role === "assistant" &&
+    (!turn.content || turn.content.trim() === "") &&
+    turn.toolCalls &&
+    turn.toolCalls.length > 0
+  );
+}
+
 export default function CommitDetail({
   commitId,
   onUpdate,
@@ -86,8 +99,8 @@ export default function CommitDetail({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showFilesModal, setShowFilesModal] = useState(false);
 
-  // Turn navigation state
-  const [currentTurnIndex, setCurrentTurnIndex] = useState(0);
+  // Item navigation state (navigates by visual items, not raw turns)
+  const [currentItemIndex, setCurrentItemIndex] = useState(0);
 
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
@@ -122,26 +135,75 @@ export default function CommitDetail({
   }, []);
 
   const conversationRef = useRef<HTMLDivElement>(null);
-  const turnRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const itemRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
-  // Flatten all turns for navigation
+  // Flatten all turns for stats
   const allTurns = useMemo(() => {
     if (!commit) return [];
     return commit.sessions.flatMap((s) => s.turns);
   }, [commit]);
 
-  // Find search matches
+  // Build render items (groups consecutive tool-only turns)
+  type RenderItem =
+    | { type: "turn"; turn: Turn; gapMinutes: number | null; isMatch: boolean }
+    | { type: "tool-group"; turns: Turn[]; gapMinutes: number | null };
+
+  const renderItems = useMemo((): RenderItem[] => {
+    if (!commit) return [];
+
+    const items: RenderItem[] = [];
+    let prevTimestamp: string | null = null;
+    let currentToolGroup: Turn[] = [];
+    let toolGroupGap: number | null = null;
+
+    const flushToolGroup = () => {
+      if (currentToolGroup.length > 0) {
+        items.push({
+          type: "tool-group",
+          turns: currentToolGroup,
+          gapMinutes: toolGroupGap,
+        });
+        currentToolGroup = [];
+        toolGroupGap = null;
+      }
+    };
+
+    for (const session of commit.sessions) {
+      for (const turn of session.turns) {
+        const gapMinutes = prevTimestamp ? getGapMinutes(prevTimestamp, turn.timestamp) : null;
+        const isMatch = searchTerm
+          ? new RegExp(escapeRegex(searchTerm), "i").test(turn.content)
+          : false;
+
+        if (isToolOnlyTurn(turn)) {
+          if (currentToolGroup.length === 0) {
+            toolGroupGap = gapMinutes;
+          }
+          currentToolGroup.push(turn);
+        } else {
+          flushToolGroup();
+          items.push({ type: "turn", turn, gapMinutes, isMatch });
+        }
+
+        prevTimestamp = turn.timestamp;
+      }
+    }
+
+    flushToolGroup();
+    return items;
+  }, [commit, searchTerm]);
+
+  // Find search matches (by item index)
   useEffect(() => {
-    if (!searchTerm || !allTurns.length) {
+    if (!searchTerm || !renderItems.length) {
       setSearchMatchIndices([]);
       setCurrentMatchIndex(0);
       return;
     }
 
-    const regex = new RegExp(escapeRegex(searchTerm), "i");
     const matches: number[] = [];
-    allTurns.forEach((turn, idx) => {
-      if (regex.test(turn.content)) {
+    renderItems.forEach((item, idx) => {
+      if (item.type === "turn" && item.isMatch) {
         matches.push(idx);
       }
     });
@@ -150,60 +212,60 @@ export default function CommitDetail({
 
     // Scroll to first match
     if (matches.length > 0) {
-      scrollToTurn(matches[0]);
+      scrollToItem(matches[0]);
     }
-  }, [searchTerm, allTurns]);
+  }, [searchTerm, renderItems]);
 
-  // Scroll to a specific turn
-  const scrollToTurn = useCallback((index: number) => {
-    const turn = allTurns[index];
-    if (!turn) return;
-    const ref = turnRefs.current.get(turn.id);
+  // Scroll to a specific item
+  const scrollToItem = useCallback((index: number) => {
+    const ref = itemRefs.current.get(index);
     if (ref) {
       ref.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-    setCurrentTurnIndex(index);
-  }, [allTurns]);
+    setCurrentItemIndex(index);
+  }, []);
 
-  // Navigate to next/prev turn
-  const goToNextTurn = useCallback(() => {
-    if (currentTurnIndex < allTurns.length - 1) {
-      scrollToTurn(currentTurnIndex + 1);
+  // Navigate to next/prev item
+  const goToNextItem = useCallback(() => {
+    if (currentItemIndex < renderItems.length - 1) {
+      scrollToItem(currentItemIndex + 1);
     }
-  }, [currentTurnIndex, allTurns.length, scrollToTurn]);
+  }, [currentItemIndex, renderItems.length, scrollToItem]);
 
-  const goToPrevTurn = useCallback(() => {
-    if (currentTurnIndex > 0) {
-      scrollToTurn(currentTurnIndex - 1);
+  const goToPrevItem = useCallback(() => {
+    if (currentItemIndex > 0) {
+      scrollToItem(currentItemIndex - 1);
     }
-  }, [currentTurnIndex, scrollToTurn]);
+  }, [currentItemIndex, scrollToItem]);
 
   // Navigate to next/prev user message
-  const goToNextUserTurn = useCallback(() => {
-    for (let i = currentTurnIndex + 1; i < allTurns.length; i++) {
-      if (allTurns[i].role === "user") {
-        scrollToTurn(i);
+  const goToNextUserItem = useCallback(() => {
+    for (let i = currentItemIndex + 1; i < renderItems.length; i++) {
+      const item = renderItems[i];
+      if (item.type === "turn" && item.turn.role === "user") {
+        scrollToItem(i);
         return;
       }
     }
-  }, [currentTurnIndex, allTurns, scrollToTurn]);
+  }, [currentItemIndex, renderItems, scrollToItem]);
 
-  const goToPrevUserTurn = useCallback(() => {
-    for (let i = currentTurnIndex - 1; i >= 0; i--) {
-      if (allTurns[i].role === "user") {
-        scrollToTurn(i);
+  const goToPrevUserItem = useCallback(() => {
+    for (let i = currentItemIndex - 1; i >= 0; i--) {
+      const item = renderItems[i];
+      if (item.type === "turn" && item.turn.role === "user") {
+        scrollToItem(i);
         return;
       }
     }
-  }, [currentTurnIndex, allTurns, scrollToTurn]);
+  }, [currentItemIndex, renderItems, scrollToItem]);
 
   // Navigate search matches
   const goToNextMatch = useCallback(() => {
     if (searchMatchIndices.length === 0) return;
     const nextIdx = (currentMatchIndex + 1) % searchMatchIndices.length;
     setCurrentMatchIndex(nextIdx);
-    scrollToTurn(searchMatchIndices[nextIdx]);
-  }, [currentMatchIndex, searchMatchIndices, scrollToTurn]);
+    scrollToItem(searchMatchIndices[nextIdx]);
+  }, [currentMatchIndex, searchMatchIndices, scrollToItem]);
 
   const goToPrevMatch = useCallback(() => {
     if (searchMatchIndices.length === 0) return;
@@ -211,8 +273,8 @@ export default function CommitDetail({
       ? searchMatchIndices.length - 1
       : currentMatchIndex - 1;
     setCurrentMatchIndex(prevIdx);
-    scrollToTurn(searchMatchIndices[prevIdx]);
-  }, [currentMatchIndex, searchMatchIndices, scrollToTurn]);
+    scrollToItem(searchMatchIndices[prevIdx]);
+  }, [currentMatchIndex, searchMatchIndices, scrollToItem]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -224,16 +286,16 @@ export default function CommitDetail({
 
       if (e.key === "j") {
         e.preventDefault();
-        goToNextTurn();
+        goToNextItem();
       } else if (e.key === "k") {
         e.preventDefault();
-        goToPrevTurn();
+        goToPrevItem();
       } else if (e.key === "J") {
         e.preventDefault();
-        goToNextUserTurn();
+        goToNextUserItem();
       } else if (e.key === "K") {
         e.preventDefault();
-        goToPrevUserTurn();
+        goToPrevUserItem();
       } else if (e.key === "/" && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
         const searchInput = document.querySelector<HTMLInputElement>('[data-search-input]');
@@ -243,12 +305,12 @@ export default function CommitDetail({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goToNextTurn, goToPrevTurn, goToNextUserTurn, goToPrevUserTurn]);
+  }, [goToNextItem, goToPrevItem, goToNextUserItem, goToPrevUserItem]);
 
   useEffect(() => {
     setLoading(true);
     setSearchTerm("");
-    setCurrentTurnIndex(0);
+    setCurrentItemIndex(0);
     fetchCommit(commitId)
       .then(({ commit }) => {
         setCommit(commit);
@@ -298,28 +360,7 @@ export default function CommitDetail({
 
   const turnCount = commit.sessions.reduce((sum, s) => sum + s.turns.length, 0);
   const projectColor = commit.projectName ? getProjectColor(commit.projectName) : null;
-  const currentTurn = allTurns[currentTurnIndex];
-
-  // Build flat list of turns with gap info
-  interface TurnWithMeta {
-    turn: Turn;
-    gapMinutes: number | null;
-    isMatch: boolean;
-  }
-
-  const turnsWithMeta: TurnWithMeta[] = [];
-  let prevTimestamp: string | null = null;
-
-  for (const session of commit.sessions) {
-    for (const turn of session.turns) {
-      const gapMinutes = prevTimestamp ? getGapMinutes(prevTimestamp, turn.timestamp) : null;
-      const isMatch = searchTerm
-        ? new RegExp(escapeRegex(searchTerm), "i").test(turn.content)
-        : false;
-      turnsWithMeta.push({ turn, gapMinutes, isMatch });
-      prevTimestamp = turn.timestamp;
-    }
-  }
+  const currentItem = renderItems[currentItemIndex];
 
   return (
     <div className="h-full flex flex-col animate-slide-in" style={{ minHeight: 0 }}>
@@ -471,56 +512,88 @@ export default function CommitDetail({
         style={{ flex: '1 1 0%', minHeight: 0, overflowY: 'auto' }}
       >
         <div className="space-y-4">
-          {turnsWithMeta.map(({ turn, gapMinutes, isMatch }, idx) => (
-            <React.Fragment key={turn.id}>
-              {/* Time gap divider */}
-              {gapMinutes !== null && gapMinutes > 60 && (
-                <div className="flex items-center gap-4 py-2 text-zinc-600 text-xs">
-                  <div className="flex-1 h-px bg-zinc-800" />
-                  <span>{formatGap(gapMinutes)} later</span>
-                  <div className="flex-1 h-px bg-zinc-800" />
-                </div>
-              )}
-              <TurnView
-                ref={(el) => {
-                  if (el) turnRefs.current.set(turn.id, el);
-                }}
-                turn={turn}
-                searchTerm={searchTerm}
-                isMatch={isMatch}
-                fontSize={fontSize}
-              />
-            </React.Fragment>
-          ))}
+          {renderItems.map((item, idx) => {
+            if (item.type === "tool-group") {
+              const groupKey = item.turns.map((t) => t.id).join("-");
+              return (
+                <React.Fragment key={groupKey}>
+                  {/* Time gap divider */}
+                  {item.gapMinutes !== null && item.gapMinutes > 60 && (
+                    <div className="flex items-center gap-4 py-2 text-zinc-600 text-xs">
+                      <div className="flex-1 h-px bg-zinc-800" />
+                      <span>{formatGap(item.gapMinutes)} later</span>
+                      <div className="flex-1 h-px bg-zinc-800" />
+                    </div>
+                  )}
+                  <ToolOnlyGroup
+                    ref={(el) => {
+                      if (el) itemRefs.current.set(idx, el);
+                    }}
+                    turns={item.turns}
+                    searchTerm={searchTerm}
+                  />
+                </React.Fragment>
+              );
+            }
+
+            const { turn, gapMinutes, isMatch } = item;
+            return (
+              <React.Fragment key={turn.id}>
+                {/* Time gap divider */}
+                {gapMinutes !== null && gapMinutes > 60 && (
+                  <div className="flex items-center gap-4 py-2 text-zinc-600 text-xs">
+                    <div className="flex-1 h-px bg-zinc-800" />
+                    <span>{formatGap(gapMinutes)} later</span>
+                    <div className="flex-1 h-px bg-zinc-800" />
+                  </div>
+                )}
+                <TurnView
+                  ref={(el) => {
+                    if (el) itemRefs.current.set(idx, el);
+                  }}
+                  turn={turn}
+                  searchTerm={searchTerm}
+                  isMatch={isMatch}
+                  fontSize={fontSize}
+                />
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
 
-      {/* Turn counter navigation bar */}
+      {/* Item navigation bar */}
       <div className="flex-shrink-0 px-6 py-3 border-t border-zinc-800 bg-panel-alt flex items-center gap-4">
-        <button
-          onClick={goToPrevTurn}
-          disabled={currentTurnIndex === 0}
-          className="text-zinc-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          title="Previous turn (k)"
-        >
-          ◀
-        </button>
-        <span className="text-sm text-zinc-400 font-mono">
-          Turn {currentTurnIndex + 1} of {allTurns.length}
-          {currentTurn && (
-            <span className="ml-2 text-zinc-500">
-              ({currentTurn.role === "user" ? "User" : "Agent"})
-            </span>
-          )}
-        </span>
-        <button
-          onClick={goToNextTurn}
-          disabled={currentTurnIndex >= allTurns.length - 1}
-          className="text-zinc-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          title="Next turn (j)"
-        >
-          ▶
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={goToPrevItem}
+            disabled={currentItemIndex === 0}
+            className="text-zinc-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            title="Previous item (k)"
+          >
+            ◀
+          </button>
+          <span className="text-sm text-zinc-400 font-mono w-32 text-center">
+            {currentItemIndex + 1} / {renderItems.length}
+          </span>
+          <button
+            onClick={goToNextItem}
+            disabled={currentItemIndex >= renderItems.length - 1}
+            className="text-zinc-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            title="Next item (j)"
+          >
+            ▶
+          </button>
+        </div>
+        {currentItem && (
+          <span className="text-xs text-zinc-500">
+            {currentItem.type === "tool-group"
+              ? `${currentItem.turns.length} tools`
+              : currentItem.turn.role === "user"
+              ? "User"
+              : "Agent"}
+          </span>
+        )}
 
         <div className="flex-1" />
 

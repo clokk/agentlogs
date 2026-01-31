@@ -184,6 +184,38 @@ Row 2: Click to add title...
 - Search input expands on focus (w-36 → w-48)
 - Reduced padding (p-4 instead of p-6)
 
+### Tool-Only Groups
+
+Consecutive assistant turns with only tool calls (no text) are grouped into a single compact row:
+
+```tsx
+<div className="rounded-lg p-3 border-l-2 bg-zinc-900/30 border-zinc-700">
+  <div className="text-xs text-zinc-500">6 tool calls</div>
+  <div className="flex flex-wrap gap-1">
+    {toolCalls.map(tc => (
+      <button className="px-2 py-0.5 text-xs font-mono bg-zinc-800">{tc.name}</button>
+    ))}
+  </div>
+</div>
+```
+
+- Groups consecutive tool-only turns to save vertical space
+- Each tool pill is clickable to expand details
+- Shows count of tools in the group
+
+### Item Navigation
+
+Navigation uses "items" (visual groups) instead of raw turns:
+
+```
+◀  [ 3 / 15 ]  ▶   User
+```
+
+- Fixed-width counter (`w-32 text-center`) keeps arrows stationary
+- Tool groups count as 1 item
+- `j/k` navigates items, `J/K` skips to user messages
+- Item type shown separately (User/Agent/N tools)
+
 ## Animations
 
 Only 2 signature animations are permitted:
