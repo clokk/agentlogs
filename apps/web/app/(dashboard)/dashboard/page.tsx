@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import CommitListView from "@/components/CommitListView";
+import DashboardView from "@/components/DashboardView";
 import type { CognitiveCommit, Session, Turn, ToolCall } from "@cogcommit/types";
 
 interface DbTurn {
@@ -33,9 +33,6 @@ interface DbCommit {
   sessions: DbSession[];
 }
 
-/**
- * Transform database turn to app Turn type
- */
 function transformTurn(dbTurn: DbTurn): Turn {
   let toolCalls: ToolCall[] | undefined;
 
@@ -64,9 +61,6 @@ function transformTurn(dbTurn: DbTurn): Turn {
   };
 }
 
-/**
- * Transform database session to app Session type
- */
 function transformSession(dbSession: DbSession): Session {
   return {
     id: dbSession.id,
@@ -76,9 +70,6 @@ function transformSession(dbSession: DbSession): Session {
   };
 }
 
-/**
- * Transform database commit to app CognitiveCommit type
- */
 function transformCommit(dbCommit: DbCommit): CognitiveCommit {
   return {
     id: dbCommit.id,
@@ -104,7 +95,13 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch commits with sessions and turns count
+  const userName =
+    user?.user_metadata?.user_name ||
+    user?.user_metadata?.preferred_username ||
+    user?.email?.split("@")[0] ||
+    "User";
+
+  // Fetch all commits with full session/turn data for inline display
   const { data: commits, error } = await supabase
     .from("cognitive_commits")
     .select(
@@ -140,21 +137,5 @@ export default async function DashboardPage() {
 
   const typedCommits = ((commits as DbCommit[]) || []).map(transformCommit);
 
-  return (
-    <div className="h-full flex flex-col">
-      {/* Header */}
-      <header className="border-b border-zinc-800 px-6 py-4">
-        <h1 className="text-2xl font-bold text-white">Your Commits</h1>
-        <p className="text-zinc-400 mt-1">
-          {typedCommits.length} cognitive commits synced from your development
-          sessions
-        </p>
-      </header>
-
-      {/* Commits list */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <CommitListView commits={typedCommits} />
-      </div>
-    </div>
-  );
+  return <DashboardView commits={typedCommits} userName={userName} />;
 }
