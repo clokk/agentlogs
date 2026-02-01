@@ -9,6 +9,8 @@ export { default as CommitCard } from "./CommitCard";
 export { default as CommitList } from "./CommitList";
 export { default as ToolOnlyGroup } from "./ToolOnlyGroup";
 export { default as Header } from "./Header";
+export { ConversationViewer } from "./ConversationViewer";
+export type { ConversationViewerProps } from "./ConversationViewer";
 
 // Hooks
 export { useResizable } from "./hooks/useResizable";
