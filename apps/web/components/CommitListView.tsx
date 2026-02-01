@@ -13,9 +13,9 @@ export default function CommitListView({ commits }: CommitListViewProps) {
   if (commits.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-800 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-panel flex items-center justify-center">
           <svg
-            className="w-8 h-8 text-zinc-600"
+            className="w-8 h-8 text-subtle"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -28,8 +28,8 @@ export default function CommitListView({ commits }: CommitListViewProps) {
             />
           </svg>
         </div>
-        <h2 className="text-lg font-medium text-white mb-2">No commits yet</h2>
-        <p className="text-zinc-400 max-w-md mx-auto mb-6">
+        <h2 className="text-lg font-medium text-primary mb-2">No commits yet</h2>
+        <p className="text-muted max-w-md mx-auto mb-6">
           Install the Agentlogs CLI and sync your Claude Code conversations to
           see them here.
         </p>

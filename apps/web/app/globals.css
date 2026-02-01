@@ -3,19 +3,33 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 24, 24, 27;
-  --background-end-rgb: 24, 24, 27;
+  /* Backgrounds */
+  --bg: #0d0b0a;
+  --panel: #181614;
+  --panel-alt: #1e1b18;
+
+  /* Primary Accent */
+  --accent: #e07b39;
+  --accent-hover: #c66a2d;
+
+  /* Semantic */
+  --commit-closed: #5fb88e;
+  --commit-open: #d4a030;
+  --user-accent: #3d84a8;
+  --parallel: #9d7cd8;
+
+  /* Text */
+  --text: #e8e4df;
+  --muted: #a39e97;
+  --subtle: #6d6862;
+
+  /* Border */
+  --border: #2a2520;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: var(--text);
+  background: var(--bg);
   min-height: 100vh;
 }
 
@@ -26,16 +40,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #27272a;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #52525b;
+  background: var(--subtle);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #71717a;
+  background: var(--muted);
 }
 
 /* Scrollbar gutter to prevent layout shift */
@@ -49,6 +63,6 @@ pre {
 }
 
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }

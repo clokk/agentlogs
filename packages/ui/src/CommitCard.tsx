@@ -45,8 +45,8 @@ export default function CommitCard({
       onClick={onClick}
       className={`relative rounded-lg p-3 cursor-pointer transition-all border-l-2 ${borderColor} ${
         isSelected
-          ? "bg-zinc-800/80 ring-1 ring-chronicle-blue/50"
-          : "bg-zinc-900/50 hover:bg-zinc-800/50"
+          ? "bg-panel/80 ring-1 ring-chronicle-blue/50"
+          : "bg-bg/50 hover:bg-panel/50"
       }`}
     >
       <div className="flex-1 min-w-0">
@@ -86,12 +86,12 @@ export default function CommitCard({
         </div>
 
         {/* Title or first user message */}
-        <div className="text-sm text-zinc-300 mt-1 truncate">
+        <div className="text-sm text-primary mt-1 truncate">
           {commit.title || getFirstUserMessage(commit) || "No content"}
         </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+        <div className="flex items-center gap-3 mt-1 text-xs text-muted">
           <span>{turnCount} turns</span>
           <span>
             {commit.sessions.length} session
@@ -100,7 +100,7 @@ export default function CommitCard({
         </div>
 
         {/* Time */}
-        <div className="text-xs text-zinc-600 mt-1">
+        <div className="text-xs text-subtle mt-1">
           {formatTime(commit.closedAt)}
         </div>
       </div>

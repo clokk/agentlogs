@@ -119,7 +119,7 @@ export default function DashboardView({
       <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
         {/* Left Panel - Commit List */}
         <div
-          className="bg-panel border-r border-zinc-800 flex flex-col transition-[width] duration-200"
+          className="bg-panel border-r border-border flex flex-col transition-[width] duration-200"
           style={{ width: sidebarCollapsed ? COLLAPSED_WIDTH : sidebarWidth }}
         >
           {sidebarCollapsed ? (
@@ -149,7 +149,7 @@ export default function DashboardView({
                   </button>
                 ))}
                 {commits.length > 20 && (
-                  <span className="text-xs text-zinc-500 mt-1">+{commits.length - 20}</span>
+                  <span className="text-xs text-muted mt-1">+{commits.length - 20}</span>
                 )}
               </div>
             </div>
@@ -165,7 +165,7 @@ export default function DashboardView({
               <div className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
                 {loading ? (
                   <div className="flex items-center justify-center py-8">
-                    <div className="text-zinc-400 text-sm">Loading...</div>
+                    <div className="text-muted text-sm">Loading...</div>
                   </div>
                 ) : (
                   <CommitList
@@ -185,7 +185,7 @@ export default function DashboardView({
           <div
             onMouseDown={handleMouseDown}
             className={`w-1 cursor-col-resize transition-colors flex-shrink-0 ${
-              isDragging ? "bg-chronicle-blue" : "bg-zinc-800 hover:bg-chronicle-blue"
+              isDragging ? "bg-chronicle-blue" : "bg-panel hover:bg-chronicle-blue"
             }`}
           />
         )}
@@ -195,16 +195,16 @@ export default function DashboardView({
           {selectedCommit ? (
             <ConversationViewer commit={selectedCommit} />
           ) : (
-            <div className="flex items-center justify-center h-full text-zinc-500">
+            <div className="flex items-center justify-center h-full text-muted">
               {commits.length === 0 ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-800 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-panel flex items-center justify-center">
+                    <svg className="w-8 h-8 text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                   </div>
-                  <h2 className="text-lg font-medium text-white mb-2">No commits yet</h2>
-                  <p className="text-zinc-400 max-w-md mx-auto mb-6">
+                  <h2 className="text-lg font-medium text-primary mb-2">No commits yet</h2>
+                  <p className="text-muted max-w-md mx-auto mb-6">
                     Install the CogCommit CLI and sync your Claude Code conversations to see them here.
                   </p>
                   <a href="/docs" className="inline-flex px-4 py-2 bg-chronicle-blue text-black rounded-lg font-medium hover:bg-chronicle-blue/90 transition-colors">

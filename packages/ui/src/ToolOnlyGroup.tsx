@@ -50,11 +50,11 @@ const ToolOnlyGroup = forwardRef<HTMLDivElement, ToolOnlyGroupProps>(
     return (
       <div
         ref={ref}
-        className="rounded-lg p-3 border-l-2 bg-zinc-900/30 border-zinc-700"
+        className="rounded-lg p-3 border-l-2 bg-bg/30 border-border"
       >
         {/* Compact header */}
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs text-zinc-500">
+          <span className="text-xs text-muted">
             {allToolCalls.length} tool call
             {allToolCalls.length !== 1 ? "s" : ""}
           </span>
@@ -73,7 +73,7 @@ const ToolOnlyGroup = forwardRef<HTMLDivElement, ToolOnlyGroupProps>(
                 ${
                   tc.isError
                     ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                    : "bg-panel text-muted hover:bg-panel-alt"
                 }
                 ${expandedToolId === tc.id ? "ring-1 ring-chronicle-blue" : ""}`}
             >
@@ -90,7 +90,7 @@ const ToolOnlyGroup = forwardRef<HTMLDivElement, ToolOnlyGroupProps>(
               .map((tc) => (
                 <div
                   key={tc.id}
-                  className="bg-zinc-800/50 rounded p-3 text-xs font-mono"
+                  className="bg-panel/50 rounded p-3 text-xs font-mono"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span
@@ -110,10 +110,10 @@ const ToolOnlyGroup = forwardRef<HTMLDivElement, ToolOnlyGroupProps>(
                   {/* Input */}
                   {tc.input && Object.keys(tc.input).length > 0 && (
                     <details className="mt-1" open>
-                      <summary className="text-zinc-500 cursor-pointer hover:text-zinc-400">
+                      <summary className="text-muted cursor-pointer hover:text-muted">
                         Input
                       </summary>
-                      <pre className="mt-1 p-2 bg-zinc-900 rounded text-zinc-400 overflow-x-auto">
+                      <pre className="mt-1 p-2 bg-bg rounded text-muted overflow-x-auto">
                         {formatToolInput(tc.input)}
                       </pre>
                     </details>
@@ -122,10 +122,10 @@ const ToolOnlyGroup = forwardRef<HTMLDivElement, ToolOnlyGroupProps>(
                   {/* Result */}
                   {tc.result && (
                     <details className="mt-1">
-                      <summary className="text-zinc-500 cursor-pointer hover:text-zinc-400">
+                      <summary className="text-muted cursor-pointer hover:text-muted">
                         Result
                       </summary>
-                      <pre className="mt-1 p-2 bg-zinc-900 rounded text-zinc-400 overflow-x-auto max-h-40">
+                      <pre className="mt-1 p-2 bg-bg rounded text-muted overflow-x-auto max-h-40">
                         {tc.result.length > 500
                           ? tc.result.substring(0, 500) + "..."
                           : tc.result}

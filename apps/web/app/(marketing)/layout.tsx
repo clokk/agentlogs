@@ -8,22 +8,22 @@ export default function MarketingLayout({
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
-      <header className="border-b border-zinc-800">
+      <header className="border-b border-border">
         <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-white">
+          <Link href="/" className="text-xl font-bold text-primary">
             CogCommit
           </Link>
 
           <div className="flex items-center gap-6">
             <Link
               href="/features"
-              className="text-zinc-400 hover:text-white transition-colors"
+              className="text-muted hover:text-primary transition-colors"
             >
               Features
             </Link>
             <Link
               href="/docs"
-              className="text-zinc-400 hover:text-white transition-colors"
+              className="text-muted hover:text-primary transition-colors"
             >
               Docs
             </Link>
@@ -41,22 +41,22 @@ export default function MarketingLayout({
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 py-8">
+      <footer className="border-t border-border py-8">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-center justify-between">
-            <p className="text-zinc-500 text-sm">
+            <p className="text-muted text-sm">
               Built for AI-assisted developers
             </p>
-            <div className="flex items-center gap-4 text-zinc-500 text-sm">
+            <div className="flex items-center gap-4 text-muted text-sm">
               <a
                 href="https://github.com/clokk/cogcommit"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white transition-colors"
+                className="hover:text-primary transition-colors"
               >
                 GitHub
               </a>
-              <span className="text-zinc-700">|</span>
+              <span className="text-subtle">|</span>
               <span>MIT License</span>
             </div>
           </div>

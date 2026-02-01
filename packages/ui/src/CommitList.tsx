@@ -21,7 +21,7 @@ export default function CommitList({
 }: CommitListProps) {
   if (commits.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-zinc-500 p-4 text-center whitespace-pre-line">
+      <div className="flex items-center justify-center h-full text-muted p-4 text-center whitespace-pre-line">
         {emptyMessage}
       </div>
     );

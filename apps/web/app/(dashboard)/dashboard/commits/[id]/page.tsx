@@ -110,11 +110,11 @@ export default async function CommitDetailPage({
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <header className="flex-shrink-0 border-b border-zinc-800 px-6 py-4 bg-panel-alt">
+      <header className="flex-shrink-0 border-b border-border px-6 py-4 bg-panel-alt">
         <div className="flex items-center gap-4 mb-2">
           <Link
             href="/dashboard"
-            className="text-zinc-400 hover:text-white transition-colors"
+            className="text-muted hover:text-primary transition-colors"
           >
             &larr; Back
           </Link>
@@ -145,19 +145,19 @@ export default async function CommitDetailPage({
             </span>
           )}
 
-          <span className="text-zinc-600">|</span>
-          <span className="text-zinc-500">{turnCount} turns</span>
-          <span className="text-zinc-600">|</span>
-          <span className="text-zinc-500">
+          <span className="text-subtle">|</span>
+          <span className="text-muted">{turnCount} turns</span>
+          <span className="text-subtle">|</span>
+          <span className="text-muted">
             {typedCommit.files_changed.length} files changed
           </span>
         </div>
 
-        <h1 className="text-xl font-semibold text-white mt-2">
+        <h1 className="text-xl font-semibold text-primary mt-2">
           {typedCommit.title || "Untitled conversation"}
         </h1>
 
-        <p className="text-sm text-zinc-500 mt-1">
+        <p className="text-sm text-muted mt-1">
           {formatAbsoluteTime(typedCommit.closed_at)}
         </p>
       </header>

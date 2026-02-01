@@ -19,7 +19,7 @@ export function SidebarHeader({
     return (
       <button
         onClick={onToggle}
-        className="p-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+        className="p-3 text-muted hover:text-primary hover:bg-panel transition-colors"
         title="Expand sidebar"
       >
         <svg
@@ -40,13 +40,13 @@ export function SidebarHeader({
   }
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800 min-w-0">
-      <span className="text-sm font-medium text-zinc-400 truncate">
+    <div className="flex items-center justify-between px-4 py-2 border-b border-border min-w-0">
+      <span className="text-sm font-medium text-muted truncate">
         {title} ({count})
       </span>
       <button
         onClick={onToggle}
-        className="p-1 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded transition-colors flex-shrink-0"
+        className="p-1 text-muted hover:text-primary hover:bg-panel rounded transition-colors flex-shrink-0"
         title="Collapse sidebar"
       >
         <svg

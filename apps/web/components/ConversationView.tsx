@@ -76,10 +76,10 @@ export default function ConversationView({ turns }: ConversationViewProps) {
             <React.Fragment key={groupKey}>
               {/* Time gap divider */}
               {item.gapMinutes !== null && item.gapMinutes > 60 && (
-                <div className="flex items-center gap-4 py-2 text-zinc-600 text-xs">
-                  <div className="flex-1 h-px bg-zinc-800" />
+                <div className="flex items-center gap-4 py-2 text-subtle text-xs">
+                  <div className="flex-1 h-px bg-panel" />
                   <span>{formatGap(item.gapMinutes)} later</span>
-                  <div className="flex-1 h-px bg-zinc-800" />
+                  <div className="flex-1 h-px bg-panel" />
                 </div>
               )}
               <ToolOnlyGroup turns={item.turns} />
@@ -92,10 +92,10 @@ export default function ConversationView({ turns }: ConversationViewProps) {
           <React.Fragment key={turn.id}>
             {/* Time gap divider */}
             {gapMinutes !== null && gapMinutes > 60 && (
-              <div className="flex items-center gap-4 py-2 text-zinc-600 text-xs">
-                <div className="flex-1 h-px bg-zinc-800" />
+              <div className="flex items-center gap-4 py-2 text-subtle text-xs">
+                <div className="flex-1 h-px bg-panel" />
                 <span>{formatGap(gapMinutes)} later</span>
-                <div className="flex-1 h-px bg-zinc-800" />
+                <div className="flex-1 h-px bg-panel" />
               </div>
             )}
             <TurnView turn={turn} />

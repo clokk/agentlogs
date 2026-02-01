@@ -6,10 +6,10 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-white mb-6">
+          <h1 className="text-5xl font-bold text-primary mb-6">
             Document Your AI-Assisted Development
           </h1>
-          <p className="text-xl text-zinc-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-muted mb-8 max-w-2xl mx-auto">
             Track, visualize, and share your AI coding conversations. Build a
             portfolio of how you solve problems with Claude, Cursor, and other
             AI tools.
@@ -25,7 +25,7 @@ export default function LandingPage() {
               href="https://github.com/clokk/cogcommit"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 bg-zinc-800 text-white rounded-lg font-medium hover:bg-zinc-700 transition-colors"
+              className="px-6 py-3 bg-panel text-primary rounded-lg font-medium hover:bg-panel-alt transition-colors"
             >
               View on GitHub
             </a>
@@ -34,15 +34,15 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-6 border-t border-zinc-800">
+      <section className="py-20 px-6 border-t border-border">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
+          <h2 className="text-3xl font-bold text-primary text-center mb-12">
             How It Works
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Import */}
-            <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <div className="bg-panel/50 rounded-lg p-6 border border-border">
               <div className="w-12 h-12 rounded-lg bg-chronicle-blue/20 flex items-center justify-center mb-4">
                 <svg
                   className="w-6 h-6 text-chronicle-blue"
@@ -58,15 +58,15 @@ export default function LandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Import</h3>
-              <p className="text-zinc-400">
+              <h3 className="text-lg font-semibold text-primary mb-2">Import</h3>
+              <p className="text-muted">
                 Automatically import your Claude Code conversations. The CLI
                 watches your development sessions and captures everything.
               </p>
             </div>
 
             {/* Sync */}
-            <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <div className="bg-panel/50 rounded-lg p-6 border border-border">
               <div className="w-12 h-12 rounded-lg bg-chronicle-green/20 flex items-center justify-center mb-4">
                 <svg
                   className="w-6 h-6 text-chronicle-green"
@@ -82,15 +82,15 @@ export default function LandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Sync</h3>
-              <p className="text-zinc-400">
+              <h3 className="text-lg font-semibold text-primary mb-2">Sync</h3>
+              <p className="text-muted">
                 Push your cognitive commits to the cloud. Access your
                 development history from anywhere, across all your machines.
               </p>
             </div>
 
             {/* Share */}
-            <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <div className="bg-panel/50 rounded-lg p-6 border border-border">
               <div className="w-12 h-12 rounded-lg bg-chronicle-purple/20 flex items-center justify-center mb-4">
                 <svg
                   className="w-6 h-6 text-chronicle-purple"
@@ -106,8 +106,8 @@ export default function LandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Share</h3>
-              <p className="text-zinc-400">
+              <h3 className="text-lg font-semibold text-primary mb-2">Share</h3>
+              <p className="text-muted">
                 Build a portfolio of your AI-assisted problem solving. Show how
                 you work with AI to build amazing software.
               </p>
@@ -117,14 +117,14 @@ export default function LandingPage() {
       </section>
 
       {/* CLI Demo */}
-      <section className="py-20 px-6 border-t border-zinc-800">
+      <section className="py-20 px-6 border-t border-border">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
+          <h2 className="text-3xl font-bold text-primary text-center mb-12">
             Simple CLI, Powerful Results
           </h2>
 
-          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800 font-mono text-sm">
-            <div className="flex items-center gap-2 mb-4 text-zinc-500">
+          <div className="bg-bg rounded-lg p-6 border border-border font-mono text-sm">
+            <div className="flex items-center gap-2 mb-4 text-muted">
               <span className="w-3 h-3 rounded-full bg-red-500"></span>
               <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
               <span className="w-3 h-3 rounded-full bg-green-500"></span>
@@ -134,25 +134,25 @@ export default function LandingPage() {
             <div className="space-y-2">
               <p>
                 <span className="text-chronicle-green">$</span>{" "}
-                <span className="text-white">npm install -g cogcommit</span>
+                <span className="text-primary">npm install -g cogcommit</span>
               </p>
-              <p className="text-zinc-500">Installing cogcommit...</p>
+              <p className="text-muted">Installing cogcommit...</p>
               <p className="text-chronicle-green">
                 Installed cogcommit v0.1.0
               </p>
               <p className="mt-4">
                 <span className="text-chronicle-green">$</span>{" "}
-                <span className="text-white">cogcommit import</span>
+                <span className="text-primary">cogcommit import</span>
               </p>
-              <p className="text-zinc-500">Scanning for Claude Code sessions...</p>
+              <p className="text-muted">Scanning for Claude Code sessions...</p>
               <p className="text-chronicle-green">
                 Found 42 sessions in 12 cognitive commits
               </p>
               <p className="mt-4">
                 <span className="text-chronicle-green">$</span>{" "}
-                <span className="text-white">cogcommit login</span>
+                <span className="text-primary">cogcommit login</span>
               </p>
-              <p className="text-zinc-500">
+              <p className="text-muted">
                 Opening browser for GitHub authentication...
               </p>
               <p className="text-chronicle-green">
@@ -160,7 +160,7 @@ export default function LandingPage() {
               </p>
               <p className="mt-4">
                 <span className="text-chronicle-green">$</span>{" "}
-                <span className="text-white">cogcommit push</span>
+                <span className="text-primary">cogcommit push</span>
               </p>
               <p className="text-chronicle-green">
                 Pushed 12 commits to cloud
@@ -171,12 +171,12 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 border-t border-zinc-800 bg-zinc-800/30">
+      <section className="py-20 px-6 border-t border-border bg-panel/30">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="text-3xl font-bold text-primary mb-4">
             Start Building Your AI Portfolio Today
           </h2>
-          <p className="text-zinc-400 mb-8">
+          <p className="text-muted mb-8">
             Free and open source. Your data stays yours.
           </p>
           <Link

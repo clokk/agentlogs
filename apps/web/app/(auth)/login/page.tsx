@@ -25,23 +25,23 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-900">
+    <div className="min-h-screen flex items-center justify-center bg-bg">
       <div className="w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">CogCommit</h1>
-          <p className="text-zinc-400">
+          <h1 className="text-3xl font-bold text-primary mb-2">CogCommit</h1>
+          <p className="text-muted">
             Document your AI-assisted development
           </p>
         </div>
 
-        <div className="bg-zinc-800 rounded-lg p-6 border border-zinc-700">
-          <h2 className="text-xl font-semibold text-white mb-4 text-center">
+        <div className="bg-panel rounded-lg p-6 border border-border">
+          <h2 className="text-xl font-semibold text-primary mb-4 text-center">
             Sign in to continue
           </h2>
 
           <button
             onClick={handleLogin}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-panel-alt hover:bg-panel text-primary rounded-lg transition-colors"
           >
             <svg
               className="w-5 h-5"
@@ -58,12 +58,12 @@ function LoginContent() {
             Sign in with GitHub
           </button>
 
-          <p className="mt-4 text-sm text-zinc-500 text-center">
+          <p className="mt-4 text-sm text-muted text-center">
             By signing in, you agree to our terms of service and privacy policy.
           </p>
         </div>
 
-        <p className="mt-6 text-sm text-zinc-500 text-center">
+        <p className="mt-6 text-sm text-muted text-center">
           New to CogCommit?{" "}
           <a href="/" className="text-chronicle-blue hover:underline">
             Learn more
@@ -78,8 +78,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-zinc-900">
-          <div className="text-zinc-400">Loading...</div>
+        <div className="min-h-screen flex items-center justify-center bg-bg">
+          <div className="text-muted">Loading...</div>
         </div>
       }
     >

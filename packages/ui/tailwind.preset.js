@@ -17,11 +17,34 @@ module.exports = {
         "bg-tertiary": "#1e1b18",
         border: "#2a2520",
 
+        // Primary Accent (burnt orange)
+        accent: {
+          DEFAULT: "#e07b39",
+          hover: "#c66a2d",
+        },
+
+        // Text colors
+        text: {
+          primary: "#e8e4df",
+          muted: "#a39e97",
+          subtle: "#6d6862",
+        },
+
         // Semantic colors
         "chronicle-blue": "#3d84a8",
         "chronicle-green": "#5fb88e",
         "chronicle-amber": "#d4a030",
         "chronicle-purple": "#9d7cd8",
+
+        // Commit states
+        "commit-closed": "#5fb88e",
+        "commit-open": "#d4a030",
+        "user-accent": "#3d84a8",
+        parallel: "#9d7cd8",
+      },
+      fontFamily: {
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "Fira Code", "JetBrains Mono", "monospace"],
       },
       animation: {
         "slide-in": "slideIn 0.2s ease-out",

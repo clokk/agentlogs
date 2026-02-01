@@ -398,7 +398,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
     return (
       <div ref={ref} className="h-full flex flex-col" style={{ minHeight: 0 }}>
         {/* Header Section */}
-        <div className="flex-shrink-0 p-4 border-b border-zinc-800 bg-panel-alt">
+        <div className="flex-shrink-0 p-4 border-b border-border bg-panel-alt">
           {/* Row 1: Metadata + Stats + Search + Actions */}
           <div className="flex items-center gap-3 text-sm">
             {/* Source badge */}
@@ -425,9 +425,9 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
             )}
 
             {/* Stats */}
-            <span className="text-zinc-600">·</span>
-            <span className="text-zinc-500">{turnCount} turns</span>
-            <span className="text-zinc-600">·</span>
+            <span className="text-subtle">·</span>
+            <span className="text-muted">{turnCount} turns</span>
+            <span className="text-subtle">·</span>
             {commit.filesChanged.length > 0 ? (
               <button
                 onClick={() => setShowFilesModal(true)}
@@ -436,7 +436,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                 {commit.filesChanged.length} files
               </button>
             ) : (
-              <span className="text-zinc-500">0 files</span>
+              <span className="text-muted">0 files</span>
             )}
 
             <div className="flex-1" />
@@ -449,7 +449,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="/ search"
-                className="w-36 bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white placeholder-zinc-500 focus:border-chronicle-blue focus:outline-none focus:w-48 transition-all"
+                className="w-36 bg-panel border border-border rounded px-2 py-1 text-xs text-primary placeholder-muted focus:border-chronicle-blue focus:outline-none focus:w-48 transition-all"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     if (e.shiftKey) goToPrevMatch();
@@ -463,19 +463,19 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
               />
               {searchTerm && searchMatchIndices.length > 0 && (
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-muted">
                     {currentMatchIndex + 1}/{searchMatchIndices.length}
                   </span>
                   <button
                     onClick={goToPrevMatch}
-                    className="text-zinc-400 hover:text-white p-0.5"
+                    className="text-muted hover:text-primary p-0.5"
                     title="Previous match (Shift+Enter)"
                   >
                     ▲
                   </button>
                   <button
                     onClick={goToNextMatch}
-                    className="text-zinc-400 hover:text-white p-0.5"
+                    className="text-muted hover:text-primary p-0.5"
                     title="Next match (Enter)"
                   >
                     ▼
@@ -483,7 +483,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                 </div>
               )}
               {searchTerm && searchMatchIndices.length === 0 && (
-                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-zinc-500">
+                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted">
                   0
                 </span>
               )}
@@ -493,7 +493,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
             <div className="relative" ref={exportMenuRef}>
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
-                className="px-2 py-1 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800 rounded transition-colors flex items-center gap-1"
+                className="px-2 py-1 text-xs text-muted hover:text-primary hover:bg-panel rounded transition-colors flex items-center gap-1"
               >
                 {exportCopied ? (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-chronicle-green">
@@ -509,22 +509,22 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                 Export
               </button>
               {showExportMenu && (
-                <div className="absolute right-0 mt-1 bg-zinc-800 border border-zinc-700 rounded shadow-lg z-10 py-1 min-w-[160px]">
+                <div className="absolute right-0 mt-1 bg-panel border border-border rounded shadow-lg z-10 py-1 min-w-[160px]">
                   <button
                     onClick={handleExportMarkdown}
-                    className="block w-full text-left px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+                    className="block w-full text-left px-3 py-2 text-xs text-primary hover:bg-panel-alt transition-colors"
                   >
                     Download as Markdown
                   </button>
                   <button
                     onClick={handleExportPlainText}
-                    className="block w-full text-left px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+                    className="block w-full text-left px-3 py-2 text-xs text-primary hover:bg-panel-alt transition-colors"
                   >
                     Download as Plain Text
                   </button>
                   <button
                     onClick={handleCopyConversation}
-                    className="block w-full text-left px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+                    className="block w-full text-left px-3 py-2 text-xs text-primary hover:bg-panel-alt transition-colors"
                   >
                     Copy to Clipboard
                   </button>
@@ -552,7 +552,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                   value={titleValue}
                   onChange={(e) => setTitleValue(e.target.value)}
                   placeholder="Enter a title..."
-                  className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-3 py-1.5 text-white text-sm focus:border-chronicle-blue focus:outline-none"
+                  className="flex-1 bg-panel border border-border rounded px-3 py-1.5 text-primary text-sm focus:border-chronicle-blue focus:outline-none"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSaveTitle();
@@ -567,7 +567,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                 </button>
                 <button
                   onClick={() => setEditingTitle(false)}
-                  className="px-2 py-1.5 bg-zinc-700 text-white rounded font-medium text-xs hover:bg-zinc-600"
+                  className="px-2 py-1.5 bg-panel-alt text-primary rounded font-medium text-xs hover:bg-panel"
                 >
                   Cancel
                 </button>
@@ -575,13 +575,13 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
             ) : (
               <h2
                 onClick={() => onTitleChange && setEditingTitle(true)}
-                className={`text-base font-medium text-white ${onTitleChange ? "cursor-pointer hover:text-chronicle-blue" : ""} transition-colors`}
+                className={`text-base font-medium text-primary ${onTitleChange ? "cursor-pointer hover:text-chronicle-blue" : ""} transition-colors`}
               >
                 {commit.title || (
                   onTitleChange ? (
-                    <span className="text-zinc-500 italic text-sm">Click to add title...</span>
+                    <span className="text-muted italic text-sm">Click to add title...</span>
                   ) : (
-                    <span className="text-zinc-400">Untitled conversation</span>
+                    <span className="text-muted">Untitled conversation</span>
                   )
                 )}
               </h2>
@@ -602,10 +602,10 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                 return (
                   <React.Fragment key={groupKey}>
                     {item.gapMinutes !== null && item.gapMinutes > 60 && (
-                      <div className="flex items-center gap-4 py-2 text-zinc-600 text-xs">
-                        <div className="flex-1 h-px bg-zinc-800" />
+                      <div className="flex items-center gap-4 py-2 text-subtle text-xs">
+                        <div className="flex-1 h-px bg-panel" />
                         <span>{formatGap(item.gapMinutes)} later</span>
-                        <div className="flex-1 h-px bg-zinc-800" />
+                        <div className="flex-1 h-px bg-panel" />
                       </div>
                     )}
                     <ToolOnlyGroup
@@ -623,10 +623,10 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
               return (
                 <React.Fragment key={turn.id}>
                   {gapMinutes !== null && gapMinutes > 60 && (
-                    <div className="flex items-center gap-4 py-2 text-zinc-600 text-xs">
-                      <div className="flex-1 h-px bg-zinc-800" />
+                    <div className="flex items-center gap-4 py-2 text-subtle text-xs">
+                      <div className="flex-1 h-px bg-panel" />
                       <span>{formatGap(gapMinutes)} later</span>
-                      <div className="flex-1 h-px bg-zinc-800" />
+                      <div className="flex-1 h-px bg-panel" />
                     </div>
                   )}
                   <TurnView
@@ -645,30 +645,30 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
         </div>
 
         {/* Navigation bar */}
-        <div className="flex-shrink-0 px-6 py-3 border-t border-zinc-800 bg-panel-alt flex items-center gap-4">
+        <div className="flex-shrink-0 px-6 py-3 border-t border-border bg-panel-alt flex items-center gap-4">
           <div className="flex items-center gap-2">
             <button
               onClick={goToPrevItem}
               disabled={currentItemIndex === 0}
-              className="text-zinc-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="text-muted hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               title="Previous item (k)"
             >
               ◀
             </button>
-            <span className="text-sm text-zinc-400 font-mono w-32 text-center">
+            <span className="text-sm text-muted font-mono w-32 text-center">
               {currentItemIndex + 1} / {renderItems.length}
             </span>
             <button
               onClick={goToNextItem}
               disabled={currentItemIndex >= renderItems.length - 1}
-              className="text-zinc-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="text-muted hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               title="Next item (j)"
             >
               ▶
             </button>
           </div>
           {currentItem && (
-            <span className="text-xs text-zinc-500">
+            <span className="text-xs text-muted">
               {currentItem.type === "tool-group"
                 ? `${currentItem.turns.length} tools`
                 : currentItem.turn.role === "user"
@@ -680,27 +680,27 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
           <div className="flex-1" />
 
           {/* Font size controls */}
-          <div className="flex items-center gap-1 border border-zinc-700 rounded">
+          <div className="flex items-center gap-1 border border-border rounded">
             <button
               onClick={decreaseFontSize}
               disabled={fontSize === FONT_SIZES[0]}
-              className="px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-l"
+              className="px-2 py-1 text-muted hover:text-primary hover:bg-panel-alt disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-l"
               title="Decrease font size"
             >
               <span className="text-xs font-bold">A</span>
             </button>
-            <span className="px-2 text-xs text-zinc-500 font-mono">{fontSize}</span>
+            <span className="px-2 text-xs text-muted font-mono">{fontSize}</span>
             <button
               onClick={increaseFontSize}
               disabled={fontSize === FONT_SIZES[FONT_SIZES.length - 1]}
-              className="px-2 py-1 text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-r"
+              className="px-2 py-1 text-muted hover:text-primary hover:bg-panel-alt disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-r"
               title="Increase font size"
             >
               <span className="text-sm font-bold">A</span>
             </button>
           </div>
 
-          <span className="text-xs text-zinc-600">
+          <span className="text-xs text-subtle">
             j/k: turns · J/K: user only · /: search
           </span>
         </div>
@@ -709,21 +709,21 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
         {showDeleteConfirm && onDelete && (
           <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
             <div className="bg-panel rounded-lg p-6 max-w-md">
-              <h3 className="text-lg font-medium text-white mb-2">Delete Commit?</h3>
-              <p className="text-zinc-400 mb-4">
+              <h3 className="text-lg font-medium text-primary mb-2">Delete Commit?</h3>
+              <p className="text-muted mb-4">
                 This will permanently delete this cognitive commit and all associated
                 data. This action cannot be undone.
               </p>
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-4 py-2 bg-zinc-700 text-white rounded font-medium hover:bg-zinc-600"
+                  className="px-4 py-2 bg-panel-alt text-primary rounded font-medium hover:bg-panel"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded font-medium hover:bg-red-500"
+                  className="px-4 py-2 bg-red-600 text-primary rounded font-medium hover:bg-red-500"
                 >
                   Delete
                 </button>
@@ -743,17 +743,17 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-white">
+                <h3 className="text-lg font-medium text-primary">
                   Files Changed ({commit.filesChanged.length})
                 </h3>
                 <button
                   onClick={() => setShowFilesModal(false)}
-                  className="text-zinc-400 hover:text-white transition-colors"
+                  className="text-muted hover:text-primary transition-colors"
                 >
                   ✕
                 </button>
               </div>
-              <div className="overflow-y-auto flex-1 bg-zinc-900 rounded-lg p-4">
+              <div className="overflow-y-auto flex-1 bg-bg rounded-lg p-4">
                 <ul className="space-y-1">
                   {commit.filesChanged.map((file, i) => (
                     <li key={i} className="font-mono text-sm text-chronicle-amber">

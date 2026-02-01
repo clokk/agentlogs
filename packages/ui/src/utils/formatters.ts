@@ -158,7 +158,7 @@ export function getSourceStyle(source?: string): {
         label: "OpenCode",
       };
     default:
-      return { bg: "bg-zinc-500/20", text: "text-zinc-400", label: "Unknown" };
+      return { bg: "bg-text-subtle/20", text: "text-muted", label: "Unknown" };
   }
 }
 

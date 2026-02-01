@@ -47,7 +47,7 @@ function highlightMatches(text: string, term: string): React.ReactNode {
   const parts = text.split(regex);
   return parts.map((part, i) =>
     regex.test(part) ? (
-      <mark key={i} className="bg-chronicle-blue/30 text-white rounded px-0.5">
+      <mark key={i} className="bg-chronicle-blue/30 text-primary rounded px-0.5">
         {part}
       </mark>
     ) : (
@@ -86,20 +86,20 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
         className={`group rounded-lg p-4 border-l-2 transition-opacity ${
           isUser
             ? "bg-chronicle-blue/5 border-chronicle-blue"
-            : "bg-zinc-900/50 border-zinc-700"
+            : "bg-bg/50 border-border"
         } ${searchTerm && !isMatch ? "opacity-40" : ""}`}
       >
         {/* Role indicator with model name */}
         <div className="flex items-center gap-2 mb-2">
           <span
             className={`text-sm font-medium ${
-              isUser ? "text-chronicle-blue" : "text-zinc-400"
+              isUser ? "text-chronicle-blue" : "text-muted"
             }`}
           >
             {isUser ? "User" : formatModelName(turn.model)}
           </span>
           <span
-            className="text-xs text-zinc-600 cursor-help"
+            className="text-xs text-subtle cursor-help"
             title={formatAbsoluteTime(turn.timestamp)}
           >
             {formatRelativeTime(turn.timestamp)}
@@ -107,7 +107,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
           {/* Copy button */}
           <button
             onClick={handleCopy}
-            className="ml-auto p-1 text-zinc-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+            className="ml-auto p-1 text-muted hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
             title="Copy turn"
           >
             {copied ? (
@@ -142,7 +142,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
         {turn.content && (
           <div className="relative">
             <div
-              className="text-zinc-200 whitespace-pre-wrap leading-relaxed"
+              className="text-primary whitespace-pre-wrap leading-relaxed"
               style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
             >
               {searchTerm
@@ -151,7 +151,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
               {shouldCollapse && !expanded && "..."}
             </div>
             {shouldCollapse && !expanded && (
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-zinc-900/80 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-bg/80 to-transparent pointer-events-none" />
             )}
           </div>
         )}
@@ -183,7 +183,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                     ${
                       tc.isError
                         ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                        : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                        : "bg-panel text-muted hover:bg-panel-alt"
                     }
                     ${expandedToolId === tc.id ? "ring-1 ring-chronicle-blue" : ""}`}
                 >
@@ -200,7 +200,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                   .map((tc) => (
                     <div
                       key={tc.id}
-                      className="bg-zinc-800/50 rounded p-3 text-xs font-mono"
+                      className="bg-panel/50 rounded p-3 text-xs font-mono"
                     >
                       <div className="flex items-center gap-2 mb-1">
                         <span
@@ -220,10 +220,10 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                       {/* Input */}
                       {tc.input && Object.keys(tc.input).length > 0 && (
                         <details className="mt-1" open>
-                          <summary className="text-zinc-500 cursor-pointer hover:text-zinc-400">
+                          <summary className="text-muted cursor-pointer hover:text-muted">
                             Input
                           </summary>
-                          <pre className="mt-1 p-2 bg-zinc-900 rounded text-zinc-400 overflow-x-auto">
+                          <pre className="mt-1 p-2 bg-bg rounded text-muted overflow-x-auto">
                             {formatToolInput(tc.input)}
                           </pre>
                         </details>
@@ -232,10 +232,10 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                       {/* Result */}
                       {tc.result && (
                         <details className="mt-1">
-                          <summary className="text-zinc-500 cursor-pointer hover:text-zinc-400">
+                          <summary className="text-muted cursor-pointer hover:text-muted">
                             Result
                           </summary>
-                          <pre className="mt-1 p-2 bg-zinc-900 rounded text-zinc-400 overflow-x-auto max-h-40">
+                          <pre className="mt-1 p-2 bg-bg rounded text-muted overflow-x-auto max-h-40">
                             {tc.result.length > 500
                               ? tc.result.substring(0, 500) + "..."
                               : tc.result}
