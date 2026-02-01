@@ -8,9 +8,9 @@ import * as path from "path";
 import type { AuthTokens, UserProfile } from "./types";
 
 // Supabase project configuration
-// These will be set during project setup
-const SUPABASE_URL = process.env.COGCOMMIT_SUPABASE_URL || "";
-const SUPABASE_ANON_KEY = process.env.COGCOMMIT_SUPABASE_ANON_KEY || "";
+// Default to production cogcommit.com backend, can be overridden for development
+export const SUPABASE_URL = process.env.COGCOMMIT_SUPABASE_URL || "https://wiucvdinjmrcveoqbhjd.supabase.co";
+export const SUPABASE_ANON_KEY = process.env.COGCOMMIT_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdWN2ZGluam1yY3Zlb3FiaGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4OTgwNjIsImV4cCI6MjA4NTQ3NDA2Mn0.z_GJGe6sZ2GOB68ukUmujA_H5DPxX1DXp5TGN3jZ94Y";
 
 const AUTH_FILE = "auth.json";
 

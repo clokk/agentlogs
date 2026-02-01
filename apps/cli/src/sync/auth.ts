@@ -15,6 +15,8 @@ import {
   loadAuthTokens,
   getMachineId,
   resetClient,
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
 } from "./client";
 import type { AuthTokens, UserProfile } from "./types";
 
@@ -123,12 +125,11 @@ export async function login(): Promise<UserProfile> {
           } else {
             // Exchange code for session with our code verifier
             // Make direct HTTP call since SDK doesn't pass our verifier
-            const supabaseUrl = process.env.AGENTLOGS_SUPABASE_URL;
-            const tokenResponse = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=pkce`, {
+            const tokenResponse = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=pkce`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "ApiKey": process.env.AGENTLOGS_SUPABASE_ANON_KEY || "",
+                "ApiKey": SUPABASE_ANON_KEY,
               },
               body: JSON.stringify({
                 auth_code: code,
@@ -232,16 +233,8 @@ export async function login(): Promise<UserProfile> {
     });
 
     server.listen(CALLBACK_PORT, async () => {
-      // Get the Supabase project URL from environment
-      const supabaseUrl = process.env.AGENTLOGS_SUPABASE_URL;
-      if (!supabaseUrl) {
-        server.close();
-        reject(new Error("AGENTLOGS_SUPABASE_URL not set"));
-        return;
-      }
-
       // Build OAuth URL manually to ensure proper PKCE handling
-      const authUrl = new URL(`${supabaseUrl}/auth/v1/authorize`);
+      const authUrl = new URL(`${SUPABASE_URL}/auth/v1/authorize`);
       authUrl.searchParams.set("provider", "github");
       authUrl.searchParams.set("redirect_to", CALLBACK_URL);
       authUrl.searchParams.set("code_challenge", codeChallenge);
