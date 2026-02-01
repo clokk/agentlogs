@@ -10,7 +10,7 @@ import type { ConflictInfo, SyncResult } from "./types";
  * Get all commits with conflicts
  */
 export function getConflicts(db: CogCommitDB): ConflictInfo[] {
-  const conflictCommits = db.getCommitsBySyncStatus("conflict");
+  const conflictCommits = db.commits.getBySyncStatus("conflict");
 
   return conflictCommits.map((commit) => ({
     localId: commit.id,
@@ -30,16 +30,16 @@ export async function resolveKeepLocal(
   db: CogCommitDB,
   localId: string
 ): Promise<void> {
-  const commit = db.getCommit(localId);
+  const commit = db.commits.get(localId);
   if (!commit || commit.syncStatus !== "conflict") {
     throw new Error("Commit not found or not in conflict");
   }
 
   // Mark as pending to be pushed
-  db.updateSyncStatus(localId, "pending");
+  db.commits.updateSyncStatus(localId, "pending");
 
   // Increment local version to ensure it wins
-  db.incrementLocalVersion(localId);
+  db.commits.incrementLocalVersion(localId);
 }
 
 /**
@@ -54,7 +54,7 @@ export async function resolveKeepCloud(
     throw new Error("Not authenticated");
   }
 
-  const commit = db.getCommit(localId);
+  const commit = db.commits.get(localId);
   if (!commit || commit.syncStatus !== "conflict") {
     throw new Error("Commit not found or not in conflict");
   }
@@ -83,7 +83,7 @@ export async function resolveKeepCloud(
   }
 
   // Update local with cloud data
-  db.updateCommit(localId, {
+  db.commits.update(localId, {
     gitHash: cloudCommit.git_hash,
     closedBy: cloudCommit.closed_by,
     published: cloudCommit.published,
@@ -93,7 +93,7 @@ export async function resolveKeepCloud(
   });
 
   // Update sync metadata
-  db.updateSyncMetadata(localId, {
+  db.commits.updateSyncMetadata(localId, {
     cloudId: cloudCommit.id,
     syncStatus: "synced",
     cloudVersion: cloudCommit.version,
@@ -177,7 +177,7 @@ export async function autoResolveConflicts(
  * Get conflict count
  */
 export function getConflictCount(db: CogCommitDB): number {
-  return db.getCommitsBySyncStatus("conflict").length;
+  return db.commits.getBySyncStatus("conflict").length;
 }
 
 /**

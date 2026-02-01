@@ -77,14 +77,25 @@ A cognitive commit closes when:
 
 | File | Purpose |
 |------|---------|
-| `apps/cli/src/index.ts` | CLI entry point with all commands |
+| `apps/cli/src/index.ts` | CLI entry point (imports command modules) |
+| `apps/cli/src/commands/` | CLI command modules (parse, sync, studio, etc.) |
 | `apps/cli/src/parser/extractor.ts` | Core parsing state machine |
+| `apps/cli/src/storage/db.ts` | Database wrapper using repository pattern |
+| `apps/cli/src/storage/repositories/` | Data access layer (commits, sessions, turns) |
 | `apps/cli/src/storage/schema.ts` | Database schema + migrations |
 | `apps/cli/src/sync/auth.ts` | GitHub OAuth PKCE flow |
+| `apps/cli/src/sync/push.ts` | Push local commits to cloud |
+| `apps/cli/src/sync/pull.ts` | Pull commits from cloud |
 | `apps/cli/src/studio/server.ts` | Local dashboard Hono server |
 | `apps/web/app/(dashboard)/` | Web platform dashboard pages |
+| `apps/web/components/DashboardClient.tsx` | Main dashboard component |
 | `packages/types/src/index.ts` | Shared type definitions |
 | `packages/supabase/src/client.ts` | Supabase client factory |
+| `packages/supabase/src/transforms.ts` | DB ↔ frontend type transforms |
+| `packages/supabase/src/queries.ts` | Supabase query functions |
+| `packages/ui/src/ConversationViewer.tsx` | Full conversation viewer component |
+| `packages/ui/src/CommitList.tsx` | Commit list sidebar component |
+| `packages/ui/src/Header.tsx` | Dashboard header component |
 
 ---
 

@@ -8,8 +8,7 @@ import { loadConfig } from "../config";
 import { exec } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
-
-const DEFAULT_PORT = 4747;
+import { STUDIO_DEFAULT_PORT } from "../constants";
 
 export interface StudioOptions {
   port?: number;
@@ -21,7 +20,7 @@ export async function startStudio(
   storagePath: string,
   options: StudioOptions = {}
 ): Promise<void> {
-  const port = options.port || DEFAULT_PORT;
+  const port = options.port || STUDIO_DEFAULT_PORT;
 
   // Get project name
   let projectName: string;

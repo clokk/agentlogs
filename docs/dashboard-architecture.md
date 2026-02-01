@@ -223,6 +223,6 @@ cd some-project && cogcommit studio
 
 ### Web-Specific
 - `apps/web/app/(dashboard)/dashboard/page.tsx` - Dashboard page
-- `apps/web/components/DashboardView.tsx` - Dashboard client component
+- `apps/web/components/DashboardClient.tsx` - Dashboard client component
 - `apps/web/app/api/commits/route.ts` - Commits API
 - `apps/web/app/api/projects/route.ts` - Projects API

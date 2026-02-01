@@ -32,7 +32,7 @@ export async function uploadVisual(
     throw new Error("Not authenticated");
   }
 
-  const visual = db.getVisual(visualId);
+  const visual = db.visuals.get(visualId);
   if (!visual) {
     throw new Error(`Visual not found: ${visualId}`);
   }
@@ -70,7 +70,7 @@ export async function uploadVisual(
   const cloudUrl = urlData.publicUrl;
 
   // Update database records
-  db.updateVisualCloudUrl(visual.id, cloudUrl);
+  db.visuals.updateCloudUrl(visual.id, cloudUrl);
 
   // Update cloud record
   await supabase.from("visuals").upsert(
@@ -133,7 +133,7 @@ export async function getVisual(
   db: CogCommitDB,
   visualId: string
 ): Promise<{ path: string; fromCloud: boolean }> {
-  const visual = db.getVisual(visualId);
+  const visual = db.visuals.get(visualId);
   if (!visual) {
     throw new Error(`Visual not found: ${visualId}`);
   }
@@ -177,7 +177,7 @@ export async function syncVisualsForCommit(
     return result;
   }
 
-  const visuals = db.getVisuals(commitId);
+  const visuals = db.visuals.getForCommit(commitId);
 
   for (const visual of visuals) {
     try {
@@ -260,7 +260,7 @@ export function getVisualSyncStatus(
   db: CogCommitDB,
   commitId: string
 ): { pending: number; synced: number; missing: number } {
-  const visuals = db.getVisuals(commitId);
+  const visuals = db.visuals.getForCommit(commitId);
 
   let pending = 0;
   let synced = 0;

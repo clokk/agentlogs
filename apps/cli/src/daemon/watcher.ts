@@ -152,7 +152,7 @@ export class SessionWatcher {
 
       // Update position
       this.filePositions.set(filePath, currentSize);
-      this.db.setFilePosition(filePath, currentSize);
+      this.db.daemonState.setFilePosition(filePath, currentSize);
     } catch (error) {
       this.handleError(error as Error);
     }
@@ -213,7 +213,7 @@ export class SessionWatcher {
     for (const file of files) {
       if (file.endsWith(".jsonl")) {
         const filePath = `${this.claudeProjectPath}/${file}`;
-        const position = this.db.getFilePosition(filePath);
+        const position = this.db.daemonState.getFilePosition(filePath);
         if (position > 0) {
           this.filePositions.set(filePath, position);
         }
@@ -226,7 +226,7 @@ export class SessionWatcher {
    */
   private saveFilePositions(): void {
     for (const [filePath, position] of this.filePositions) {
-      this.db.setFilePosition(filePath, position);
+      this.db.daemonState.setFilePosition(filePath, position);
     }
   }
 }

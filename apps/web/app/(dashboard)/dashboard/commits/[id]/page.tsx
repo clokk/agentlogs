@@ -3,69 +3,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ConversationView from "@/components/ConversationView";
 import { getSourceStyle, formatAbsoluteTime, getProjectColor } from "@cogcommit/ui";
-import type { Turn, ToolCall } from "@cogcommit/types";
-
-interface DbTurn {
-  id: string;
-  role: string;
-  content: string | null;
-  timestamp: string;
-  model: string | null;
-  tool_calls: string | null;
-}
-
-interface DbSession {
-  id: string;
-  started_at: string;
-  ended_at: string;
-  turns: DbTurn[];
-}
-
-interface DbCommit {
-  id: string;
-  git_hash: string | null;
-  started_at: string;
-  closed_at: string;
-  closed_by: string;
-  parallel: boolean;
-  files_read: string[];
-  files_changed: string[];
-  title: string | null;
-  project_name: string | null;
-  source: string;
-  sessions: DbSession[];
-}
-
-/**
- * Transform database turn to app Turn type
- */
-function transformTurn(dbTurn: DbTurn): Turn {
-  let toolCalls: ToolCall[] | undefined;
-
-  if (dbTurn.tool_calls) {
-    try {
-      const parsed = JSON.parse(dbTurn.tool_calls);
-      toolCalls = parsed.map((tc: { id: string; name: string; input?: Record<string, unknown>; result?: string; isError?: boolean }) => ({
-        id: tc.id,
-        name: tc.name,
-        input: tc.input || {},
-        result: tc.result,
-        isError: tc.isError,
-      }));
-    } catch {
-      // Ignore parse errors
-    }
-  }
-
-  return {
-    id: dbTurn.id,
-    role: dbTurn.role as "user" | "assistant",
-    content: dbTurn.content || "",
-    timestamp: dbTurn.timestamp,
-    model: dbTurn.model || undefined,
-    toolCalls,
-  };
-}
+import {
+  transformCommitWithRelations,
+  type DbCommitWithRelations,
+} from "@cogcommit/supabase";
 
 export default async function CommitDetailPage({
   params,
@@ -94,17 +35,18 @@ export default async function CommitDetailPage({
     notFound();
   }
 
-  const typedCommit = commit as DbCommit;
-  const sourceStyle = getSourceStyle(typedCommit.source);
-  const projectColor = typedCommit.project_name
-    ? getProjectColor(typedCommit.project_name)
-    : null;
-
-  // Flatten and transform all turns
-  const allTurns: Turn[] = typedCommit.sessions.flatMap((s) =>
-    s.turns.map(transformTurn)
+  // Transform from database format to frontend format
+  const transformedCommit = transformCommitWithRelations(
+    commit as DbCommitWithRelations
   );
 
+  const sourceStyle = getSourceStyle(transformedCommit.source || "claude_code");
+  const projectColor = transformedCommit.projectName
+    ? getProjectColor(transformedCommit.projectName)
+    : null;
+
+  // Flatten all turns from sessions
+  const allTurns = transformedCommit.sessions.flatMap((s) => s.turns);
   const turnCount = allTurns.length;
 
   return (
@@ -127,17 +69,17 @@ export default async function CommitDetailPage({
             {sourceStyle.label}
           </span>
 
-          {typedCommit.project_name && projectColor && (
+          {transformedCommit.projectName && projectColor && (
             <span
               className={`px-2 py-0.5 text-xs font-medium rounded ${projectColor.bg} ${projectColor.text}`}
             >
-              {typedCommit.project_name}
+              {transformedCommit.projectName}
             </span>
           )}
 
-          {typedCommit.git_hash ? (
+          {transformedCommit.gitHash ? (
             <span className="font-mono text-chronicle-green text-xs">
-              [{typedCommit.git_hash}]
+              [{transformedCommit.gitHash}]
             </span>
           ) : (
             <span className="font-mono text-chronicle-amber text-xs">
@@ -149,16 +91,16 @@ export default async function CommitDetailPage({
           <span className="text-muted">{turnCount} turns</span>
           <span className="text-subtle">|</span>
           <span className="text-muted">
-            {typedCommit.files_changed.length} files changed
+            {transformedCommit.filesChanged.length} files changed
           </span>
         </div>
 
         <h1 className="text-xl font-semibold text-primary mt-2">
-          {typedCommit.title || "Untitled conversation"}
+          {transformedCommit.title || "Untitled conversation"}
         </h1>
 
         <p className="text-sm text-muted mt-1">
-          {formatAbsoluteTime(typedCommit.closed_at)}
+          {formatAbsoluteTime(transformedCommit.closedAt)}
         </p>
       </header>
 

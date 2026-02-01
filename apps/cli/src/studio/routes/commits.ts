@@ -23,9 +23,9 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
 
       let commits;
       if (projectFilter) {
-        commits = db.getCommitsByProject(projectFilter);
+        commits = db.commits.getByProject(projectFilter);
       } else {
-        commits = db.getAllCommits();
+        commits = db.commits.getAll();
       }
 
       // Filter out empty and warmup commits
@@ -59,7 +59,7 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
     const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
-      const commit = db.getCommit(id);
+      const commit = db.commits.get(id);
       if (!commit) {
         return c.json({ error: "Commit not found" }, 404);
       }
@@ -82,17 +82,17 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
     const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
-      const commit = db.getCommit(id);
+      const commit = db.commits.get(id);
       if (!commit) {
         return c.json({ error: "Commit not found" }, 404);
       }
 
-      const success = db.updateCommit(id, body);
+      const success = db.commits.update(id, body);
       if (!success) {
         return c.json({ error: "No updates provided" }, 400);
       }
 
-      const updated = db.getCommit(id);
+      const updated = db.commits.get(id);
       return c.json({ commit: updated });
     } finally {
       db.close();
@@ -105,12 +105,12 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
     const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
-      const commit = db.getCommit(id);
+      const commit = db.commits.get(id);
       if (!commit) {
         return c.json({ error: "Commit not found" }, 404);
       }
 
-      const success = db.deleteCommit(id);
+      const success = db.commits.delete(id);
       return c.json({ success });
     } finally {
       db.close();
@@ -133,7 +133,7 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
     const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
-      const updated = db.bulkUpdateCommits(body.ids, body.updates);
+      const updated = db.commits.bulkUpdate(body.ids, body.updates);
       return c.json({ updated });
     } finally {
       db.close();

@@ -77,7 +77,7 @@ export class EntryProcessor {
 
   private initializeState(): ProcessorState {
     // Try to restore current commit from DB
-    const currentCommitId = this.db.getCurrentCommitId();
+    const currentCommitId = this.db.daemonState.getCurrentCommitId();
 
     return {
       currentCommitId,
@@ -115,7 +115,7 @@ export class EntryProcessor {
     }
 
     // Update last activity
-    this.db.updateLastActivity();
+    this.db.daemonState.updateLastActivity();
   }
 
   /**
@@ -275,7 +275,7 @@ export class EntryProcessor {
     this.state.pendingToolCalls = new Map();
 
     // Persist current commit ID
-    this.db.setCurrentCommitId(commitId);
+    this.db.daemonState.setCurrentCommitId(commitId);
 
     if (this.options.verbose) {
       console.log(`Started new cognitive commit: ${commitId}`);
@@ -319,7 +319,7 @@ export class EntryProcessor {
     };
 
     // Persist to DB
-    this.db.insertCommit(commit);
+    this.db.commits.insert(commit);
 
     if (this.options.verbose) {
       console.log(
@@ -340,7 +340,7 @@ export class EntryProcessor {
         );
 
         if (screenshotPath) {
-          this.db.createVisual(
+          this.db.visuals.create(
             commit.id,
             "screenshot",
             screenshotPath,
@@ -373,7 +373,7 @@ export class EntryProcessor {
     }
 
     // Clear current commit ID
-    this.db.setCurrentCommitId(null);
+    this.db.daemonState.setCurrentCommitId(null);
   }
 
   /**

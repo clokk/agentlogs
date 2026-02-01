@@ -7,9 +7,7 @@ import { CogCommitDB } from "../storage/db";
 import type { CognitiveCommit } from "../models/types";
 import type { SyncResult } from "./types";
 import { v5 as uuidv5 } from "uuid";
-
-// Namespace UUID for generating deterministic UUIDs from non-UUID strings
-const COGCOMMIT_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+import { COGCOMMIT_UUID_NAMESPACE, SYNC_BATCH_SIZE } from "../constants";
 
 /**
  * Convert a string to a valid UUID
@@ -22,7 +20,7 @@ function toUuid(id: string): string {
     return id;
   }
   // Generate a deterministic UUID from the string
-  return uuidv5(id, COGCOMMIT_NAMESPACE);
+  return uuidv5(id, COGCOMMIT_UUID_NAMESPACE);
 }
 
 /**
@@ -60,7 +58,7 @@ export async function pushToCloud(
   const machineUuid = machineData?.id || null;
 
   // Get pending commits
-  const pendingCommits = db.getPendingCommits();
+  const pendingCommits = db.commits.getPending();
 
   if (options.verbose) {
     console.log(`Found ${pendingCommits.length} pending commits to push`);
@@ -78,7 +76,7 @@ export async function pushToCloud(
 
         if (cloudCommit && cloudCommit.version > (commit.cloudVersion || 0)) {
           // Conflict detected - cloud has newer version
-          db.updateSyncStatus(commit.id, "conflict");
+          db.commits.updateSyncStatus(commit.id, "conflict");
           result.conflicts++;
           continue;
         }
@@ -93,7 +91,7 @@ export async function pushToCloud(
       }
 
       // Update local sync metadata
-      db.updateSyncMetadata(commit.id, {
+      db.commits.updateSyncMetadata(commit.id, {
         cloudId: cloudCommit.id,
         syncStatus: "synced",
         cloudVersion: cloudCommit.version,
@@ -107,7 +105,7 @@ export async function pushToCloud(
       }
     } catch (error) {
       result.errors.push(`Failed to push commit ${commit.id}: ${(error as Error).message}`);
-      db.updateSyncStatus(commit.id, "error");
+      db.commits.updateSyncStatus(commit.id, "error");
     }
   }
 
@@ -187,9 +185,8 @@ async function pushSession(
   }
 
   // Push turns in batches
-  const BATCH_SIZE = 100;
-  for (let i = 0; i < session.turns.length; i += BATCH_SIZE) {
-    const batch = session.turns.slice(i, i + BATCH_SIZE).map((turn) => ({
+  for (let i = 0; i < session.turns.length; i += SYNC_BATCH_SIZE) {
+    const batch = session.turns.slice(i, i + SYNC_BATCH_SIZE).map((turn) => ({
       id: toUuid(turn.id),
       session_id: sessionUuid,
       role: turn.role,
@@ -229,7 +226,7 @@ export async function pushVisuals(
   }
 
   const supabase = getAuthenticatedClient();
-  const visuals = db.getVisuals(commitId);
+  const visuals = db.visuals.getWithCloudInfo(commitId);
 
   for (const visual of visuals) {
     // Skip if already uploaded
@@ -290,7 +287,7 @@ export async function pushVisuals(
       }
 
       // Update local record
-      db.updateVisualCloudUrl(visual.id, urlData.publicUrl);
+      db.visuals.updateCloudUrl(visual.id, urlData.publicUrl);
 
       result.uploaded++;
 

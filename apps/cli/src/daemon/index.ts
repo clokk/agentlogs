@@ -169,8 +169,8 @@ export class CogCommitDaemon {
       projectName: this.config.projectName,
       projectPath: this.config.projectPath,
       claudeProjectPath: this.config.claudeProjectPath,
-      commitCount: this.db.getCommitCount(),
-      lastActivity: this.db.getLastActivity(),
+      commitCount: this.db.commits.getCount(),
+      lastActivity: this.db.daemonState.getLastActivity(),
       processorStatus: this.processor.getStatus(),
     };
   }

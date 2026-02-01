@@ -19,10 +19,7 @@ import {
   SUPABASE_ANON_KEY,
 } from "./client";
 import type { AuthTokens, UserProfile } from "./types";
-
-// OAuth callback port
-const CALLBACK_PORT = 54321;
-const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/auth/callback`;
+import { OAUTH_CALLBACK_PORT, OAUTH_CALLBACK_URL } from "../constants";
 
 // PKCE helpers
 function generateCodeVerifier(): string {
@@ -232,11 +229,11 @@ export async function login(): Promise<UserProfile> {
       }
     });
 
-    server.listen(CALLBACK_PORT, async () => {
+    server.listen(OAUTH_CALLBACK_PORT, async () => {
       // Build OAuth URL manually to ensure proper PKCE handling
       const authUrl = new URL(`${SUPABASE_URL}/auth/v1/authorize`);
       authUrl.searchParams.set("provider", "github");
-      authUrl.searchParams.set("redirect_to", CALLBACK_URL);
+      authUrl.searchParams.set("redirect_to", OAUTH_CALLBACK_URL);
       authUrl.searchParams.set("code_challenge", codeChallenge);
       authUrl.searchParams.set("code_challenge_method", "S256");
       authUrl.searchParams.set("scopes", "read:user user:email");

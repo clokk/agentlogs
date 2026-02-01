@@ -113,10 +113,10 @@ export function getSyncStatus(
   const { isAuthenticated: checkAuth } = require("./client");
 
   return {
-    lastSyncAt: db.getLastSyncTime(),
-    pendingCount: db.getCommitsBySyncStatus("pending").length,
-    syncedCount: db.getCommitsBySyncStatus("synced").length,
-    conflictCount: db.getCommitsBySyncStatus("conflict").length,
+    lastSyncAt: db.daemonState.getLastSyncTime(),
+    pendingCount: db.commits.getBySyncStatus("pending").length,
+    syncedCount: db.commits.getBySyncStatus("synced").length,
+    conflictCount: db.commits.getBySyncStatus("conflict").length,
     isOnline: checkAuth(),
     isSyncing: false,
   };

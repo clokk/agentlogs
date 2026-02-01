@@ -109,7 +109,7 @@ export default function DashboardClient({ userId, userName, avatarUrl }) {
     return <DashboardSkeleton />;
   }
 
-  return <DashboardView commits={commits} ... />;
+  return <DashboardClient commits={commits} ... />;
 }
 ```
 

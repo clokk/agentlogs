@@ -6,9 +6,7 @@
 import * as http from "http";
 import * as fs from "fs";
 import * as path from "path";
-
-// Common dev server ports
-const COMMON_PORTS = [3000, 5173, 8080, 4321, 8000, 4200, 5000, 3001];
+import { COMMON_DEV_PORTS } from "../constants";
 
 export interface ServerInfo {
   port: number;
@@ -65,7 +63,7 @@ export async function detectDevServer(
   }
 
   // Check common ports
-  for (const port of COMMON_PORTS) {
+  for (const port of COMMON_DEV_PORTS) {
     const responding = await checkPort(port);
     if (responding) {
       return {

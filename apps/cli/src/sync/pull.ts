@@ -33,7 +33,7 @@ export async function pullFromCloud(
 
   try {
     // Get last sync cursor
-    const lastSyncAt = db.getLastSyncTime() || "1970-01-01T00:00:00Z";
+    const lastSyncAt = db.daemonState.getLastSyncTime() || "1970-01-01T00:00:00Z";
 
     if (options.verbose) {
       console.log(`Pulling commits updated since ${lastSyncAt}`);
@@ -67,7 +67,7 @@ export async function pullFromCloud(
     for (const cloudCommit of cloudCommits || []) {
       try {
         // Check if we have this commit locally
-        const localCommit = db.getCommitByCloudId(cloudCommit.id);
+        const localCommit = db.commits.getByCloudId(cloudCommit.id);
 
         if (localCommit) {
           const localVersion = localCommit.localVersion || 1;
@@ -81,7 +81,7 @@ export async function pullFromCloud(
             // Local has unpushed changes
             if (cloudCommit.version > cloudVersion) {
               // Both have changes - conflict
-              db.updateSyncStatus(localCommit.id, "conflict");
+              db.commits.updateSyncStatus(localCommit.id, "conflict");
               result.conflicts++;
               continue;
             }
@@ -117,7 +117,7 @@ export async function pullFromCloud(
     // Update last sync time
     if (cloudCommits && cloudCommits.length > 0) {
       const lastUpdated = cloudCommits[cloudCommits.length - 1].updated_at;
-      db.setLastSyncTime(lastUpdated);
+      db.daemonState.setLastSyncTime(lastUpdated);
     }
 
     // Pull deleted commits (soft deletes)
@@ -173,7 +173,7 @@ async function createLocalCommit(
     lastSyncedAt: new Date().toISOString(),
   };
 
-  db.insertCommit(commit);
+  db.commits.insert(commit);
 }
 
 /**
@@ -185,7 +185,7 @@ async function updateLocalCommit(
   cloudCommit: CloudCommitWithRelations
 ): Promise<void> {
   // Update commit fields
-  db.updateCommit(localId, {
+  db.commits.update(localId, {
     gitHash: cloudCommit.git_hash,
     closedBy: cloudCommit.closed_by as CognitiveCommit["closedBy"],
     published: cloudCommit.published,
@@ -195,7 +195,7 @@ async function updateLocalCommit(
   });
 
   // Update sync metadata
-  db.updateSyncMetadata(localId, {
+  db.commits.updateSyncMetadata(localId, {
     cloudId: cloudCommit.id,
     syncStatus: "synced",
     cloudVersion: cloudCommit.version,
@@ -204,14 +204,14 @@ async function updateLocalCommit(
 
   // Update sessions and turns
   for (const cloudSession of cloudCommit.sessions || []) {
-    db.upsertSession(localId, {
+    db.sessions.upsert(localId, {
       id: cloudSession.id,
       startedAt: cloudSession.started_at,
       endedAt: cloudSession.ended_at,
     });
 
     for (const cloudTurn of cloudSession.turns || []) {
-      db.upsertTurn(cloudSession.id, {
+      db.turns.upsert(cloudSession.id, {
         id: cloudTurn.id,
         role: cloudTurn.role,
         content: cloudTurn.content,
@@ -247,9 +247,9 @@ async function pullDeletedCommits(
   }
 
   for (const deleted of deletedCommits || []) {
-    const localCommit = db.getCommitByCloudId(deleted.id);
+    const localCommit = db.commits.getByCloudId(deleted.id);
     if (localCommit) {
-      db.deleteCommit(localCommit.id);
+      db.commits.delete(localCommit.id);
       if (options.verbose) {
         console.log(`Deleted commit ${localCommit.id.substring(0, 8)}`);
       }

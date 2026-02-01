@@ -106,6 +106,56 @@ cogcommit/
 └── docs/                    # Documentation
 ```
 
+## Development
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm 8+
+
+### Setup
+
+```bash
+# Clone the repo
+git clone https://github.com/cogcommit/cogcommit.git
+cd cogcommit
+
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+```
+
+### Running Locally
+
+```bash
+# Run the CLI in development mode
+pnpm dev --filter=cogcommit
+
+# Run the web app
+pnpm dev --filter=web
+
+# Run both dashboards for testing
+# Terminal 1: Web dashboard
+pnpm dev --filter=web
+# Terminal 2: CLI studio
+node apps/cli/dist/index.js dashboard
+```
+
+### Building
+
+```bash
+# Build everything
+pnpm build
+
+# Build only CLI
+pnpm build --filter=cogcommit
+
+# Build only web
+pnpm build --filter=web
+```
+
 ## Data Storage
 
 Data is stored in:

@@ -19,7 +19,7 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
     const db = new CogCommitDB(storagePath, dbOptions);
 
     try {
-      const commits = db.getAllCommits();
+      const commits = db.commits.getAll();
       const commitCount = commits.length;
 
       // Count total turns
@@ -68,8 +68,8 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
     const db = new CogCommitDB(storagePath, dbOptions);
 
     try {
-      const projects = db.getDistinctProjects();
-      const totalCount = db.getCommitCount();
+      const projects = db.commits.getDistinctProjects();
+      const totalCount = db.commits.getCount();
 
       return c.json({
         projects,

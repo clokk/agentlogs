@@ -130,28 +130,40 @@ export function findGitCommitInBlocks(
 }
 
 /**
- * Extract file path from Read tool use
+ * Extract file path from a tool use block
+ * @param toolUse The tool use block
+ * @param toolName The expected tool name (Read, Edit, Write, etc.)
+ * @returns The file path if found, null otherwise
  */
-export function extractReadFilePath(toolUse: ToolUseBlock): string | null {
-  if (toolUse.name !== "Read") return null;
+export function extractFilePathFromTool(
+  toolUse: ToolUseBlock,
+  toolName: string
+): string | null {
+  if (toolUse.name !== toolName) return null;
   const input = toolUse.input as { file_path?: string };
   return input.file_path || null;
+}
+
+/**
+ * Extract file path from Read tool use
+ * @deprecated Use extractFilePathFromTool(toolUse, "Read") instead
+ */
+export function extractReadFilePath(toolUse: ToolUseBlock): string | null {
+  return extractFilePathFromTool(toolUse, "Read");
 }
 
 /**
  * Extract file path from Edit tool use
+ * @deprecated Use extractFilePathFromTool(toolUse, "Edit") instead
  */
 export function extractEditFilePath(toolUse: ToolUseBlock): string | null {
-  if (toolUse.name !== "Edit") return null;
-  const input = toolUse.input as { file_path?: string };
-  return input.file_path || null;
+  return extractFilePathFromTool(toolUse, "Edit");
 }
 
 /**
  * Extract file path from Write tool use
+ * @deprecated Use extractFilePathFromTool(toolUse, "Write") instead
  */
 export function extractWriteFilePath(toolUse: ToolUseBlock): string | null {
-  if (toolUse.name !== "Write") return null;
-  const input = toolUse.input as { file_path?: string };
-  return input.file_path || null;
+  return extractFilePathFromTool(toolUse, "Write");
 }

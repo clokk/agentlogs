@@ -2,55 +2,12 @@
  * API client for CogCommit Studio
  */
 
+import type { CognitiveCommit } from "@cogcommit/types";
+
+// Re-export CognitiveCommit for consumers
+export type { CognitiveCommit };
+
 const API_BASE = "/api";
-
-/** Source agent/tool that the conversation was imported from */
-export type ConversationSource =
-  | "claude_code"
-  | "cursor"
-  | "antigravity"
-  | "codex"
-  | "opencode";
-
-export interface Turn {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: string;
-  model?: string;
-  toolCalls?: Array<{
-    id: string;
-    name: string;
-    input: Record<string, unknown>;
-    result?: string;
-    isError?: boolean;
-  }>;
-}
-
-export interface Session {
-  id: string;
-  startedAt: string;
-  endedAt: string;
-  turns: Turn[];
-}
-
-export interface CognitiveCommit {
-  id: string;
-  gitHash: string | null;
-  startedAt: string;
-  closedAt: string;
-  closedBy: "git_commit" | "session_end" | "explicit";
-  sessions: Session[];
-  parallel: boolean;
-  filesRead: string[];
-  filesChanged: string[];
-  title?: string;
-  hidden?: boolean;
-  displayOrder?: number;
-  turnCount?: number;
-  projectName?: string;
-  source?: ConversationSource;
-}
 
 export interface ProjectInfo {
   project: {
