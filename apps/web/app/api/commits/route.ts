@@ -55,7 +55,15 @@ export async function GET(request: Request) {
       return true;
     });
 
-    return NextResponse.json({ commits });
+    // Return with cache headers for browser/CDN caching
+    return NextResponse.json(
+      { commits },
+      {
+        headers: {
+          "Cache-Control": "private, max-age=60, stale-while-revalidate=300",
+        },
+      }
+    );
   } catch (error) {
     console.error("Failed to fetch commits:", error);
     return NextResponse.json({ error: "Failed to fetch commits" }, { status: 500 });

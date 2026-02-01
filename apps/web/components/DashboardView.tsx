@@ -4,11 +4,13 @@ import React, { useState, useCallback } from "react";
 import {
   Header,
   CommitList,
+  CommitListSkeleton,
   useResizable,
   ConversationViewer,
   SidebarHeader,
 } from "@cogcommit/ui";
 import type { CognitiveCommit } from "@cogcommit/types";
+import { useCommits, useUpdateCommitTitle } from "@/lib/hooks/useCommits";
 
 interface ProjectListItem {
   name: string;
@@ -40,10 +42,21 @@ export default function DashboardView({
   projects,
   totalCount,
 }: DashboardViewProps) {
-  // State for lazy loading
-  const [commits, setCommits] = useState<CognitiveCommit[]>(initialCommits);
+  // Project filter state
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  // React Query for commits with server-rendered initial data
+  const {
+    data: commits = initialCommits,
+    isFetching,
+    isLoading,
+  } = useCommits({
+    initialData: selectedProject === null ? initialCommits : undefined,
+    project: selectedProject,
+  });
+
+  // Mutation for title updates with optimistic updates
+  const updateTitleMutation = useUpdateCommitTitle();
 
   const [selectedCommitId, setSelectedCommitId] = useState<string | null>(
     initialCommits[0]?.id || null
@@ -55,56 +68,44 @@ export default function DashboardView({
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
   });
 
-  // Handle title change for a commit
-  const handleTitleChange = useCallback(async (newTitle: string) => {
-    if (!selectedCommitId) return;
+  // Handle title change for a commit using mutation
+  const handleTitleChange = useCallback(
+    async (newTitle: string) => {
+      if (!selectedCommitId) return;
 
-    try {
-      const res = await fetch(`/api/commits/${selectedCommitId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTitle || null }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update title");
+      try {
+        await updateTitleMutation.mutateAsync({
+          commitId: selectedCommitId,
+          title: newTitle || null,
+        });
+      } catch (err) {
+        console.error("Failed to update title:", err);
+        throw err;
       }
+    },
+    [selectedCommitId, updateTitleMutation]
+  );
 
-      // Update local state
-      setCommits((prev) =>
-        prev.map((c) =>
-          c.id === selectedCommitId ? { ...c, title: newTitle || undefined } : c
-        )
-      );
-    } catch (err) {
-      console.error("Failed to update title:", err);
-      throw err;
+  // Handle project selection - React Query handles the fetching
+  const handleSelectProject = useCallback(
+    (project: string | null) => {
+      setSelectedProject(project);
+      // Select first commit when switching projects (will update when data loads)
+    },
+    []
+  );
+
+  // Update selected commit when commits change (e.g., after project filter)
+  React.useEffect(() => {
+    if (commits.length > 0 && !commits.find((c) => c.id === selectedCommitId)) {
+      setSelectedCommitId(commits[0].id);
+    } else if (commits.length === 0) {
+      setSelectedCommitId(null);
     }
-  }, [selectedCommitId]);
+  }, [commits, selectedCommitId]);
 
-  // Fetch commits when project changes - API returns already-transformed CognitiveCommit[]
-  const handleSelectProject = useCallback(async (project: string | null) => {
-    setSelectedProject(project);
-    setLoading(true);
-
-    try {
-      const res = await fetch(`/api/commits${project ? `?project=${encodeURIComponent(project)}` : ""}`);
-      const { commits: newCommits } = await res.json();
-
-      setCommits(newCommits as CognitiveCommit[]);
-
-      // Select first commit in filtered list
-      if (newCommits.length > 0) {
-        setSelectedCommitId(newCommits[0].id);
-      } else {
-        setSelectedCommitId(null);
-      }
-    } catch (err) {
-      console.error("Failed to fetch commits:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Show loading state only on initial load, not background refetches
+  const loading = isLoading || (isFetching && commits.length === 0);
 
   // Resizable sidebar
   const { width: sidebarWidth, isDragging, handleMouseDown } = useResizable(
@@ -196,9 +197,7 @@ export default function DashboardView({
               />
               <div className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
                 {loading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="text-muted text-sm">Loading...</div>
-                  </div>
+                  <CommitListSkeleton count={8} showProjectBadges={showProjectBadges} />
                 ) : (
                   <CommitList
                     commits={commits}

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import QueryProvider from "@/components/providers/QueryProvider";
 
 async function getUser() {
   const supabase = await createClient();
@@ -21,5 +22,5 @@ export default async function DashboardLayout({
   }
 
   // DashboardView handles its own full-screen layout
-  return <>{children}</>;
+  return <QueryProvider>{children}</QueryProvider>;
 }

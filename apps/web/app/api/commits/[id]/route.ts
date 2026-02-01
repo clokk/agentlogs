@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { revalidateUserCommits } from "@/lib/data/revalidate";
 
 export async function PATCH(
   request: Request,
@@ -30,6 +31,9 @@ export async function PATCH(
       console.error("Failed to update commit:", error);
       return NextResponse.json({ error: "Failed to update commit" }, { status: 500 });
     }
+
+    // Invalidate server-side cache for this user's commits
+    await revalidateUserCommits(user.id);
 
     return NextResponse.json({ success: true });
   } catch (error) {
