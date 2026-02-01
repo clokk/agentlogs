@@ -109,6 +109,32 @@ A cognitive commit closes when:
 
 ---
 
+## Critical: Dashboard Maintainability
+
+**See `docs/dashboard-architecture.md` for full details.**
+
+CogCommit has two dashboards (CLI Studio and Web) that must stay in sync. Key rules:
+
+1. **Shared UI**: All visual components live in `@cogcommit/ui`. Edit there, not in app-specific code.
+2. **Shared transforms**: Use `transformCommitWithRelations` from `@cogcommit/supabase` for data transformation.
+3. **Test both**: After changes, verify both `pnpm dev --filter=web` and `cogcommit studio --global`.
+
+### GOTCHA: Supabase Table Names
+
+The Supabase tables are named `sessions` and `turns`, NOT `cognitive_sessions` and `cognitive_turns`:
+
+```typescript
+// CORRECT
+.select(`*, sessions (*, turns (*))`)
+
+// WRONG - returns empty sessions/turns
+.select(`*, sessions:cognitive_sessions (*, turns:cognitive_turns (*))`)
+```
+
+This has caused multiple bugs. Always check `apps/cli/src/sync/push.ts` for canonical table names.
+
+---
+
 ## Critical: Flexbox Scroll Bug
 
 **This is the most common issue when working on UI.**

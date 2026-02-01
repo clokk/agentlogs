@@ -44,6 +44,8 @@ Last-write-wins with versions:
 
 ## Schema
 
+> **IMPORTANT**: The relation tables are named `sessions` and `turns`, NOT `cognitive_sessions` or `cognitive_turns`. This has caused bugs when writing Supabase queries. See `docs/dashboard-architecture.md` for details.
+
 ### Cloud (PostgreSQL)
 
 ```sql
@@ -113,7 +115,33 @@ CREATE TABLE cognitive_commits (
   encryption_key_id TEXT
 );
 
--- Sessions, turns, visuals follow same pattern
+-- Sessions and turns tables
+-- IMPORTANT: These are named 'sessions' and 'turns', NOT 'cognitive_sessions'/'cognitive_turns'
+CREATE TABLE sessions (
+  id UUID PRIMARY KEY,
+  commit_id UUID NOT NULL REFERENCES cognitive_commits(id),
+  started_at TIMESTAMPTZ NOT NULL,
+  ended_at TIMESTAMPTZ NOT NULL,
+  version INTEGER DEFAULT 1,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
+);
+
+CREATE TABLE turns (
+  id UUID PRIMARY KEY,
+  session_id UUID NOT NULL REFERENCES sessions(id),
+  role TEXT NOT NULL,
+  content TEXT,
+  timestamp TIMESTAMPTZ NOT NULL,
+  model TEXT,
+  tool_calls JSONB,
+  triggers_visual BOOLEAN DEFAULT FALSE,
+  version INTEGER DEFAULT 1,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
+);
+
+-- Visuals follow same pattern
 -- (include user_id, version, updated_at, deleted_at)
 
 -- Row-level security
