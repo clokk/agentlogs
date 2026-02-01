@@ -1,5 +1,5 @@
 /**
- * Entry processor for Agentlogs daemon
+ * Entry processor for CogCommit daemon
  * Processes new log entries, detects commits, triggers captures
  */
 
@@ -27,9 +27,9 @@ import {
   extractEditFilePath,
   extractWriteFilePath,
 } from "../utils/git";
-import type { AgentlogsDB } from "../storage/db";
+import type { CogCommitDB } from "../storage/db";
 import type { ScreenshotCapturer } from "./capturer";
-import type { AgentlogsConfig } from "../config";
+import type { CogCommitConfig } from "../config";
 import type { SyncQueue } from "../sync/queue";
 
 export interface ProcessorOptions {
@@ -51,15 +51,15 @@ interface ProcessorState {
 }
 
 export class EntryProcessor {
-  private db: AgentlogsDB;
+  private db: CogCommitDB;
   private capturer: ScreenshotCapturer | null;
-  private config: AgentlogsConfig;
+  private config: CogCommitConfig;
   private options: ProcessorOptions;
   private state: ProcessorState;
 
   constructor(
-    db: AgentlogsDB,
-    config: AgentlogsConfig,
+    db: CogCommitDB,
+    config: CogCommitConfig,
     capturer: ScreenshotCapturer | null,
     options: ProcessorOptions = {}
   ) {

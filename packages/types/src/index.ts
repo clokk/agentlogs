@@ -1,5 +1,5 @@
 /**
- * Shared types for Agentlogs
+ * Shared types for CogCommit
  * Used by both CLI and web applications
  */
 

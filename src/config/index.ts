@@ -1,13 +1,13 @@
 /**
- * Configuration management for Agentlogs
- * Handles project-level config stored in .agentlogs/config.json
+ * Configuration management for CogCommit
+ * Handles project-level config stored in .cogcommit/config.json
  */
 
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 
-export interface AgentlogsConfig {
+export interface CogCommitConfig {
   projectName: string;
   projectPath: string;
   claudeProjectPath: string;
@@ -16,12 +16,12 @@ export interface AgentlogsConfig {
   storage: "local" | "cloud";
 }
 
-const CONFIG_DIR = ".agentlogs";
+const CONFIG_DIR = ".cogcommit";
 const CONFIG_FILE = "config.json";
 const DAEMON_PID_FILE = "daemon.pid";
 
 /**
- * Get the .agentlogs directory path for a project
+ * Get the .cogcommit directory path for a project
  */
 export function getConfigDir(projectPath: string): string {
   return path.join(projectPath, CONFIG_DIR);
@@ -51,17 +51,17 @@ export function isInitialized(projectPath: string): boolean {
 /**
  * Load config from project directory
  */
-export function loadConfig(projectPath: string): AgentlogsConfig {
+export function loadConfig(projectPath: string): CogCommitConfig {
   const configPath = getConfigPath(projectPath);
 
   if (!fs.existsSync(configPath)) {
     throw new Error(
-      `Project not initialized. Run 'agentlogs init' first.`
+      `Project not initialized. Run 'cogcommit init' first.`
     );
   }
 
   const content = fs.readFileSync(configPath, "utf-8");
-  return JSON.parse(content) as AgentlogsConfig;
+  return JSON.parse(content) as CogCommitConfig;
 }
 
 /**
@@ -69,7 +69,7 @@ export function loadConfig(projectPath: string): AgentlogsConfig {
  */
 export function saveConfig(
   projectPath: string,
-  config: AgentlogsConfig
+  config: CogCommitConfig
 ): void {
   const configDir = getConfigDir(projectPath);
   const configPath = getConfigPath(projectPath);
@@ -160,8 +160,8 @@ export function detectDevServerPort(projectPath: string): number | undefined {
  */
 export function initializeProject(
   projectPath: string,
-  options: Partial<AgentlogsConfig> = {}
-): AgentlogsConfig {
+  options: Partial<CogCommitConfig> = {}
+): CogCommitConfig {
   const resolvedPath = path.resolve(projectPath);
   const projectName = options.projectName || path.basename(resolvedPath);
   const claudeProjectPath =
@@ -173,7 +173,7 @@ export function initializeProject(
     );
   }
 
-  const config: AgentlogsConfig = {
+  const config: CogCommitConfig = {
     projectName,
     projectPath: resolvedPath,
     claudeProjectPath,
@@ -184,14 +184,14 @@ export function initializeProject(
 
   saveConfig(resolvedPath, config);
 
-  // Add .agentlogs to .gitignore if not already
+  // Add .cogcommit to .gitignore if not already
   addToGitignore(resolvedPath);
 
   return config;
 }
 
 /**
- * Add .agentlogs to .gitignore
+ * Add .cogcommit to .gitignore
  */
 function addToGitignore(projectPath: string): void {
   const gitignorePath = path.join(projectPath, ".gitignore");
@@ -203,7 +203,7 @@ function addToGitignore(projectPath: string): void {
   const content = fs.readFileSync(gitignorePath, "utf-8");
 
   if (!content.includes(CONFIG_DIR)) {
-    fs.appendFileSync(gitignorePath, `\n# Agentlogs\n${CONFIG_DIR}/\n`);
+    fs.appendFileSync(gitignorePath, `\n# CogCommit\n${CONFIG_DIR}/\n`);
   }
 }
 
@@ -218,7 +218,7 @@ export function getStorageDir(projectPath: string): string {
     .update(projectPath)
     .digest("hex")
     .substring(0, 12);
-  return path.join(home, ".agentlogs", hash);
+  return path.join(home, ".cogcommit", hash);
 }
 
 /**
@@ -301,7 +301,7 @@ export function isDaemonRunning(projectPath: string): boolean {
  */
 export function getGlobalStorageDir(): string {
   const home = process.env.HOME || "";
-  return path.join(home, ".agentlogs", "global");
+  return path.join(home, ".cogcommit", "global");
 }
 
 /**

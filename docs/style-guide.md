@@ -1,4 +1,4 @@
-# Agentlogs Style Guide
+# CogCommit Style Guide
 
 ## Design Philosophy
 
@@ -106,9 +106,9 @@
 
 | Key | Type | Default | Purpose |
 |-----|------|---------|---------|
-| `agentlogs-sidebar-width` | number | 384 | Sidebar width in pixels |
-| `agentlogs-sidebar-collapsed` | boolean | false | Sidebar collapsed state |
-| `agentlogs-font-size` | number | 16 | Conversation font size (12-20px) |
+| `cogcommit-sidebar-width` | number | 384 | Sidebar width in pixels |
+| `cogcommit-sidebar-collapsed` | boolean | false | Sidebar collapsed state |
+| `cogcommit-font-size` | number | 16 | Conversation font size (12-20px) |
 
 ## Component Patterns
 

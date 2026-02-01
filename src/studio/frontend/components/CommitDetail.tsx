@@ -22,7 +22,7 @@ interface CommitDetailProps {
 }
 
 // Font size settings
-const FONT_SIZE_KEY = "agentlogs-font-size";
+const FONT_SIZE_KEY = "cogcommit-font-size";
 const FONT_SIZES = [12, 14, 16, 18, 20] as const;
 type FontSize = (typeof FONT_SIZES)[number];
 const DEFAULT_FONT_SIZE: FontSize = 16;

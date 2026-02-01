@@ -12,8 +12,8 @@ import CommitList from "./components/CommitList";
 import CommitDetail from "./components/CommitDetail";
 
 // localStorage keys
-const SIDEBAR_WIDTH_KEY = "agentlogs-sidebar-width";
-const SIDEBAR_COLLAPSED_KEY = "agentlogs-sidebar-collapsed";
+const SIDEBAR_WIDTH_KEY = "cogcommit-sidebar-width";
+const SIDEBAR_COLLAPSED_KEY = "cogcommit-sidebar-collapsed";
 
 // Default and constraint values
 const DEFAULT_SIDEBAR_WIDTH = 384;

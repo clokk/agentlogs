@@ -3,13 +3,13 @@
  */
 
 import { getAuthenticatedClient, getMachineId, loadAuthTokens } from "./client";
-import { AgentlogsDB } from "../storage/db";
+import { CogCommitDB } from "../storage/db";
 import type { CognitiveCommit } from "../models/types";
 import type { SyncResult } from "./types";
 import { v5 as uuidv5 } from "uuid";
 
 // Namespace UUID for generating deterministic UUIDs from non-UUID strings
-const AGENTLOGS_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+const COGCOMMIT_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
 /**
  * Convert a string to a valid UUID
@@ -22,14 +22,14 @@ function toUuid(id: string): string {
     return id;
   }
   // Generate a deterministic UUID from the string
-  return uuidv5(id, AGENTLOGS_NAMESPACE);
+  return uuidv5(id, COGCOMMIT_NAMESPACE);
 }
 
 /**
  * Push pending local commits to cloud
  */
 export async function pushToCloud(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   options: { verbose?: boolean } = {}
 ): Promise<SyncResult> {
   const result: SyncResult = {
@@ -216,7 +216,7 @@ async function pushSession(
  * Push visuals to cloud storage
  */
 export async function pushVisuals(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   commitId: string,
   options: { verbose?: boolean } = {}
 ): Promise<{ uploaded: number; errors: string[] }> {

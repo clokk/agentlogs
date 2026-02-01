@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Agentlogs CLI
+ * CogCommit CLI
  * Chronicle of shipping: explore how products evolve through human-AI collaboration
  */
 
@@ -23,8 +23,8 @@ import {
   discoverAllClaudeProjects,
   getProjectNameFromClaudePath,
 } from "./config";
-import { AgentlogsDB } from "./storage/db";
-import { AgentlogsDaemon } from "./daemon";
+import { CogCommitDB } from "./storage/db";
+import { CogCommitDaemon } from "./daemon";
 import { captureScreenshot } from "./daemon/capturer";
 import { getBestCaptureUrl } from "./utils/server-detect";
 import { startStudio } from "./studio";
@@ -43,7 +43,7 @@ import {
 const program = new Command();
 
 program
-  .name("agentlogs")
+  .name("cogcommit")
   .description("Chronicle of shipping: parse Claude Code session logs")
   .version("0.1.0");
 
@@ -183,7 +183,7 @@ function outputSummary(result: ParseResult): void {
 
 function outputPretty(result: ParseResult): void {
   console.log(`\n╔════════════════════════════════════════════════════════════╗`);
-  console.log(`║  AGENTLOGS: ${result.project.padEnd(42)}║`);
+  console.log(`║  COGCOMMIT: ${result.project.padEnd(42)}║`);
   console.log(`╚════════════════════════════════════════════════════════════╝\n`);
 
   console.log(`📊 Summary`);
@@ -256,7 +256,7 @@ function formatTimestamp(iso: string): string {
 
 program
   .command("init")
-  .description("Initialize agentlogs for this project")
+  .description("Initialize cogcommit for this project")
   .option("-n, --name <name>", "Project name (defaults to directory name)")
   .option("-c, --claude-path <path>", "Claude project path (auto-detected if not specified)")
   .option("-p, --port <port>", "Dev server port", parseInt)
@@ -292,8 +292,8 @@ program
         captureEnabled: options.capture !== false,
       });
 
-      console.log(`Initialized agentlogs for: ${config.projectName}`);
-      console.log(`\nConfig created at: .agentlogs/config.json`);
+      console.log(`Initialized cogcommit for: ${config.projectName}`);
+      console.log(`\nConfig created at: .cogcommit/config.json`);
       console.log(`\nSettings:`);
       console.log(`  Claude path: ${config.claudeProjectPath}`);
       console.log(`  Dev server port: ${config.devServerPort || "auto-detect"}`);
@@ -301,7 +301,7 @@ program
       console.log(`\nStorage directory: ${getStorageDir(projectPath)}`);
       console.log(`\nNext steps:`);
       console.log(`  1. Start your dev server`);
-      console.log(`  2. Run: agentlogs watch`);
+      console.log(`  2. Run: cogcommit watch`);
     } catch (error) {
       console.error(`Error: ${(error as Error).message}`);
       process.exit(1);
@@ -320,14 +320,14 @@ program
       const projectPath = process.cwd();
 
       if (!isInitialized(projectPath)) {
-        console.error("Project not initialized. Run 'agentlogs init' first.");
+        console.error("Project not initialized. Run 'cogcommit init' first.");
         process.exit(1);
       }
 
       if (isDaemonRunning(projectPath)) {
         const pid = readDaemonPid(projectPath);
         console.log(`Daemon already running (PID: ${pid})`);
-        console.log("Use 'agentlogs stop' to stop it first.");
+        console.log("Use 'cogcommit stop' to stop it first.");
         process.exit(1);
       }
 
@@ -335,7 +335,7 @@ program
         // Run in foreground
         console.log("Starting daemon in foreground (Ctrl+C to stop)...\n");
 
-        const daemon = new AgentlogsDaemon(projectPath, {
+        const daemon = new CogCommitDaemon(projectPath, {
           verbose: options.verbose,
           captureEnabled: options.capture !== false,
         });
@@ -365,8 +365,8 @@ program
         child.unref();
 
         console.log(`Daemon started in background (PID: ${child.pid})`);
-        console.log("Use 'agentlogs status' to check status");
-        console.log("Use 'agentlogs stop' to stop the daemon");
+        console.log("Use 'cogcommit status' to check status");
+        console.log("Use 'cogcommit stop' to stop the daemon");
       }
     } catch (error) {
       console.error(`Error: ${(error as Error).message}`);
@@ -438,7 +438,7 @@ program
       const projectPath = process.cwd();
 
       if (!isInitialized(projectPath)) {
-        console.error("Project not initialized. Run 'agentlogs init' first.");
+        console.error("Project not initialized. Run 'cogcommit init' first.");
         process.exit(1);
       }
 
@@ -446,7 +446,7 @@ program
       const running = isDaemonRunning(projectPath);
       const pid = readDaemonPid(projectPath);
 
-      console.log(`\nAgentlogs Status`);
+      console.log(`\nCogCommit Status`);
       console.log(`${"─".repeat(40)}`);
       console.log(`Project: ${config.projectName}`);
       console.log(`Status: ${running ? "Running" : "Stopped"}`);
@@ -456,7 +456,7 @@ program
       }
 
       // Open DB to get stats
-      const db = new AgentlogsDB(projectPath);
+      const db = new CogCommitDB(projectPath);
       const commitCount = db.getCommitCount();
       const lastActivity = db.getLastActivity();
       db.close();
@@ -493,7 +493,7 @@ program
       const projectPath = process.cwd();
 
       if (!isInitialized(projectPath)) {
-        console.error("Project not initialized. Run 'agentlogs init' first.");
+        console.error("Project not initialized. Run 'cogcommit init' first.");
         process.exit(1);
       }
 
@@ -531,7 +531,7 @@ program
 
       // If daemon is running and we have a current commit, attach the visual
       if (isDaemonRunning(projectPath)) {
-        const db = new AgentlogsDB(projectPath);
+        const db = new CogCommitDB(projectPath);
         const currentCommitId = db.getCurrentCommitId();
         if (currentCommitId) {
           db.createVisual(currentCommitId, "screenshot", outputPath, "Manual capture");
@@ -585,7 +585,7 @@ program
         const projectPath = process.cwd();
 
         if (!isInitialized(projectPath)) {
-          console.error("Project not initialized. Run 'agentlogs init' first.");
+          console.error("Project not initialized. Run 'cogcommit init' first.");
           console.error("\nTip: Run without --project to see all your Claude history.");
           process.exit(1);
         }
@@ -625,7 +625,7 @@ program
         const projectPath = process.cwd();
 
         if (!isInitialized(projectPath)) {
-          console.error("Project not initialized. Run 'agentlogs init' first.");
+          console.error("Project not initialized. Run 'cogcommit init' first.");
           console.error("\nTip: Run without --project to import all your Claude history.");
           process.exit(1);
         }
@@ -647,7 +647,7 @@ program
       }
 
       // Open database (global mode is default, project mode uses rawStoragePath: false)
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: !options.project });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: !options.project });
 
       // Optionally clear existing commits
       if (options.clear) {
@@ -715,9 +715,9 @@ program
       console.log();
 
       if (options.project) {
-        console.log("Import complete! Run 'agentlogs studio --project' to view.");
+        console.log("Import complete! Run 'cogcommit studio --project' to view.");
       } else {
-        console.log("Import complete! Run 'agentlogs studio' to view.");
+        console.log("Import complete! Run 'cogcommit studio' to view.");
       }
     } catch (error) {
       console.error(`Error: ${(error as Error).message}`);
@@ -736,14 +736,14 @@ program
     try {
       if (!isCloudAvailable()) {
         console.error("Cloud sync is not configured.");
-        console.error("Set AGENTLOGS_SUPABASE_URL and AGENTLOGS_SUPABASE_ANON_KEY environment variables.");
+        console.error("Set COGCOMMIT_SUPABASE_URL and COGCOMMIT_SUPABASE_ANON_KEY environment variables.");
         process.exit(1);
       }
 
       if (isAuthenticated()) {
         const user = getCurrentUser();
         console.log(`Already logged in as ${user?.githubUsername}`);
-        console.log("Use 'agentlogs logout' to switch accounts.");
+        console.log("Use 'cogcommit logout' to switch accounts.");
         return;
       }
 
@@ -751,9 +751,9 @@ program
       const user = await login();
       console.log(`\nLogged in as ${user.githubUsername}`);
       console.log("\nYou can now sync your conversations:");
-      console.log("  agentlogs push    # Push local commits to cloud");
-      console.log("  agentlogs pull    # Pull commits from cloud");
-      console.log("  agentlogs sync    # Bidirectional sync");
+      console.log("  cogcommit push    # Push local commits to cloud");
+      console.log("  cogcommit pull    # Pull commits from cloud");
+      console.log("  cogcommit sync    # Bidirectional sync");
     } catch (error) {
       console.error(`Login failed: ${(error as Error).message}`);
       process.exit(1);
@@ -785,7 +785,7 @@ program
   .action(() => {
     if (!isAuthenticated()) {
       console.log("Not logged in.");
-      console.log("Run 'agentlogs login' to authenticate with GitHub.");
+      console.log("Run 'cogcommit login' to authenticate with GitHub.");
       return;
     }
 
@@ -801,12 +801,12 @@ program
   .action(async (options) => {
     try {
       if (!isAuthenticated()) {
-        console.error("Not logged in. Run 'agentlogs login' first.");
+        console.error("Not logged in. Run 'cogcommit login' first.");
         process.exit(1);
       }
 
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       console.log("Pushing to cloud...");
       const result = await pushToCloud(db, { verbose: options.verbose });
@@ -816,7 +816,7 @@ program
       console.log(`\nPush complete:`);
       console.log(`  Pushed: ${result.pushed} commits`);
       if (result.conflicts > 0) {
-        console.log(`  Conflicts: ${result.conflicts} (run 'agentlogs sync' to resolve)`);
+        console.log(`  Conflicts: ${result.conflicts} (run 'cogcommit sync' to resolve)`);
       }
       if (result.errors.length > 0) {
         console.log(`  Errors: ${result.errors.length}`);
@@ -837,12 +837,12 @@ program
   .action(async (options) => {
     try {
       if (!isAuthenticated()) {
-        console.error("Not logged in. Run 'agentlogs login' first.");
+        console.error("Not logged in. Run 'cogcommit login' first.");
         process.exit(1);
       }
 
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       console.log("Pulling from cloud...");
       const result = await pullFromCloud(db, { verbose: options.verbose });
@@ -852,7 +852,7 @@ program
       console.log(`\nPull complete:`);
       console.log(`  Pulled: ${result.pulled} commits`);
       if (result.conflicts > 0) {
-        console.log(`  Conflicts: ${result.conflicts} (run 'agentlogs sync' to resolve)`);
+        console.log(`  Conflicts: ${result.conflicts} (run 'cogcommit sync' to resolve)`);
       }
       if (result.errors.length > 0) {
         console.log(`  Errors: ${result.errors.length}`);
@@ -874,7 +874,7 @@ program
   .action(async (options) => {
     try {
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       if (options.status) {
         const status = getSyncStatus(db);
@@ -891,7 +891,7 @@ program
       }
 
       if (!isAuthenticated()) {
-        console.error("Not logged in. Run 'agentlogs login' first.");
+        console.error("Not logged in. Run 'cogcommit login' first.");
         db.close();
         process.exit(1);
       }
@@ -928,7 +928,7 @@ program
   .action(async (key: string | undefined, value: string | undefined, options) => {
     try {
       const home = process.env.HOME || "";
-      const configPath = path.join(home, ".agentlogs", "settings.json");
+      const configPath = path.join(home, ".cogcommit", "settings.json");
       const fs = require("fs");
 
       // Load existing settings
@@ -938,7 +938,7 @@ program
       }
 
       if (options.list || (!key && !value)) {
-        console.log("\nAgentlogs Configuration:");
+        console.log("\nCogCommit Configuration:");
         console.log(`  storage: ${settings.storage || "local"}`);
         console.log(`  continuous-sync: ${settings.continuousSync || false}`);
         console.log(`  analytics-opt-in: ${settings.analyticsOptIn || false}`);
@@ -991,11 +991,11 @@ program
   .action(async (options) => {
     try {
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       if (options.optIn || options.optOut) {
         const home = process.env.HOME || "";
-        const configPath = path.join(home, ".agentlogs", "settings.json");
+        const configPath = path.join(home, ".cogcommit", "settings.json");
         const fs = require("fs");
 
         let settings: Record<string, unknown> = {};
@@ -1040,7 +1040,7 @@ program
 
       db.close();
 
-      console.log("\nAgentlogs Analytics (Local)\n");
+      console.log("\nCogCommit Analytics (Local)\n");
       console.log(`Total Commits: ${commitCount}`);
       console.log(`Projects: ${projects.length}`);
       console.log(`\nRecent Activity (last 100 commits):`);
@@ -1060,7 +1060,7 @@ program
 
       console.log("\n---");
       console.log("Analytics are computed locally. No data is uploaded.");
-      console.log("Run 'agentlogs analytics --opt-in' to help improve agentlogs.");
+      console.log("Run 'cogcommit analytics --opt-in' to help improve cogcommit.");
     } catch (error) {
       console.error(`Analytics error: ${(error as Error).message}`);
       process.exit(1);

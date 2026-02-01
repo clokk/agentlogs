@@ -3,7 +3,7 @@
  */
 
 import { getAuthenticatedClient, loadAuthTokens, getMachineId } from "./client";
-import { AgentlogsDB } from "../storage/db";
+import { CogCommitDB } from "../storage/db";
 import type { CognitiveCommit, Session, Turn } from "../models/types";
 import type { SyncResult } from "./types";
 
@@ -11,7 +11,7 @@ import type { SyncResult } from "./types";
  * Pull commits from cloud that are newer than local
  */
 export async function pullFromCloud(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   options: { verbose?: boolean } = {}
 ): Promise<SyncResult> {
   const result: SyncResult = {
@@ -133,7 +133,7 @@ export async function pullFromCloud(
  * Create a new local commit from cloud data
  */
 async function createLocalCommit(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   cloudCommit: CloudCommitWithRelations
 ): Promise<void> {
   const commit: CognitiveCommit = {
@@ -180,7 +180,7 @@ async function createLocalCommit(
  * Update an existing local commit with cloud data
  */
 async function updateLocalCommit(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   localId: string,
   cloudCommit: CloudCommitWithRelations
 ): Promise<void> {
@@ -228,7 +228,7 @@ async function updateLocalCommit(
  * Pull soft-deleted commits from cloud
  */
 async function pullDeletedCommits(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   supabase: ReturnType<typeof getAuthenticatedClient>,
   userId: string,
   lastSyncAt: string,
@@ -261,7 +261,7 @@ async function pullDeletedCommits(
  * Download visuals from cloud storage
  */
 export async function pullVisuals(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   commitId: string,
   options: { verbose?: boolean } = {}
 ): Promise<{ downloaded: number; errors: string[] }> {

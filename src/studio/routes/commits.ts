@@ -3,7 +3,7 @@
  */
 
 import { Hono } from "hono";
-import { AgentlogsDB } from "../../storage/db";
+import { CogCommitDB } from "../../storage/db";
 import type { CognitiveCommit } from "../../models/types";
 
 interface CommitRouteOptions {
@@ -16,7 +16,7 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
 
   // GET /api/commits - List all commits, optionally filtered by project
   app.get("/", async (c) => {
-    const db = new AgentlogsDB(projectPath, dbOptions);
+    const db = new CogCommitDB(projectPath, dbOptions);
     try {
       // Check for project filter
       const projectFilter = c.req.query("project");
@@ -56,7 +56,7 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
   // GET /api/commits/:id - Get single commit with full details
   app.get("/:id", async (c) => {
     const id = c.req.param("id");
-    const db = new AgentlogsDB(projectPath, dbOptions);
+    const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
       const commit = db.getCommit(id);
@@ -79,7 +79,7 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
       displayOrder?: number;
     }>();
 
-    const db = new AgentlogsDB(projectPath, dbOptions);
+    const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
       const commit = db.getCommit(id);
@@ -102,7 +102,7 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
   // DELETE /api/commits/:id - Delete commit
   app.delete("/:id", async (c) => {
     const id = c.req.param("id");
-    const db = new AgentlogsDB(projectPath, dbOptions);
+    const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
       const commit = db.getCommit(id);
@@ -130,7 +130,7 @@ export function createCommitRoutes(projectPath: string, options: CommitRouteOpti
       return c.json({ error: "No commit IDs provided" }, 400);
     }
 
-    const db = new AgentlogsDB(projectPath, dbOptions);
+    const db = new CogCommitDB(projectPath, dbOptions);
 
     try {
       const updated = db.bulkUpdateCommits(body.ids, body.updates);

@@ -244,7 +244,7 @@ export async function login(): Promise<UserProfile> {
       // Store the code verifier for the callback
       // The Supabase client needs this, so we set it in the auth storage
       // We'll use a workaround by setting it before the exchange
-      (globalThis as any).__agentlogs_code_verifier = codeVerifier;
+      (globalThis as any).__cogcommit_code_verifier = codeVerifier;
 
       const oauthUrl = authUrl.toString();
 

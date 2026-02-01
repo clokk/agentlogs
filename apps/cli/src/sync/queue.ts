@@ -3,7 +3,7 @@
  */
 
 import { EventEmitter } from "events";
-import { AgentlogsDB } from "../storage/db";
+import { CogCommitDB } from "../storage/db";
 import { pushToCloud, pushVisuals } from "./push";
 import { pullFromCloud } from "./pull";
 import { autoResolveConflicts, hasConflicts } from "./conflict";
@@ -26,7 +26,7 @@ export interface SyncQueueOptions {
 }
 
 export class SyncQueue extends EventEmitter {
-  private db: AgentlogsDB;
+  private db: CogCommitDB;
   private options: SyncQueueOptions;
   private syncTimeout: NodeJS.Timeout | null = null;
   private isRunning = false;
@@ -34,7 +34,7 @@ export class SyncQueue extends EventEmitter {
   private retryCount = 0;
   private lastSyncResult: SyncResult | null = null;
 
-  constructor(db: AgentlogsDB, options: SyncQueueOptions = {}) {
+  constructor(db: CogCommitDB, options: SyncQueueOptions = {}) {
     super();
     this.db = db;
     this.options = {
@@ -259,7 +259,7 @@ export class SyncQueue extends EventEmitter {
 let syncQueueInstance: SyncQueue | null = null;
 
 export function getSyncQueue(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   options?: SyncQueueOptions
 ): SyncQueue {
   if (!syncQueueInstance) {

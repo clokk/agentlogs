@@ -1,5 +1,5 @@
 /**
- * SQLite database wrapper for Agentlogs
+ * SQLite database wrapper for CogCommit
  */
 
 import Database from "better-sqlite3";
@@ -21,7 +21,7 @@ export interface DBOptions {
   rawStoragePath?: boolean;
 }
 
-export class AgentlogsDB {
+export class CogCommitDB {
   private db: Database.Database;
   private projectPath: string;
 

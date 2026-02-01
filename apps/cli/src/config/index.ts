@@ -21,7 +21,7 @@ const CONFIG_FILE = "config.json";
 const DAEMON_PID_FILE = "daemon.pid";
 
 /**
- * Get the .agentlogs directory path for a project
+ * Get the .cogcommit directory path for a project
  */
 export function getConfigDir(projectPath: string): string {
   return path.join(projectPath, CONFIG_DIR);
@@ -184,14 +184,14 @@ export function initializeProject(
 
   saveConfig(resolvedPath, config);
 
-  // Add .agentlogs to .gitignore if not already
+  // Add .cogcommit to .gitignore if not already
   addToGitignore(resolvedPath);
 
   return config;
 }
 
 /**
- * Add .agentlogs to .gitignore
+ * Add .cogcommit to .gitignore
  */
 function addToGitignore(projectPath: string): void {
   const gitignorePath = path.join(projectPath, ".gitignore");

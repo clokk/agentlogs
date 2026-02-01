@@ -9,8 +9,8 @@ import type { AuthTokens, UserProfile } from "./types";
 
 // Supabase project configuration
 // These will be set during project setup
-const SUPABASE_URL = process.env.AGENTLOGS_SUPABASE_URL || "";
-const SUPABASE_ANON_KEY = process.env.AGENTLOGS_SUPABASE_ANON_KEY || "";
+const SUPABASE_URL = process.env.COGCOMMIT_SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = process.env.COGCOMMIT_SUPABASE_ANON_KEY || "";
 
 const AUTH_FILE = "auth.json";
 
@@ -19,7 +19,7 @@ const AUTH_FILE = "auth.json";
  */
 export function getAuthFilePath(): string {
   const home = process.env.HOME || "";
-  return path.join(home, ".agentlogs", AUTH_FILE);
+  return path.join(home, ".cogcommit", AUTH_FILE);
 }
 
 /**
@@ -98,7 +98,7 @@ let supabaseClient: SupabaseClient | null = null;
 export function getSupabaseClient(): SupabaseClient {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     throw new Error(
-      "Supabase not configured. Set AGENTLOGS_SUPABASE_URL and AGENTLOGS_SUPABASE_ANON_KEY environment variables."
+      "Supabase not configured. Set COGCOMMIT_SUPABASE_URL and COGCOMMIT_SUPABASE_ANON_KEY environment variables."
     );
   }
 
@@ -128,7 +128,7 @@ export function getAuthenticatedClient(): SupabaseClient {
   const tokens = loadAuthTokens();
 
   if (!tokens) {
-    throw new Error("Not authenticated. Run 'agentlogs login' first.");
+    throw new Error("Not authenticated. Run 'cogcommit login' first.");
   }
 
   return getSupabaseClient();
@@ -153,7 +153,7 @@ export function isCloudAvailable(): boolean {
  */
 export function getMachineId(): string {
   const home = process.env.HOME || "";
-  const machineIdPath = path.join(home, ".agentlogs", "machine-id");
+  const machineIdPath = path.join(home, ".cogcommit", "machine-id");
 
   if (fs.existsSync(machineIdPath)) {
     return fs.readFileSync(machineIdPath, "utf-8").trim();

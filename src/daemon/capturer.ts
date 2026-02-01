@@ -1,5 +1,5 @@
 /**
- * Screenshot capturer for Agentlogs
+ * Screenshot capturer for CogCommit
  * Uses Puppeteer to capture screenshots of dev servers
  */
 

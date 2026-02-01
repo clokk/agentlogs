@@ -2,14 +2,14 @@
  * Conflict detection and resolution for sync
  */
 
-import { AgentlogsDB } from "../storage/db";
+import { CogCommitDB } from "../storage/db";
 import { getAuthenticatedClient, loadAuthTokens } from "./client";
 import type { ConflictInfo, SyncResult } from "./types";
 
 /**
  * Get all commits with conflicts
  */
-export function getConflicts(db: AgentlogsDB): ConflictInfo[] {
+export function getConflicts(db: CogCommitDB): ConflictInfo[] {
   const conflictCommits = db.getCommitsBySyncStatus("conflict");
 
   return conflictCommits.map((commit) => ({
@@ -27,7 +27,7 @@ export function getConflicts(db: AgentlogsDB): ConflictInfo[] {
  * Resolve a conflict by keeping local changes
  */
 export async function resolveKeepLocal(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   localId: string
 ): Promise<void> {
   const commit = db.getCommit(localId);
@@ -46,7 +46,7 @@ export async function resolveKeepLocal(
  * Resolve a conflict by accepting cloud changes
  */
 export async function resolveKeepCloud(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   localId: string
 ): Promise<void> {
   const tokens = loadAuthTokens();
@@ -107,7 +107,7 @@ export async function resolveKeepCloud(
  * Compares updated_at timestamps and keeps the newer version
  */
 export async function autoResolveConflicts(
-  db: AgentlogsDB,
+  db: CogCommitDB,
   options: { verbose?: boolean } = {}
 ): Promise<SyncResult> {
   const result: SyncResult = {
@@ -176,13 +176,13 @@ export async function autoResolveConflicts(
 /**
  * Get conflict count
  */
-export function getConflictCount(db: AgentlogsDB): number {
+export function getConflictCount(db: CogCommitDB): number {
   return db.getCommitsBySyncStatus("conflict").length;
 }
 
 /**
  * Check if there are any conflicts
  */
-export function hasConflicts(db: AgentlogsDB): boolean {
+export function hasConflicts(db: CogCommitDB): boolean {
   return getConflictCount(db) > 0;
 }

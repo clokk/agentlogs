@@ -1,9 +1,9 @@
-# Agentlogs Cloud Architecture
+# CogCommit Cloud Architecture
 
 ## Overview
 
-Transform agentlogs from local-only to cloud-synced, following the git/github model:
-- `agentlogs` CLI = local tool (like git)
+Transform cogcommit from local-only to cloud-synced, following the git/github model:
+- `cogcommit` CLI = local tool (like git)
 - Cloud backend = sync/backup (like github)
 - Conversations become portable across machines
 
@@ -33,7 +33,7 @@ Background sync like Dropbox:
 
 ### Push-on-demand
 Manual sync like git push:
-- `agentlogs push` / `agentlogs pull`
+- `cogcommit push` / `cogcommit pull`
 - Useful for offline work or controlled sync
 
 ### Conflict Resolution
@@ -170,30 +170,30 @@ CREATE INDEX IF NOT EXISTS idx_commits_cloud_id ON cognitive_commits(cloud_id);
 
 ### Auth
 ```bash
-agentlogs login              # GitHub OAuth (opens browser)
-agentlogs logout             # Clear local tokens
-agentlogs whoami             # Show current user
+cogcommit login              # GitHub OAuth (opens browser)
+cogcommit logout             # Clear local tokens
+cogcommit whoami             # Show current user
 ```
 
 ### Sync
 ```bash
-agentlogs push               # Push pending commits to cloud
-agentlogs pull               # Pull new commits from cloud
-agentlogs sync               # Bidirectional sync
-agentlogs sync --status      # Show sync state
+cogcommit push               # Push pending commits to cloud
+cogcommit pull               # Pull new commits from cloud
+cogcommit sync               # Bidirectional sync
+cogcommit sync --status      # Show sync state
 ```
 
 ### Config
 ```bash
-agentlogs config set storage cloud
-agentlogs config set continuous-sync true
-agentlogs config get storage
+cogcommit config set storage cloud
+cogcommit config set continuous-sync true
+cogcommit config get storage
 ```
 
 ### Analytics
 ```bash
-agentlogs analytics          # View local stats
-agentlogs analytics --opt-in # Opt in to aggregate analytics
+cogcommit analytics          # View local stats
+cogcommit analytics --opt-in # Opt in to aggregate analytics
 ```
 
 ## Security & Privacy
@@ -244,16 +244,16 @@ src/sync/
 - [x] Create src/sync/ module structure
 
 ### Phase 2: Authentication ✅
-- [x] `agentlogs login` with GitHub OAuth PKCE flow
-- [x] Token storage in `~/.agentlogs/auth.json`
+- [x] `cogcommit login` with GitHub OAuth PKCE flow
+- [x] Token storage in `~/.cogcommit/auth.json`
 - [x] Token refresh handling
-- [x] `agentlogs logout` and `agentlogs whoami`
+- [x] `cogcommit logout` and `cogcommit whoami`
 
 ### Phase 3: Sync Core ✅
 - [x] Push sync implementation (tested with 666 commits)
 - [x] UUID conversion for non-UUID session/turn IDs
-- [x] `agentlogs push` command working
-- [x] `agentlogs sync --status` command working
+- [x] `cogcommit push` command working
+- [x] `cogcommit sync --status` command working
 - [ ] Pull sync implementation (needs testing)
 - [ ] Conflict detection and resolution
 
@@ -297,12 +297,12 @@ src/sync/
 
 ## Verification Checklist
 
-- [x] `agentlogs login` completes OAuth flow
-- [x] `agentlogs whoami` shows GitHub username
-- [x] `agentlogs push` uploads pending commits (tested: 666 commits)
-- [ ] On another machine, `agentlogs pull` downloads them
+- [x] `cogcommit login` completes OAuth flow
+- [x] `cogcommit whoami` shows GitHub username
+- [x] `cogcommit push` uploads pending commits (tested: 666 commits)
+- [ ] On another machine, `cogcommit pull` downloads them
 - [ ] Continuous sync: new commit auto-syncs
 - [ ] Screenshots sync correctly
-- [ ] `agentlogs analytics` shows local stats
+- [ ] `cogcommit analytics` shows local stats
 - [ ] Opt-in analytics only uploads aggregates
 - [ ] Conflicts resolved with last-write-wins

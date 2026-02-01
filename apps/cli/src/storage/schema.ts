@@ -1,5 +1,5 @@
 /**
- * SQLite schema definitions for Agentlogs
+ * SQLite schema definitions for CogCommit
  */
 
 export const SCHEMA_VERSION = 6;

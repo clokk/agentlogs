@@ -46,7 +46,7 @@ src/
 ## Target Directory Structure
 
 ```
-agentlogs/
+cogcommit/
 ├── apps/
 │   ├── cli/                    # Current CLI (moved from src/)
 │   │   ├── package.json
@@ -123,7 +123,7 @@ agentlogs/
 5. Move CLI to `apps/cli/`
    - Move: index.ts, parser/, storage/, daemon/, config/, sync/
    - Keep sync/ in CLI for now (CLI auth uses file-based tokens)
-   - Update imports to use @agentlogs/types
+   - Update imports to use @cogcommit/types
    - Create apps/cli/package.json with CLI dependencies
 
 ### Phase 2: Next.js Scaffold
@@ -184,13 +184,13 @@ agentlogs/
 | `pnpm-workspace.yaml` | Create - define apps/* and packages/* |
 | `turbo.json` | Create - build/dev/lint pipelines |
 | `package.json` | Create - root workspace with scripts |
-| `packages/types/package.json` | Create - @agentlogs/types package |
+| `packages/types/package.json` | Create - @cogcommit/types package |
 | `packages/types/src/index.ts` | Create - extract from src/models/types.ts |
-| `packages/supabase/package.json` | Create - @agentlogs/supabase package |
+| `packages/supabase/package.json` | Create - @cogcommit/supabase package |
 | `packages/supabase/src/client.ts` | Create - browser/server client factories |
 | `packages/supabase/src/queries.ts` | Create - getCommits, getCommit functions |
 | `packages/supabase/src/transforms.ts` | Create - DB → frontend type transforms |
-| `apps/cli/package.json` | Create - agentlogs CLI package |
+| `apps/cli/package.json` | Create - cogcommit CLI package |
 | `apps/cli/src/*` | Move - all current src/ contents |
 | `apps/cli/tsconfig.json` | Create - CLI-specific config |
 
@@ -210,7 +210,7 @@ agentlogs/
 ### Phase 3 Files
 | File | Action |
 |------|--------|
-| `packages/ui/package.json` | Create - @agentlogs/ui package |
+| `packages/ui/package.json` | Create - @cogcommit/ui package |
 | `packages/ui/src/CommitDetail.tsx` | Port from studio/frontend/components/ |
 | `packages/ui/src/TurnView.tsx` | Port from studio/frontend/components/ |
 | `packages/ui/src/CommitCard.tsx` | Port from studio/frontend/components/ |
@@ -287,7 +287,7 @@ export function transformCommit(db: DbCommit): CognitiveCommit {
 ### After Phase 1 (Monorepo)
 ```bash
 pnpm install                    # All workspaces resolve
-pnpm build --filter=@agentlogs/types   # Types package builds
+pnpm build --filter=@cogcommit/types   # Types package builds
 pnpm build --filter=cli         # CLI still compiles
 node apps/cli/dist/index.js --help     # CLI runs
 ```

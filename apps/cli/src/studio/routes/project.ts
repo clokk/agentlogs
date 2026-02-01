@@ -4,7 +4,7 @@
 
 import { Hono } from "hono";
 import { loadConfig } from "../../config";
-import { AgentlogsDB } from "../../storage/db";
+import { CogCommitDB } from "../../storage/db";
 
 interface ProjectRouteOptions {
   global?: boolean;
@@ -16,7 +16,7 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
 
   // GET /api/project - Get project info and stats
   app.get("/", async (c) => {
-    const db = new AgentlogsDB(storagePath, dbOptions);
+    const db = new CogCommitDB(storagePath, dbOptions);
 
     try {
       const commits = db.getAllCommits();
@@ -65,7 +65,7 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
       return c.json({ projects: [] });
     }
 
-    const db = new AgentlogsDB(storagePath, dbOptions);
+    const db = new CogCommitDB(storagePath, dbOptions);
 
     try {
       const projects = db.getDistinctProjects();

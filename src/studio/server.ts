@@ -1,5 +1,5 @@
 /**
- * Hono server setup for Agentlogs Studio
+ * Hono server setup for CogCommit Studio
  */
 
 import { Hono } from "hono";
@@ -50,7 +50,7 @@ export function createApp(storagePath: string, options: ServerOptions = {}): Hon
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agentlogs Studio</title>
+  <title>CogCommit Studio</title>
   <style>
     body {
       font-family: system-ui, -apple-system, sans-serif;
@@ -79,7 +79,7 @@ export function createApp(storagePath: string, options: ServerOptions = {}): Hon
 </head>
 <body>
   <div class="container">
-    <h1>Agentlogs Studio</h1>
+    <h1>CogCommit Studio</h1>
     <p>Frontend not built. Run the build command first:</p>
     <code>npm run build:studio</code>
     <p>Or for development with hot reload:</p>

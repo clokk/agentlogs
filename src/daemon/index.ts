@@ -1,18 +1,18 @@
 /**
- * Agentlogs Daemon
+ * CogCommit Daemon
  * Main daemon module that orchestrates watching, processing, and capturing
  */
 
 import { SessionWatcher, createWatcher } from "./watcher";
 import { EntryProcessor } from "./processor";
 import { ScreenshotCapturer } from "./capturer";
-import { AgentlogsDB } from "../storage/db";
+import { CogCommitDB } from "../storage/db";
 import {
   loadConfig,
   writeDaemonPid,
   removeDaemonPid,
   isDaemonRunning,
-  type AgentlogsConfig,
+  type CogCommitConfig,
 } from "../config";
 import type { LogEntry } from "../parser/types";
 
@@ -21,9 +21,9 @@ export interface DaemonOptions {
   captureEnabled?: boolean;
 }
 
-export class AgentlogsDaemon {
-  private config: AgentlogsConfig;
-  private db: AgentlogsDB;
+export class CogCommitDaemon {
+  private config: CogCommitConfig;
+  private db: CogCommitDB;
   private watcher: SessionWatcher | null = null;
   private processor: EntryProcessor;
   private capturer: ScreenshotCapturer | null = null;
@@ -35,7 +35,7 @@ export class AgentlogsDaemon {
     this.options = options;
 
     // Initialize storage
-    this.db = new AgentlogsDB(this.config.projectPath);
+    this.db = new CogCommitDB(this.config.projectPath);
 
     // Initialize capturer if enabled
     const captureEnabled =
@@ -193,7 +193,7 @@ export class AgentlogsDaemon {
   /**
    * Get database instance (for CLI status commands)
    */
-  getDb(): AgentlogsDB {
+  getDb(): CogCommitDB {
     return this.db;
   }
 
@@ -222,7 +222,7 @@ export async function runDaemon(
   projectPath: string,
   options: DaemonOptions = {}
 ): Promise<void> {
-  const daemon = new AgentlogsDaemon(projectPath, options);
+  const daemon = new CogCommitDaemon(projectPath, options);
   await daemon.start();
 
   // Keep process alive

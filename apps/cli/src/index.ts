@@ -23,8 +23,8 @@ import {
   discoverAllClaudeProjects,
   getProjectNameFromClaudePath,
 } from "./config";
-import { AgentlogsDB } from "./storage/db";
-import { AgentlogsDaemon } from "./daemon";
+import { CogCommitDB } from "./storage/db";
+import { CogCommitDaemon } from "./daemon";
 import { captureScreenshot } from "./daemon/capturer";
 import { getBestCaptureUrl } from "./utils/server-detect";
 import { startStudio } from "./studio";
@@ -335,7 +335,7 @@ program
         // Run in foreground
         console.log("Starting daemon in foreground (Ctrl+C to stop)...\n");
 
-        const daemon = new AgentlogsDaemon(projectPath, {
+        const daemon = new CogCommitDaemon(projectPath, {
           verbose: options.verbose,
           captureEnabled: options.capture !== false,
         });
@@ -456,7 +456,7 @@ program
       }
 
       // Open DB to get stats
-      const db = new AgentlogsDB(projectPath);
+      const db = new CogCommitDB(projectPath);
       const commitCount = db.getCommitCount();
       const lastActivity = db.getLastActivity();
       db.close();
@@ -531,7 +531,7 @@ program
 
       // If daemon is running and we have a current commit, attach the visual
       if (isDaemonRunning(projectPath)) {
-        const db = new AgentlogsDB(projectPath);
+        const db = new CogCommitDB(projectPath);
         const currentCommitId = db.getCurrentCommitId();
         if (currentCommitId) {
           db.createVisual(currentCommitId, "screenshot", outputPath, "Manual capture");
@@ -647,7 +647,7 @@ program
       }
 
       // Open database (global mode is default, project mode uses rawStoragePath: false)
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: !options.project });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: !options.project });
 
       // Optionally clear existing commits
       if (options.clear) {
@@ -806,7 +806,7 @@ program
       }
 
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       console.log("Pushing to cloud...");
       const result = await pushToCloud(db, { verbose: options.verbose });
@@ -842,7 +842,7 @@ program
       }
 
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       console.log("Pulling from cloud...");
       const result = await pullFromCloud(db, { verbose: options.verbose });
@@ -874,7 +874,7 @@ program
   .action(async (options) => {
     try {
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       if (options.status) {
         const status = getSyncStatus(db);
@@ -991,7 +991,7 @@ program
   .action(async (options) => {
     try {
       const storagePath = ensureGlobalStorageDir();
-      const db = new AgentlogsDB(storagePath, { rawStoragePath: true });
+      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
 
       if (options.optIn || options.optOut) {
         const home = process.env.HOME || "";

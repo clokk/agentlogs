@@ -1,5 +1,5 @@
 /**
- * Output types for Agentlogs
+ * Output types for CogCommit
  * Represents the structured cognitive commit data
  */
 

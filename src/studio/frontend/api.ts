@@ -1,5 +1,5 @@
 /**
- * API client for Agentlogs Studio
+ * API client for CogCommit Studio
  */
 
 const API_BASE = "/api";

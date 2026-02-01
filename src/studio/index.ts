@@ -1,5 +1,5 @@
 /**
- * Agentlogs Studio - Web-based curation interface
+ * CogCommit Studio - Web-based curation interface
  */
 
 import { serve } from "@hono/node-server";
@@ -41,7 +41,7 @@ export async function startStudio(
     port,
   });
 
-  console.log(`\nAgentlogs Studio`);
+  console.log(`\nCogCommit Studio`);
   console.log(`${"─".repeat(40)}`);
   console.log(`Mode: ${options.global ? "Global" : "Project"}`);
   console.log(`Project: ${projectName}`);

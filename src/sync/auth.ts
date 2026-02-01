@@ -123,12 +123,12 @@ export async function login(): Promise<UserProfile> {
           } else {
             // Exchange code for session with our code verifier
             // Make direct HTTP call since SDK doesn't pass our verifier
-            const supabaseUrl = process.env.AGENTLOGS_SUPABASE_URL;
+            const supabaseUrl = process.env.COGCOMMIT_SUPABASE_URL;
             const tokenResponse = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=pkce`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "ApiKey": process.env.AGENTLOGS_SUPABASE_ANON_KEY || "",
+                "ApiKey": process.env.COGCOMMIT_SUPABASE_ANON_KEY || "",
               },
               body: JSON.stringify({
                 auth_code: code,
@@ -233,10 +233,10 @@ export async function login(): Promise<UserProfile> {
 
     server.listen(CALLBACK_PORT, async () => {
       // Get the Supabase project URL from environment
-      const supabaseUrl = process.env.AGENTLOGS_SUPABASE_URL;
+      const supabaseUrl = process.env.COGCOMMIT_SUPABASE_URL;
       if (!supabaseUrl) {
         server.close();
-        reject(new Error("AGENTLOGS_SUPABASE_URL not set"));
+        reject(new Error("COGCOMMIT_SUPABASE_URL not set"));
         return;
       }
 
@@ -251,7 +251,7 @@ export async function login(): Promise<UserProfile> {
       // Store the code verifier for the callback
       // The Supabase client needs this, so we set it in the auth storage
       // We'll use a workaround by setting it before the exchange
-      (globalThis as any).__agentlogs_code_verifier = codeVerifier;
+      (globalThis as any).__cogcommit_code_verifier = codeVerifier;
 
       const oauthUrl = authUrl.toString();
 
