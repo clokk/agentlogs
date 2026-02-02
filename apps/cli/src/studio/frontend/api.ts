@@ -2,10 +2,10 @@
  * API client for CogCommit Studio
  */
 
-import type { CognitiveCommit } from "@cogcommit/types";
+import type { CognitiveCommit, UsageData } from "@cogcommit/types";
 
 // Re-export CognitiveCommit for consumers
-export type { CognitiveCommit };
+export type { CognitiveCommit, UsageData };
 
 const API_BASE = "/api";
 
@@ -76,6 +76,13 @@ export async function deleteCommit(id: string): Promise<{ success: boolean }> {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Failed to delete commit");
+  return res.json();
+}
+
+// Usage
+export async function fetchUsage(): Promise<{ usage: UsageData | null }> {
+  const res = await fetch(`${API_BASE}/usage`);
+  if (!res.ok) throw new Error("Failed to fetch usage");
   return res.json();
 }
 

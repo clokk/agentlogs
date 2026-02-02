@@ -17,6 +17,9 @@ importers:
 
   apps/cli:
     dependencies:
+      '@cogcommit/supabase':
+        specifier: workspace:*
+        version: link:../../packages/supabase
       '@cogcommit/types':
         specifier: workspace:*
         version: link:../../packages/types

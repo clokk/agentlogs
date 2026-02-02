@@ -3,7 +3,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { CognitiveCommit, DbCommit, DbSession, DbTurn } from "@cogcommit/types";
+import type { CognitiveCommit, DbCommit, DbSession, DbTurn, UsageData, QuotaTier } from "@cogcommit/types";
+import { FREE_TIER_LIMITS } from "@cogcommit/types";
 import {
   transformCommit,
   transformSession,
@@ -295,5 +296,44 @@ export async function getUserProfile(
   return {
     id: data.id,
     githubUsername: data.github_username,
+  };
+}
+
+/**
+ * Get user's usage data (commit count, storage usage, limits)
+ */
+export async function getUserUsage(
+  client: SupabaseClient,
+  userId: string
+): Promise<UsageData> {
+  // Get user's quota settings (if they have a custom tier)
+  const { data: quota } = await client
+    .from("user_quotas")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
+
+  const tier = (quota?.tier as QuotaTier) || "free";
+  const commitLimit = quota?.commit_limit ?? FREE_TIER_LIMITS.commits;
+  const storageLimitBytes = quota?.storage_limit_bytes ?? FREE_TIER_LIMITS.storageBytes;
+
+  // Count commits
+  const { count: commitCount } = await client
+    .from("cognitive_commits")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .is("deleted_at", null);
+
+  // Get storage usage via database function
+  const { data: storageBytes } = await client.rpc("calculate_user_storage", {
+    p_user_id: userId,
+  });
+
+  return {
+    commitCount: commitCount ?? 0,
+    commitLimit,
+    storageUsedBytes: storageBytes ?? 0,
+    storageLimitBytes,
+    tier,
   };
 }

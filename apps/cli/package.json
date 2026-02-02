@@ -24,6 +24,7 @@
   "author": "Connor Leisz",
   "license": "MIT",
   "dependencies": {
+    "@cogcommit/supabase": "workspace:*",
     "@cogcommit/types": "workspace:*",
     "@cogcommit/ui": "workspace:*",
     "@hono/node-server": "^1.0.0",

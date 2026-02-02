@@ -24,6 +24,7 @@ export {
   updateCommit,
   deleteCommit,
   getUserProfile,
+  getUserUsage,
   type GetCommitsOptions,
 } from "./queries";
 
@@ -52,4 +53,8 @@ export type {
   SyncStatus,
   ClosedBy,
   ConversationSource,
+  UsageData,
+  QuotaTier,
 } from "@cogcommit/types";
+
+export { FREE_TIER_LIMITS } from "@cogcommit/types";

@@ -3,9 +3,11 @@ import {
   fetchProject,
   fetchProjects,
   fetchCommits,
+  fetchUsage,
   type ProjectInfo,
   type ProjectListItem,
   type CognitiveCommit,
+  type UsageData,
 } from "./api";
 import { Header, CommitList, useResizable, SidebarHeader } from "@cogcommit/ui";
 import CommitDetail from "./components/CommitDetail";
@@ -31,6 +33,10 @@ export default function App() {
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+  // Usage state
+  const [usage, setUsage] = useState<UsageData | null>(null);
+  const [usageLoading, setUsageLoading] = useState(false);
 
   // Sidebar collapse state
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -76,6 +82,13 @@ export default function App() {
         if (commitsData.commits.length > 0) {
           setSelectedCommitId(commitsData.commits[0].id);
         }
+
+        // Fetch usage data in background (don't block initial load)
+        setUsageLoading(true);
+        fetchUsage()
+          .then((data) => setUsage(data.usage))
+          .catch(() => setUsage(null))
+          .finally(() => setUsageLoading(false));
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -152,6 +165,8 @@ export default function App() {
         totalCount={totalCount}
         selectedProject={selectedProject}
         onSelectProject={handleSelectProject}
+        usage={usage}
+        usageLoading={usageLoading}
       />
 
       <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>

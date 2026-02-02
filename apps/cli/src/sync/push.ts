@@ -10,6 +10,7 @@ import { v5 as uuidv5 } from "uuid";
 import { COGCOMMIT_UUID_NAMESPACE, SYNC_BATCH_SIZE } from "../constants";
 import { generateCommitTitle } from "../utils/title";
 import cliProgress from "cli-progress";
+import { getUserUsage } from "@cogcommit/supabase";
 
 export interface PushOptions {
   verbose?: boolean;
@@ -96,6 +97,29 @@ export async function pushToCloud(
 
   if (pendingCommits.length === 0) {
     return result;
+  }
+
+  // Check usage limits for free tier
+  const supabaseForUsage = getAuthenticatedClient();
+  const usage = await getUserUsage(supabaseForUsage, tokens.user.id);
+
+  // Sort pending commits by most recent first
+  pendingCommits.sort((a, b) =>
+    new Date(b.closedAt).getTime() - new Date(a.closedAt).getTime()
+  );
+
+  // Calculate remaining slots
+  const remainingSlots = Math.max(0, usage.commitLimit - usage.commitCount);
+
+  if (pendingCommits.length > remainingSlots && usage.tier === "free") {
+    if (remainingSlots === 0) {
+      console.log(`\n  Cloud full (${usage.commitCount}/${usage.commitLimit} commits)`);
+      console.log(`   Upgrade at cogcommit.com/pro for unlimited sync\n`);
+      return result;
+    }
+
+    console.log(`\n  Syncing most recent ${remainingSlots} of ${pendingCommits.length} commits (free tier)`);
+    pendingCommits = pendingCommits.slice(0, remainingSlots);
   }
 
   const supabase = getAuthenticatedClient();

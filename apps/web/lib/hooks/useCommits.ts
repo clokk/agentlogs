@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CognitiveCommit, CommitListItem } from "@cogcommit/types";
+import type { CognitiveCommit, CommitListItem, UsageData } from "@cogcommit/types";
 
 interface ProjectListItem {
   name: string;
@@ -28,6 +28,10 @@ export const commitKeys = {
 
 export const projectKeys = {
   all: ["projects"] as const,
+};
+
+export const usageKeys = {
+  all: ["usage"] as const,
 };
 
 interface UseCommitListOptions {
@@ -185,6 +189,28 @@ export function useProjects() {
         throw new Error("Failed to fetch projects");
       }
       return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+interface UsageResponse {
+  usage: UsageData;
+}
+
+/**
+ * Hook for fetching user usage data (commit count, storage, limits).
+ */
+export function useUsage() {
+  return useQuery({
+    queryKey: usageKeys.all,
+    queryFn: async (): Promise<UsageData> => {
+      const res = await fetch("/api/usage");
+      if (!res.ok) {
+        throw new Error("Failed to fetch usage");
+      }
+      const data: UsageResponse = await res.json();
+      return data.usage;
     },
     staleTime: 5 * 60 * 1000,
   });

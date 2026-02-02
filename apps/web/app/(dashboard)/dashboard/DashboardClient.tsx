@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   Shimmer,
 } from "@cogcommit/ui";
-import { useCommitList, useCommitDetail, useUpdateCommitTitle, useProjects } from "@/lib/hooks/useCommits";
+import { useCommitList, useCommitDetail, useUpdateCommitTitle, useProjects, useUsage } from "@/lib/hooks/useCommits";
 
 interface DashboardClientProps {
   userId: string;
@@ -49,6 +49,9 @@ export default function DashboardClient({
   const { data: projectsData } = useProjects();
   const projects = projectsData?.projects ?? [];
   const totalCount = projectsData?.totalCount ?? 0;
+
+  // React Query for usage limits
+  const { data: usage, isLoading: isUsageLoading } = useUsage();
 
   // Mutation for title updates with optimistic updates
   const updateTitleMutation = useUpdateCommitTitle();
@@ -215,6 +218,8 @@ export default function DashboardClient({
         homeHref="/"
         user={{ userName, avatarUrl }}
         settingsHref="/dashboard/settings"
+        usage={usage}
+        usageLoading={isUsageLoading}
       />
 
       <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>

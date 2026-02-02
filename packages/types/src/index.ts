@@ -301,3 +301,22 @@ export interface DbTurn {
   updated_at: string;
   deleted_at: string | null;
 }
+
+// ============================================
+// Quota Types
+// ============================================
+
+export type QuotaTier = "free" | "pro" | "enterprise";
+
+export interface UsageData {
+  commitCount: number;
+  commitLimit: number;
+  storageUsedBytes: number;
+  storageLimitBytes: number;
+  tier: QuotaTier;
+}
+
+export const FREE_TIER_LIMITS = {
+  commits: 250,
+  storageBytes: 50 * 1024 * 1024, // 50 MB
+} as const;

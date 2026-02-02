@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { UsageLimitBar } from "./UsageLimitBar";
+import type { UsageData } from "@cogcommit/types";
 
 interface ProjectListItem {
   name: string;
@@ -26,6 +28,9 @@ interface HeaderProps {
   };
   homeHref?: string;
   settingsHref?: string;
+  // Usage limits
+  usage?: UsageData | null;
+  usageLoading?: boolean;
 }
 
 export default function Header({
@@ -39,6 +44,8 @@ export default function Header({
   user,
   homeHref,
   settingsHref,
+  usage,
+  usageLoading,
 }: HeaderProps) {
   return (
     <header className="bg-bg border-b border-border px-6 py-4">
@@ -83,6 +90,16 @@ export default function Header({
             </div>
           )}
         </div>
+
+        {/* Usage limits */}
+        {usage !== undefined && (
+          <UsageLimitBar
+            usage={usage}
+            loading={usageLoading}
+            compact={!user}
+            upgradeHref={user ? "/dashboard/settings" : undefined}
+          />
+        )}
 
         {/* User section (web dashboard only) */}
         {user && (
