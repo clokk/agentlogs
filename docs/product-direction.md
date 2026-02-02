@@ -15,7 +15,7 @@ Last updated: 2026-02-02
 | Cloud sync (push/pull) | ✓ |
 | Web dashboard | ✓ |
 | Search in dashboard | ✓ |
-| Usage limits | In progress |
+| Usage limits | ✓ |
 | Analytics v1 | In progress |
 | Public sharing | In progress |
 | Per-commit quick stats | In progress |
