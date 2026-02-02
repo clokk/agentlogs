@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CognitiveCommit, CommitListItem, UsageData } from "@cogcommit/types";
+import type { CognitiveCommit, CommitListItem, UsageData, WeeklySummaryStats } from "@cogcommit/types";
 
 interface ProjectListItem {
   name: string;
@@ -175,6 +175,7 @@ export function useUpdateCommitTitle() {
 interface ProjectsResponse {
   projects: ProjectListItem[];
   totalCount: number;
+  weeklySummary?: WeeklySummaryStats;
 }
 
 /**

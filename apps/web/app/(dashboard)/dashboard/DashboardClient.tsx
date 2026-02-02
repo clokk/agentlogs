@@ -49,6 +49,7 @@ export default function DashboardClient({
   const { data: projectsData } = useProjects();
   const projects = projectsData?.projects ?? [];
   const totalCount = projectsData?.totalCount ?? 0;
+  const weeklySummary = projectsData?.weeklySummary;
 
   // React Query for usage limits
   const { data: usage, isLoading: isUsageLoading } = useUsage();
@@ -220,6 +221,7 @@ export default function DashboardClient({
         settingsHref="/dashboard/settings"
         usage={usage}
         usageLoading={isUsageLoading}
+        weeklySummary={weeklySummary}
       />
 
       <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>

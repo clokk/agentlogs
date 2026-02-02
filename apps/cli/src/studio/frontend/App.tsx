@@ -167,6 +167,7 @@ export default function App() {
         onSelectProject={handleSelectProject}
         usage={usage}
         usageLoading={usageLoading}
+        weeklySummary={project?.weeklySummary}
       />
 
       <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>

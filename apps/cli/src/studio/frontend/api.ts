@@ -2,10 +2,10 @@
  * API client for CogCommit Studio
  */
 
-import type { CognitiveCommit, UsageData } from "@cogcommit/types";
+import type { CognitiveCommit, UsageData, WeeklySummaryStats } from "@cogcommit/types";
 
-// Re-export CognitiveCommit for consumers
-export type { CognitiveCommit, UsageData };
+// Re-export types for consumers
+export type { CognitiveCommit, UsageData, WeeklySummaryStats };
 
 const API_BASE = "/api";
 
@@ -21,6 +21,7 @@ export interface ProjectInfo {
     firstDate: string | null;
     lastDate: string | null;
   };
+  weeklySummary?: WeeklySummaryStats;
 }
 
 export interface ProjectListItem {

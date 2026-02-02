@@ -42,6 +42,9 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
         projectName = config.projectName;
       }
 
+      // Get weekly summary stats
+      const weeklySummary = db.commits.getWeeklySummary(options.global ? undefined : projectName);
+
       return c.json({
         project: {
           name: projectName,
@@ -54,6 +57,7 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
           firstDate,
           lastDate,
         },
+        weeklySummary,
       });
     } finally {
       db.close();

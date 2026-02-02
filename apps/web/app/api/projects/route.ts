@@ -5,6 +5,7 @@ interface DbCommitMinimal {
   id: string;
   project_name: string | null;
   prompt_count: number | null;
+  closed_at: string;
 }
 
 export async function GET() {
@@ -19,10 +20,10 @@ export async function GET() {
   }
 
   try {
-    // Fetch only id, project_name, and prompt_count - minimal data for counting
+    // Fetch id, project_name, prompt_count, and closed_at for counting and weekly stats
     const { data: rawCommits, error } = await supabase
       .from("cognitive_commits")
-      .select(`id, project_name, prompt_count`)
+      .select(`id, project_name, prompt_count, closed_at`)
       .eq("user_id", user.id)
       .is("deleted_at", null)
       .eq("hidden", false);
@@ -32,9 +33,16 @@ export async function GET() {
       return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
     }
 
-    // Build project counts, filtering out 0-turn commits
+    // Build project counts and weekly stats, filtering out 0-turn commits
     const projectCounts = new Map<string, number>();
     let totalCount = 0;
+
+    // Calculate weekly stats
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const weekStartISO = oneWeekAgo.toISOString();
+    let weeklyCommitCount = 0;
+    let weeklyPromptCount = 0;
 
     for (const commit of (rawCommits as DbCommitMinimal[]) || []) {
       // Filter out 0-turn commits using stored prompt_count
@@ -44,7 +52,21 @@ export async function GET() {
       if (commit.project_name) {
         projectCounts.set(commit.project_name, (projectCounts.get(commit.project_name) || 0) + 1);
       }
+
+      // Count weekly stats
+      if (commit.closed_at >= weekStartISO) {
+        weeklyCommitCount++;
+        weeklyPromptCount += commit.prompt_count;
+      }
     }
+
+    const weeklySummary = {
+      weeklyCommitCount,
+      weeklyPromptCount,
+      avgPromptsPerCommit: weeklyCommitCount > 0
+        ? weeklyPromptCount / weeklyCommitCount
+        : 0,
+    };
 
     // Convert to array and sort by count descending
     const projects = Array.from(projectCounts.entries())
@@ -52,7 +74,7 @@ export async function GET() {
       .sort((a, b) => b.count - a.count);
 
     return NextResponse.json(
-      { projects, totalCount },
+      { projects, totalCount, weeklySummary },
       {
         headers: {
           "Cache-Control": "private, max-age=300, stale-while-revalidate=600",

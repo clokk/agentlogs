@@ -321,3 +321,10 @@ export const FREE_TIER_LIMITS = {
   commits: 250,
   storageBytes: 50 * 1024 * 1024, // 50 MB
 } as const;
+
+/** Weekly summary analytics for dashboard header */
+export interface WeeklySummaryStats {
+  weeklyCommitCount: number;
+  weeklyPromptCount: number;
+  avgPromptsPerCommit: number;
+}

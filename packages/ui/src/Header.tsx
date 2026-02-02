@@ -2,7 +2,7 @@
 
 import React from "react";
 import { UsageLimitBar } from "./UsageLimitBar";
-import type { UsageData } from "@cogcommit/types";
+import type { UsageData, WeeklySummaryStats } from "@cogcommit/types";
 
 interface ProjectListItem {
   name: string;
@@ -31,6 +31,8 @@ interface HeaderProps {
   // Usage limits
   usage?: UsageData | null;
   usageLoading?: boolean;
+  // Weekly summary stats
+  weeklySummary?: WeeklySummaryStats | null;
 }
 
 export default function Header({
@@ -46,6 +48,7 @@ export default function Header({
   settingsHref,
   usage,
   usageLoading,
+  weeklySummary,
 }: HeaderProps) {
   return (
     <header className="bg-bg border-b border-border px-6 py-4">
@@ -83,10 +86,22 @@ export default function Header({
             </div>
           )}
 
-          {stats && (
+          {(stats || weeklySummary) && (
             <div className="flex items-center gap-4 text-sm text-muted">
-              <span>{stats.commitCount} commits</span>
-              <span>{stats.totalTurns} prompts</span>
+              {stats && (
+                <>
+                  <span>{stats.commitCount} commits</span>
+                  <span>{stats.totalTurns} prompts</span>
+                </>
+              )}
+              {weeklySummary && weeklySummary.weeklyCommitCount > 0 && (
+                <>
+                  <span className="text-subtle">·</span>
+                  <span className="text-primary">This week:</span>
+                  <span>{weeklySummary.weeklyCommitCount} commits</span>
+                  <span>avg {weeklySummary.avgPromptsPerCommit.toFixed(1)} prompts</span>
+                </>
+              )}
             </div>
           )}
         </div>

@@ -423,6 +423,41 @@ export class CommitsRepository {
     };
   }
 
+  /**
+   * Get weekly summary statistics (commits and prompts from the past 7 days)
+   */
+  getWeeklySummary(projectName?: string): { weeklyCommitCount: number; weeklyPromptCount: number; avgPromptsPerCommit: number } {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const weekStart = oneWeekAgo.toISOString();
+
+    const whereClause = projectName
+      ? "WHERE c.closed_at >= ? AND c.project_name = ?"
+      : "WHERE c.closed_at >= ?";
+    const params = projectName ? [weekStart, projectName] : [weekStart];
+
+    // Count commits and user turns (prompts) from the past week
+    const result = this.db
+      .prepare(`
+        SELECT
+          COUNT(DISTINCT c.id) as commit_count,
+          COUNT(CASE WHEN t.role = 'user' THEN 1 END) as prompt_count
+        FROM cognitive_commits c
+        LEFT JOIN sessions s ON s.commit_id = c.id
+        LEFT JOIN turns t ON t.session_id = s.id
+        ${whereClause}
+      `)
+      .get(...params) as { commit_count: number; prompt_count: number };
+
+    const weeklyCommitCount = result.commit_count;
+    const weeklyPromptCount = result.prompt_count;
+    const avgPromptsPerCommit = weeklyCommitCount > 0
+      ? weeklyPromptCount / weeklyCommitCount
+      : 0;
+
+    return { weeklyCommitCount, weeklyPromptCount, avgPromptsPerCommit };
+  }
+
   private rowToCommit(row: CommitRow): CognitiveCommit {
     const sessions = this.sessionsRepo.getForCommit(row.id);
 
