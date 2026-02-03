@@ -10,7 +10,10 @@ interface DbCommitListRow {
   closed_by: string;
   parallel: boolean;
   title: string | null;
+  published: boolean;
   hidden: boolean;
+  public_slug: string | null;
+  published_at: string | null;
   project_name: string | null;
   source: string;
   prompt_count: number | null;
@@ -39,6 +42,7 @@ export async function GET(request: Request) {
         `
         id, git_hash, started_at, closed_at, closed_by,
         title, project_name, source, parallel, hidden, prompt_count,
+        published, public_slug, published_at,
         sessions!inner (id)
       `
       )
@@ -76,7 +80,10 @@ export async function GET(request: Request) {
         closedBy: raw.closed_by as ClosedBy,
         parallel: raw.parallel,
         title: raw.title || undefined,
+        published: raw.published,
         hidden: raw.hidden,
+        publicSlug: raw.public_slug || undefined,
+        publishedAt: raw.published_at || undefined,
         projectName: raw.project_name || undefined,
         source: raw.source as ConversationSource,
         sessionCount,

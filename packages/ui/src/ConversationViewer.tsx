@@ -28,6 +28,12 @@ export interface ConversationViewerProps {
   onTitleChange?: (newTitle: string) => Promise<void>;
   /** Called when delete is requested (if omitted, delete button is hidden) */
   onDelete?: () => Promise<void>;
+  /** Called when publish is requested (if omitted, publish button is hidden) */
+  onPublish?: () => Promise<{ slug: string; url: string }>;
+  /** Called when unpublish is requested */
+  onUnpublish?: () => Promise<void>;
+  /** Read-only mode - hides all edit/delete/publish buttons */
+  readOnly?: boolean;
 }
 
 // Font size settings
@@ -65,14 +71,19 @@ type RenderItem =
  * - Optional: editable title, delete button
  */
 export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerProps>(
-  function ConversationViewer({ commit, onTitleChange, onDelete }, ref) {
+  function ConversationViewer({ commit, onTitleChange, onDelete, onPublish, onUnpublish, readOnly }, ref) {
     const [editingTitle, setEditingTitle] = useState(false);
     const [titleValue, setTitleValue] = useState(commit.title || "");
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showPublishConfirm, setShowPublishConfirm] = useState(false);
+    const [showPublishMenu, setShowPublishMenu] = useState(false);
+    const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
+    const [linkCopied, setLinkCopied] = useState(false);
     const [showFilesModal, setShowFilesModal] = useState(false);
     const [showExportMenu, setShowExportMenu] = useState(false);
     const [exportCopied, setExportCopied] = useState(false);
     const exportMenuRef = useRef<HTMLDivElement>(null);
+    const publishMenuRef = useRef<HTMLDivElement>(null);
 
     // Item navigation state
     const [currentItemIndex, setCurrentItemIndex] = useState(0);
@@ -108,6 +119,10 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
       setCurrentItemIndex(0);
       setHighlightedItemIndex(null);
       setEditingTitle(false);
+      setShowPublishConfirm(false);
+      setShowPublishMenu(false);
+      setPublishedUrl(null);
+      setLinkCopied(false);
       if (highlightTimeoutRef.current) {
         clearTimeout(highlightTimeoutRef.current);
         highlightTimeoutRef.current = null;
@@ -176,6 +191,63 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showExportMenu]);
+
+    // Close publish menu when clicking outside
+    useEffect(() => {
+      if (!showPublishMenu) return;
+      const handleClickOutside = (e: MouseEvent) => {
+        if (publishMenuRef.current && !publishMenuRef.current.contains(e.target as Node)) {
+          setShowPublishMenu(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [showPublishMenu]);
+
+    // Publish handler
+    const handlePublish = async () => {
+      if (!onPublish) return;
+      try {
+        const result = await onPublish();
+        setPublishedUrl(result.url);
+        setShowPublishConfirm(false);
+        // Auto-copy the link
+        const fullUrl = typeof window !== "undefined"
+          ? `${window.location.origin}${result.url}`
+          : result.url;
+        await copyToClipboard(fullUrl);
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to publish commit:", err);
+      }
+    };
+
+    // Unpublish handler
+    const handleUnpublish = async () => {
+      if (!onUnpublish) return;
+      try {
+        await onUnpublish();
+        setShowPublishMenu(false);
+        setPublishedUrl(null);
+      } catch (err) {
+        console.error("Failed to unpublish commit:", err);
+      }
+    };
+
+    // Copy link handler
+    const handleCopyLink = async () => {
+      const url = commit.publicSlug
+        ? (typeof window !== "undefined" ? `${window.location.origin}/c/${commit.publicSlug}` : `/c/${commit.publicSlug}`)
+        : publishedUrl;
+      if (url) {
+        const fullUrl = url.startsWith("http") ? url : (typeof window !== "undefined" ? `${window.location.origin}${url}` : url);
+        await copyToClipboard(fullUrl);
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      }
+      setShowPublishMenu(false);
+    };
 
     // Build render items (groups consecutive tool-only turns)
     const renderItems = useMemo((): RenderItem[] => {
@@ -551,8 +623,67 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
               )}
             </div>
 
-            {/* Delete button - only show if onDelete is provided */}
-            {onDelete && (
+            {/* Publish button/menu - only show if onPublish is provided and not readOnly */}
+            {onPublish && !readOnly && (
+              <div className="relative" ref={publishMenuRef}>
+                {commit.published && commit.publicSlug ? (
+                  // Published state - show dropdown with Copy Link and Unpublish
+                  <>
+                    <button
+                      onClick={() => setShowPublishMenu(!showPublishMenu)}
+                      className="px-2 py-1 text-xs text-chronicle-green hover:text-chronicle-green/80 hover:bg-chronicle-green/10 rounded transition-colors flex items-center gap-1"
+                    >
+                      {linkCopied ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="2" y1="12" x2="22" y2="12" />
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                        </svg>
+                      )}
+                      {linkCopied ? "Copied!" : "Public"}
+                    </button>
+                    {showPublishMenu && (
+                      <div className="absolute right-0 mt-1 bg-panel border border-border rounded shadow-lg z-10 py-1 min-w-[140px]">
+                        <button
+                          onClick={handleCopyLink}
+                          className="block w-full text-left px-3 py-2 text-xs text-primary hover:bg-panel-alt transition-colors"
+                        >
+                          Copy Link
+                        </button>
+                        {onUnpublish && (
+                          <button
+                            onClick={handleUnpublish}
+                            className="block w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-panel-alt transition-colors"
+                          >
+                            Unpublish
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  // Unpublished state - show Publish button
+                  <button
+                    onClick={() => setShowPublishConfirm(true)}
+                    className="px-2 py-1 text-xs text-muted hover:text-primary hover:bg-panel rounded transition-colors flex items-center gap-1"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                    Publish
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Delete button - only show if onDelete is provided and not readOnly */}
+            {onDelete && !readOnly && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="px-2 py-1 text-xs text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors"
@@ -739,6 +870,33 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
                   className="px-4 py-2 bg-red-600 text-primary rounded font-medium hover:bg-red-500"
                 >
                   Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Publish confirmation modal */}
+        {showPublishConfirm && onPublish && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-panel rounded-lg p-6 max-w-md">
+              <h3 className="text-lg font-medium text-primary mb-2">Publish Commit?</h3>
+              <p className="text-muted mb-4">
+                This will make the conversation publicly accessible via a shareable link.
+                Anyone with the link will be able to view the full conversation.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowPublishConfirm(false)}
+                  className="px-4 py-2 bg-panel-alt text-primary rounded font-medium hover:bg-panel"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePublish}
+                  className="px-4 py-2 bg-chronicle-blue text-black rounded font-medium hover:bg-chronicle-blue/90"
+                >
+                  Publish
                 </button>
               </div>
             </div>

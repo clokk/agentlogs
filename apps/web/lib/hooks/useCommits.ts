@@ -87,6 +87,11 @@ interface UpdateTitleVariables {
   title: string | null;
 }
 
+interface PublishResult {
+  slug: string;
+  url: string;
+}
+
 /**
  * Mutation hook for updating commit titles with optimistic updates.
  * Uses targeted cache invalidation for better performance.
@@ -168,6 +173,147 @@ export function useUpdateCommitTitle() {
       queryClient.invalidateQueries({
         queryKey: commitKeys.lists(),
       });
+    },
+  });
+}
+
+/**
+ * Mutation hook for publishing a commit (making it publicly accessible)
+ */
+export function usePublishCommit() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (commitId: string): Promise<PublishResult> => {
+      const res = await fetch(`/api/commits/${commitId}/publish`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to publish commit");
+      }
+      return res.json();
+    },
+    onMutate: async (commitId) => {
+      await queryClient.cancelQueries({ queryKey: commitKeys.lists() });
+      await queryClient.cancelQueries({ queryKey: commitKeys.detail(commitId) });
+
+      const previousLists = queryClient.getQueriesData<CommitListItem[]>({
+        queryKey: commitKeys.lists(),
+      });
+
+      const previousDetail = queryClient.getQueryData<CognitiveCommit>(
+        commitKeys.detail(commitId)
+      );
+
+      // Optimistically update list queries
+      queryClient.setQueriesData<CommitListItem[]>(
+        { queryKey: commitKeys.lists() },
+        (old) => {
+          if (!old) return old;
+          return old.map((commit) =>
+            commit.id === commitId
+              ? { ...commit, published: true, publishedAt: new Date().toISOString() }
+              : commit
+          );
+        }
+      );
+
+      // Optimistically update detail query
+      if (previousDetail) {
+        queryClient.setQueryData<CognitiveCommit>(
+          commitKeys.detail(commitId),
+          { ...previousDetail, published: true, publishedAt: new Date().toISOString() }
+        );
+      }
+
+      return { previousLists, previousDetail, commitId };
+    },
+    onError: (err, commitId, context) => {
+      if (context?.previousLists) {
+        for (const [queryKey, data] of context.previousLists) {
+          queryClient.setQueryData(queryKey, data);
+        }
+      }
+      if (context?.previousDetail && context?.commitId) {
+        queryClient.setQueryData(
+          commitKeys.detail(context.commitId),
+          context.previousDetail
+        );
+      }
+    },
+    onSettled: (_, __, commitId) => {
+      queryClient.invalidateQueries({ queryKey: commitKeys.detail(commitId) });
+      queryClient.invalidateQueries({ queryKey: commitKeys.lists() });
+    },
+  });
+}
+
+/**
+ * Mutation hook for unpublishing a commit (making it private again)
+ */
+export function useUnpublishCommit() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (commitId: string): Promise<void> => {
+      const res = await fetch(`/api/commits/${commitId}/unpublish`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to unpublish commit");
+      }
+    },
+    onMutate: async (commitId) => {
+      await queryClient.cancelQueries({ queryKey: commitKeys.lists() });
+      await queryClient.cancelQueries({ queryKey: commitKeys.detail(commitId) });
+
+      const previousLists = queryClient.getQueriesData<CommitListItem[]>({
+        queryKey: commitKeys.lists(),
+      });
+
+      const previousDetail = queryClient.getQueryData<CognitiveCommit>(
+        commitKeys.detail(commitId)
+      );
+
+      // Optimistically update list queries
+      queryClient.setQueriesData<CommitListItem[]>(
+        { queryKey: commitKeys.lists() },
+        (old) => {
+          if (!old) return old;
+          return old.map((commit) =>
+            commit.id === commitId
+              ? { ...commit, published: false }
+              : commit
+          );
+        }
+      );
+
+      // Optimistically update detail query
+      if (previousDetail) {
+        queryClient.setQueryData<CognitiveCommit>(
+          commitKeys.detail(commitId),
+          { ...previousDetail, published: false }
+        );
+      }
+
+      return { previousLists, previousDetail, commitId };
+    },
+    onError: (err, commitId, context) => {
+      if (context?.previousLists) {
+        for (const [queryKey, data] of context.previousLists) {
+          queryClient.setQueryData(queryKey, data);
+        }
+      }
+      if (context?.previousDetail && context?.commitId) {
+        queryClient.setQueryData(
+          commitKeys.detail(context.commitId),
+          context.previousDetail
+        );
+      }
+    },
+    onSettled: (_, __, commitId) => {
+      queryClient.invalidateQueries({ queryKey: commitKeys.detail(commitId) });
+      queryClient.invalidateQueries({ queryKey: commitKeys.lists() });
     },
   });
 }

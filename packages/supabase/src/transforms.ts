@@ -37,6 +37,8 @@ export function transformCommit(
     published: db.published,
     hidden: db.hidden,
     displayOrder: db.display_order,
+    publicSlug: db.public_slug ?? undefined,
+    publishedAt: db.published_at ?? undefined,
     projectName: db.project_name ?? undefined,
     source: db.source as ConversationSource | undefined,
     cloudId: db.id,

@@ -2,7 +2,7 @@
  * SQLite schema definitions for CogCommit
  */
 
-export const SCHEMA_VERSION = 7;
+export const SCHEMA_VERSION = 8;
 
 export const CREATE_TABLES = `
 -- Cognitive commits (persisted)
@@ -140,6 +140,15 @@ export const MIGRATIONS: { version: number; sql: string }[] = [
   {
     version: 7,
     sql: `ALTER TABLE cognitive_commits ADD COLUMN prompt_count INTEGER DEFAULT 0;`,
+  },
+  {
+    version: 8,
+    sql: `
+      -- Public sharing fields for cognitive_commits
+      ALTER TABLE cognitive_commits ADD COLUMN public_slug TEXT;
+      ALTER TABLE cognitive_commits ADD COLUMN published_at TEXT;
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_commits_public_slug ON cognitive_commits(public_slug);
+    `,
   },
 ];
 

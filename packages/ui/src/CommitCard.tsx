@@ -85,6 +85,16 @@ export default function CommitCard({
             </span>
           )}
 
+          {/* Public indicator */}
+          {commit.published && commit.publicSlug && (
+            <span
+              className="px-1.5 py-0.5 text-xs font-medium rounded bg-chronicle-green/20 text-chronicle-green"
+              title="Public commit"
+            >
+              Public
+            </span>
+          )}
+
           {/* Parallel indicator */}
           {commit.parallel && (
             <span

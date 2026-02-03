@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   Shimmer,
 } from "@cogcommit/ui";
-import { useCommitList, useCommitDetail, useUpdateCommitTitle, useProjects, useUsage } from "@/lib/hooks/useCommits";
+import { useCommitList, useCommitDetail, useUpdateCommitTitle, usePublishCommit, useUnpublishCommit, useProjects, useUsage } from "@/lib/hooks/useCommits";
 
 interface DashboardClientProps {
   userId: string;
@@ -57,6 +57,10 @@ export default function DashboardClient({
   // Mutation for title updates with optimistic updates
   const updateTitleMutation = useUpdateCommitTitle();
 
+  // Mutations for publish/unpublish
+  const publishMutation = usePublishCommit();
+  const unpublishMutation = useUnpublishCommit();
+
   const [selectedCommitId, setSelectedCommitId] = useState<string | null>(null);
 
   // React Query for full commit detail (lazy loaded on selection)
@@ -95,6 +99,18 @@ export default function DashboardClient({
     },
     [selectedCommitId, updateTitleMutation]
   );
+
+  // Handle publish for a commit
+  const handlePublish = useCallback(async () => {
+    if (!selectedCommitId) throw new Error("No commit selected");
+    return publishMutation.mutateAsync(selectedCommitId);
+  }, [selectedCommitId, publishMutation]);
+
+  // Handle unpublish for a commit
+  const handleUnpublish = useCallback(async () => {
+    if (!selectedCommitId) throw new Error("No commit selected");
+    await unpublishMutation.mutateAsync(selectedCommitId);
+  }, [selectedCommitId, unpublishMutation]);
 
   // Handle project selection
   const handleSelectProject = useCallback((project: string | null) => {
@@ -326,7 +342,12 @@ export default function DashboardClient({
               </div>
             </div>
           ) : selectedCommit ? (
-            <ConversationViewer commit={selectedCommit} onTitleChange={handleTitleChange} />
+            <ConversationViewer
+              commit={selectedCommit}
+              onTitleChange={handleTitleChange}
+              onPublish={handlePublish}
+              onUnpublish={handleUnpublish}
+            />
           ) : (
             <div className="flex items-center justify-center h-full text-muted">
               {commits.length === 0 ? (

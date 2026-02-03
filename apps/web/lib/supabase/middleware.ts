@@ -63,6 +63,12 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/callback");
+  const isPublicRoute = request.nextUrl.pathname.startsWith("/c/");
+
+  // Public routes don't need any auth checks
+  if (isPublicRoute) {
+    return response;
+  }
 
   // Only redirect to login if no session cookie exists at all
   // Full auth verification with getUser() happens in the layout with Suspense

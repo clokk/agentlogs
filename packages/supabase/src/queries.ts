@@ -5,6 +5,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CognitiveCommit, DbCommit, DbSession, DbTurn, UsageData, QuotaTier } from "@cogcommit/types";
 import { FREE_TIER_LIMITS } from "@cogcommit/types";
+import { nanoid } from "nanoid";
 import {
   transformCommit,
   transformSession,
@@ -367,5 +368,137 @@ export async function getUserUsage(
     storageUsedBytes: storageBytes ?? 0,
     storageLimitBytes,
     tier,
+  };
+}
+
+/**
+ * Publish a commit (make it publicly accessible)
+ * Generates a public_slug if one doesn't exist, sets published=true
+ */
+export async function publishCommit(
+  client: SupabaseClient,
+  commitId: string,
+  userId: string
+): Promise<{ slug: string; url: string }> {
+  // First, get the current commit to check if it already has a slug
+  const { data: existing, error: fetchError } = await client
+    .from("cognitive_commits")
+    .select("public_slug")
+    .eq("id", commitId)
+    .eq("user_id", userId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(`Failed to fetch commit: ${fetchError.message}`);
+  }
+
+  // Use existing slug or generate new one (8 chars, URL-safe)
+  const slug = existing?.public_slug || nanoid(8);
+
+  // Update the commit
+  const { error: updateError } = await client
+    .from("cognitive_commits")
+    .update({
+      public_slug: slug,
+      published: true,
+      published_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", commitId)
+    .eq("user_id", userId);
+
+  if (updateError) {
+    throw new Error(`Failed to publish commit: ${updateError.message}`);
+  }
+
+  return {
+    slug,
+    url: `/c/${slug}`,
+  };
+}
+
+/**
+ * Unpublish a commit (make it private again)
+ * Preserves the public_slug for potential re-publishing
+ */
+export async function unpublishCommit(
+  client: SupabaseClient,
+  commitId: string,
+  userId: string
+): Promise<void> {
+  const { error } = await client
+    .from("cognitive_commits")
+    .update({
+      published: false,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", commitId)
+    .eq("user_id", userId);
+
+  if (error) {
+    throw new Error(`Failed to unpublish commit: ${error.message}`);
+  }
+}
+
+/**
+ * Result type for public commit fetch including author info
+ */
+export interface PublicCommitResult {
+  commit: CognitiveCommit;
+  author: {
+    username: string;
+    avatarUrl?: string;
+  };
+}
+
+/**
+ * Fetch a public commit by its slug (no auth required)
+ * Returns null if not found or not published
+ */
+export async function getPublicCommit(
+  client: SupabaseClient,
+  slug: string
+): Promise<PublicCommitResult | null> {
+  const { data, error } = await client
+    .from("cognitive_commits")
+    .select(
+      `
+      *,
+      sessions (
+        *,
+        turns (*)
+      ),
+      user_profiles!cognitive_commits_user_id_fkey (
+        github_username,
+        github_avatar_url
+      )
+    `
+    )
+    .eq("public_slug", slug)
+    .eq("published", true)
+    .is("deleted_at", null)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      // Not found
+      return null;
+    }
+    throw new Error(`Failed to fetch public commit: ${error.message}`);
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  // Extract user profile data
+  const userProfile = data.user_profiles as { github_username: string; github_avatar_url?: string } | null;
+
+  return {
+    commit: transformCommitWithRelations(data as DbCommitWithRelations),
+    author: {
+      username: userProfile?.github_username || "Anonymous",
+      avatarUrl: userProfile?.github_avatar_url,
+    },
   };
 }

@@ -61,6 +61,9 @@ export interface CognitiveCommit {
   published?: boolean;
   hidden?: boolean;
   displayOrder?: number;
+  // Public sharing fields
+  publicSlug?: string;
+  publishedAt?: string;
   // Global mode field
   projectName?: string;
   // Source agent
@@ -89,7 +92,11 @@ export interface CommitListItem {
   parallel: boolean;
   // Curation fields
   title?: string;
+  published?: boolean;
   hidden?: boolean;
+  // Public sharing fields
+  publicSlug?: string;
+  publishedAt?: string;
   // Global mode field
   projectName?: string;
   // Source agent
@@ -271,6 +278,9 @@ export interface DbCommit {
   hidden: boolean;
   display_order: number;
   title: string | null;
+  // Public sharing fields
+  public_slug: string | null;
+  published_at: string | null;
   version: number;
   updated_at: string;
   deleted_at: string | null;
