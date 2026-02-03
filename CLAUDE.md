@@ -115,6 +115,8 @@ Commits can be published to make them publicly accessible via shareable links:
 | `packages/ui/src/CommitList.tsx` | Commit list sidebar component |
 | `packages/ui/src/Header.tsx` | Dashboard header component |
 | `apps/web/app/c/[slug]/page.tsx` | Public commit viewer page |
+| `apps/web/app/c/[slug]/opengraph-image.tsx` | Dynamic OG image for social sharing |
+| `apps/web/app/c/[slug]/twitter-image.tsx` | Dynamic Twitter image (2:1 ratio) |
 | `apps/web/app/api/commits/[id]/publish/route.ts` | Publish commit API endpoint |
 | `apps/web/app/api/commits/[id]/unpublish/route.ts` | Unpublish commit API endpoint |
 | `apps/web/app/api/public/commits/[slug]/route.ts` | Public commit fetch API (no auth) |

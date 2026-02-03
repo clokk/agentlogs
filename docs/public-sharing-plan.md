@@ -250,12 +250,31 @@ if (isPublicRoute) {
 }
 ```
 
-### 4.3 SEO Metadata
+### 4.3 SEO Metadata & Social Previews
 
-Add OpenGraph tags for sharing:
+**Status: Implemented**
+
+Dynamic OpenGraph and Twitter images are generated for each public commit:
+
+**Files:**
+- `apps/web/app/c/[slug]/opengraph-image.tsx` - OG image (1200x630)
+- `apps/web/app/c/[slug]/twitter-image.tsx` - Twitter image (1200x600, 2:1 ratio)
+
+**Visual elements (matching CommitCard design):**
+- Left accent bar (green for committed, amber for uncommitted)
+- Git hash badge with color coding
+- "Public" badge
+- Parallel session indicator (if applicable)
+- Title or first user message preview
+- Stats: "X prompts · Y sessions"
+- Timestamp
+- Author info with avatar
+- CogCommit branding
+
+**Metadata:**
 - Title: commit title or first prompt preview
-- Description: "AI-assisted development conversation"
-- Image: CogCommit og-image
+- Description: "AI-assisted development conversation by @username"
+- Twitter card: `summary_large_image` for rich preview
 
 ### 4.4 Read-Only ConversationViewer
 
@@ -290,6 +309,8 @@ Either:
 | `apps/web/app/api/commits/[id]/unpublish/route.ts` | **NEW** |
 | `apps/web/app/api/public/commits/[slug]/route.ts` | **NEW** |
 | `apps/web/app/c/[slug]/page.tsx` | **NEW** |
+| `apps/web/app/c/[slug]/opengraph-image.tsx` | **NEW** - Dynamic OG image |
+| `apps/web/app/c/[slug]/twitter-image.tsx` | **NEW** - Dynamic Twitter image |
 | `apps/web/lib/hooks/useCommits.ts` | Add mutation hooks |
 
 ---
