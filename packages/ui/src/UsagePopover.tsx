@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { UsageData } from "@cogcommit/types";
+import { Shimmer } from "./Shimmer";
 
 interface UsagePopoverProps {
   usage: UsageData | null;
@@ -51,57 +53,75 @@ export function UsagePopover({ usage, loading, upgradeHref }: UsagePopoverProps)
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center gap-2 animate-pulse">
-        <div className="w-4 h-4 bg-subtle/40 rounded" />
-        <div className="h-4 w-8 bg-subtle/40 rounded" />
-      </div>
-    );
-  }
-
-  if (!usage) return null;
-
-  const commitPct = Math.min((usage.commitCount / usage.commitLimit) * 100, 100);
-  const storagePct = Math.min((usage.storageUsedBytes / usage.storageLimitBytes) * 100, 100);
+  const commitPct = usage ? Math.min((usage.commitCount / usage.commitLimit) * 100, 100) : 0;
+  const storagePct = usage ? Math.min((usage.storageUsedBytes / usage.storageLimitBytes) * 100, 100) : 0;
   const higherPct = Math.max(commitPct, storagePct);
 
   return (
     <div className="relative">
-      {/* Trigger button */}
-      <button
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2 py-1 text-sm text-muted hover:text-primary transition-colors rounded hover:bg-panel"
-      >
-        {/* Vertical bar indicator */}
-        <div className="w-4 h-4 bg-subtle/30 rounded overflow-hidden flex items-end">
-          <div
-            className={`w-full ${getBarColor(higherPct)}`}
-            style={{ height: `${higherPct}%` }}
-          />
-        </div>
-        <span className="text-xs">{Math.round(higherPct)}%</span>
-        {/* Chevron */}
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </button>
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="relative flex items-center gap-2 px-2 py-1"
+          >
+            <Shimmer />
+            <div className="w-4 h-4 bg-subtle/40 rounded" />
+            <div className="h-4 w-8 bg-subtle/40 rounded" />
+          </motion.div>
+        ) : usage ? (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Trigger button */}
+            <button
+              ref={triggerRef}
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex items-center gap-2 px-2 py-1 text-sm text-muted hover:text-primary transition-colors rounded hover:bg-panel"
+            >
+              {/* Vertical bar indicator */}
+              <div className="w-4 h-4 bg-subtle/30 rounded overflow-hidden flex items-end">
+                <div
+                  className={`w-full ${getBarColor(higherPct)}`}
+                  style={{ height: `${higherPct}%` }}
+                />
+              </div>
+              <span className="text-xs">{Math.round(higherPct)}%</span>
+              {/* Chevron */}
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       {/* Popover */}
-      {isOpen && (
-        <div
-          ref={popoverRef}
-          className="absolute top-full right-0 mt-1 bg-panel border border-border rounded-lg shadow-lg z-50 w-[220px]"
-        >
+      <AnimatePresence>
+        {isOpen && usage && (
+          <motion.div
+            ref={popoverRef}
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-full right-0 mt-1 bg-panel border border-border rounded-lg shadow-lg z-50 w-[220px]"
+          >
           {/* Commits section */}
           <div className="p-3">
             <div className="flex items-center justify-between mb-2">
@@ -170,8 +190,9 @@ export function UsagePopover({ usage, loading, upgradeHref }: UsagePopoverProps)
               </div>
             </>
           )}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
