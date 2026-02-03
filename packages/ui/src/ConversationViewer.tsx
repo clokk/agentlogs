@@ -261,11 +261,11 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
         }
         // Flash the highlight
         setHighlightedItemIndex(index);
-        // Clear after animation completes (1.5s fade + buffer)
+        // Clear after animation completes (0.8s fade + buffer)
         highlightTimeoutRef.current = setTimeout(() => {
           setHighlightedItemIndex(null);
           highlightTimeoutRef.current = null;
-        }, 2000);
+        }, 1200);
       }
     }, []);
 

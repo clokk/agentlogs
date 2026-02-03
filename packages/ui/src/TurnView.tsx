@@ -82,9 +82,9 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
       }
     };
 
-    // Flash highlight: appears instantly, fades out over 1.5s
-    const highlightShadow = "inset 4px 0 12px -4px rgba(61, 132, 168, 0.6)";
-    const noShadow = "inset 4px 0 12px -4px rgba(61, 132, 168, 0)";
+    // Flash highlight: appears instantly, fades out over 0.8s
+    const highlightShadow = "inset 4px 0 16px -2px rgba(61, 132, 168, 0.75)";
+    const noShadow = "inset 4px 0 16px -2px rgba(61, 132, 168, 0)";
 
     return (
       <motion.div
@@ -96,7 +96,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
         } ${searchTerm && !isMatch ? "opacity-40" : ""}`}
         animate={{ boxShadow: isHighlighted ? highlightShadow : noShadow }}
         transition={{
-          duration: isHighlighted ? 0.1 : 1.5,
+          duration: isHighlighted ? 0.1 : 0.8,
           ease: isHighlighted ? "easeOut" : "easeIn",
         }}
       >
