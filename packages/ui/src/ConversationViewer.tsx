@@ -230,6 +230,11 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
       return 0;
     }, [userPromptIndices, currentItemIndex]);
 
+    // The render item index of the current prompt (for highlighting)
+    const currentPromptItemIndex = useMemo(() => {
+      return userPromptIndices[currentPromptPosition] ?? -1;
+    }, [userPromptIndices, currentPromptPosition]);
+
     // Scroll to a specific item
     const scrollToItem = useCallback((index: number) => {
       const ref = itemRefs.current.get(index);
@@ -391,7 +396,6 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
     const projectColor = commit.projectName ? getProjectColor(commit.projectName) : null;
     const sourceStyle = getSourceStyle(commit.source);
     const closureStyle = getClosureStyle(commit.closedBy);
-    const currentPromptItemIndex = userPromptIndices[currentPromptPosition] ?? -1;
 
     return (
       <div ref={ref} className="h-full flex flex-col" style={{ minHeight: 0 }}>

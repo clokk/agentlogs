@@ -93,7 +93,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
         animate={{
           boxShadow: isCurrentPrompt
             ? "inset 4px 0 12px -4px rgba(61, 132, 168, 0.6)"
-            : "none",
+            : "inset 4px 0 12px -4px rgba(61, 132, 168, 0)",
         }}
         transition={{ duration: 0.15, ease: "easeOut" }}
       >
