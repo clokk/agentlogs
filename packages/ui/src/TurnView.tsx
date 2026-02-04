@@ -85,9 +85,9 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
 
     // Flash highlight: appears instantly, fades out over 0.5s
     const highlightShadow = isUser
-      ? "0 0 20px 4px rgba(93, 138, 154, 0.5)"
-      : "0 0 20px 4px rgba(93, 138, 154, 0.3)";
-    const noShadow = "0 0 20px 4px rgba(93, 138, 154, 0)";
+      ? "0 0 20px 4px rgba(79, 125, 141, 0.5)"
+      : "0 0 20px 4px rgba(79, 125, 141, 0.3)";
+    const noShadow = "0 0 20px 4px rgba(79, 125, 141, 0)";
 
     return (
       <motion.div
@@ -97,7 +97,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
         <motion.div
           className={`group max-w-[80%] rounded-2xl px-4 py-3 ${
             isUser
-              ? "bg-chronicle-blue text-primary rounded-br-md shadow-[0_2px_8px_rgba(93,138,154,0.25)]"
+              ? "bg-chronicle-blue text-primary rounded-br-md shadow-[0_2px_8px_rgba(79,125,141,0.25)]"
               : "bg-panel border border-border rounded-bl-md shadow-[0_1px_3px_rgba(0,0,0,0.2)]"
           }`}
           animate={{ boxShadow: isHighlighted ? highlightShadow : noShadow }}
