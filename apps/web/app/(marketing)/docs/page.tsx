@@ -175,7 +175,7 @@ export default function DocsPage() {
             Free Tier Limits
           </h2>
 
-          <div className="bg-panel/50 rounded-lg p-6 border border-border">
+          <div className="bg-panel rounded-lg p-6 border border-border">
             <p className="text-primary mb-4">
               Cloud sync has usage limits on the free tier:
             </p>
@@ -209,7 +209,7 @@ export default function DocsPage() {
             Configuration
           </h2>
 
-          <div className="bg-panel/50 rounded-lg p-6 border border-border">
+          <div className="bg-panel rounded-lg p-6 border border-border">
             <p className="text-primary mb-4">
               CogCommit stores its data in{" "}
               <code className="bg-panel px-1 rounded">~/.cogcommit/</code>:
@@ -232,7 +232,7 @@ export default function DocsPage() {
             Environment Variables
           </h2>
 
-          <div className="bg-panel/50 rounded-lg p-6 border border-border">
+          <div className="bg-panel rounded-lg p-6 border border-border">
             <p className="text-primary mb-4">
               For self-hosted Supabase instances, set these environment
               variables:
@@ -260,7 +260,7 @@ function CommandDoc({
   options: { flag: string; desc: string }[];
 }) {
   return (
-    <div className="bg-panel/50 rounded-lg p-4 border border-border">
+    <div className="bg-panel rounded-lg p-4 border border-border">
       <code className="text-chronicle-green font-mono">{command}</code>
       <p className="text-primary mt-2">{description}</p>
       {options.length > 0 && (

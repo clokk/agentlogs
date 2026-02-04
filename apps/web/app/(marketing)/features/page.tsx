@@ -15,7 +15,7 @@ export default function FeaturesPage() {
             <h2 className="text-2xl font-semibold text-primary mb-4">
               Automatic Import
             </h2>
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <p className="text-primary mb-4">
                 The CogCommit CLI automatically discovers and imports your
                 Claude Code conversation logs. Just point it at your project
@@ -47,33 +47,33 @@ export default function FeaturesPage() {
             <h2 className="text-2xl font-semibold text-primary mb-4">
               Multiple AI Sources
             </h2>
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <p className="text-primary mb-4">
                 Import conversations from multiple AI coding assistants:
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                <div className="flex items-center gap-2 text-[#6a9aaa]">
+                  <span className="w-2 h-2 rounded-full bg-[#6a9aaa]"></span>
                   Claude Code
                 </div>
-                <div className="flex items-center gap-2 text-purple-400">
-                  <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+                <div className="flex items-center gap-2 text-[#a090c0]">
+                  <span className="w-2 h-2 rounded-full bg-[#a090c0]"></span>
                   Cursor
                 </div>
-                <div className="flex items-center gap-2 text-cyan-400">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                <div className="flex items-center gap-2 text-[#6a9a9a]">
+                  <span className="w-2 h-2 rounded-full bg-[#6a9a9a]"></span>
                   Antigravity
                 </div>
-                <div className="flex items-center gap-2 text-emerald-400">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <div className="flex items-center gap-2 text-[#6aaa8a]">
+                  <span className="w-2 h-2 rounded-full bg-[#6aaa8a]"></span>
                   Codex
                 </div>
-                <div className="flex items-center gap-2 text-orange-400">
-                  <span className="w-2 h-2 rounded-full bg-orange-400"></span>
+                <div className="flex items-center gap-2 text-[#c8a24a]">
+                  <span className="w-2 h-2 rounded-full bg-[#c8a24a]"></span>
                   OpenCode
                 </div>
                 <div className="flex items-center gap-2 text-muted">
-                  <span className="w-2 h-2 rounded-full bg-text-muted"></span>
+                  <span className="w-2 h-2 rounded-full bg-muted"></span>
                   More coming...
                 </div>
               </div>
@@ -85,7 +85,7 @@ export default function FeaturesPage() {
             <h2 className="text-2xl font-semibold text-primary mb-4">
               Cloud Sync
             </h2>
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <p className="text-primary mb-4">
                 Sync your cognitive commits across all your machines with secure
                 cloud storage.
@@ -116,7 +116,7 @@ export default function FeaturesPage() {
             <h2 className="text-2xl font-semibold text-primary mb-4">
               Local Dashboard
             </h2>
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <p className="text-primary mb-4">
                 Browse and search your conversations locally with the built-in
                 dashboard interface.
@@ -147,7 +147,7 @@ export default function FeaturesPage() {
             <h2 className="text-2xl font-semibold text-primary mb-4">
               Web Dashboard
             </h2>
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <p className="text-primary mb-4">
                 Access your synced commits from anywhere with the web dashboard.
               </p>

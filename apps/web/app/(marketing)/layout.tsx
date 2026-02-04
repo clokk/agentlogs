@@ -77,7 +77,7 @@ export default async function MarketingLayout({
       </header>
 
       {/* Main content */}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 bg-panel-alt">{children}</main>
 
       {/* Footer */}
       <footer className="border-t border-border py-8">

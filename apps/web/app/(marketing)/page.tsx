@@ -42,7 +42,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Import */}
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <div className="w-12 h-12 rounded-lg bg-chronicle-blue/20 flex items-center justify-center mb-4">
                 <svg
                   className="w-6 h-6 text-chronicle-blue"
@@ -66,7 +66,7 @@ export default function LandingPage() {
             </div>
 
             {/* Sync */}
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <div className="w-12 h-12 rounded-lg bg-chronicle-green/20 flex items-center justify-center mb-4">
                 <svg
                   className="w-6 h-6 text-chronicle-green"
@@ -90,7 +90,7 @@ export default function LandingPage() {
             </div>
 
             {/* Share */}
-            <div className="bg-panel/50 rounded-lg p-6 border border-border">
+            <div className="bg-panel rounded-lg p-6 border border-border">
               <div className="w-12 h-12 rounded-lg bg-chronicle-purple/20 flex items-center justify-center mb-4">
                 <svg
                   className="w-6 h-6 text-chronicle-purple"
@@ -125,9 +125,9 @@ export default function LandingPage() {
 
           <div className="bg-bg rounded-lg p-6 border border-border font-mono text-sm">
             <div className="flex items-center gap-2 mb-4 text-muted">
-              <span className="w-3 h-3 rounded-full bg-red-500"></span>
-              <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              <span className="w-3 h-3 rounded-full bg-chronicle-red"></span>
+              <span className="w-3 h-3 rounded-full bg-chronicle-amber"></span>
+              <span className="w-3 h-3 rounded-full bg-chronicle-green"></span>
               <span className="ml-2">Terminal</span>
             </div>
 
@@ -171,7 +171,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 border-t border-border bg-panel/30">
+      <section className="py-20 px-6 border-t border-border bg-panel">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-primary mb-4">
             Start Building Your AI Portfolio Today

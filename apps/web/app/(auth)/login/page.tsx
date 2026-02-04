@@ -25,7 +25,7 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg">
+    <div className="min-h-screen flex items-center justify-center bg-panel-alt">
       <div className="w-full max-w-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2">CogCommit</h1>
@@ -78,7 +78,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="min-h-screen flex items-center justify-center bg-panel-alt">
           <div className="text-muted">Loading...</div>
         </div>
       }
