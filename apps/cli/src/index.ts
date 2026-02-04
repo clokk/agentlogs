@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * CogCommit CLI
- * Document your AI-assisted development with cognitive commits
+ * Tuhnr CLI
+ * Track your AI coding sessions
  */
 
 import { Command } from "commander";
@@ -24,8 +24,8 @@ import {
 const program = new Command();
 
 program
-  .name("cogcommit")
-  .description("Document your AI-assisted development with cognitive commits")
+  .name("tuhnr")
+  .description("Track your AI coding sessions")
   .version("0.1.0");
 
 // Register all commands

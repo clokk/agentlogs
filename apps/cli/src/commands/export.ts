@@ -6,7 +6,7 @@
 import { Command } from "commander";
 import * as fs from "fs";
 import { ensureGlobalStorageDir } from "../config";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import type { CognitiveCommit } from "../models/types";
 
 export function registerExportCommand(program: Command): void {
@@ -19,7 +19,7 @@ export function registerExportCommand(program: Command): void {
     .option("--limit <n>", "Limit number of commits", parseInt)
     .action(async (options) => {
       const storagePath = ensureGlobalStorageDir();
-      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+      const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
       try {
         let commits = options.project

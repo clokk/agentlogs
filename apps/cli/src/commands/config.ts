@@ -5,7 +5,7 @@
 import { Command } from "commander";
 import * as path from "path";
 import { ensureGlobalStorageDir } from "../config";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 
 export function registerConfigCommands(program: Command): void {
   program
@@ -17,7 +17,7 @@ export function registerConfigCommands(program: Command): void {
     .action(async (key: string | undefined, value: string | undefined, options) => {
       try {
         const home = process.env.HOME || "";
-        const configPath = path.join(home, ".cogcommit", "settings.json");
+        const configPath = path.join(home, ".tuhnr", "settings.json");
         const fs = require("fs");
 
         // Load existing settings
@@ -27,7 +27,7 @@ export function registerConfigCommands(program: Command): void {
         }
 
         if (options.list || (!key && !value)) {
-          console.log("\nCogCommit Configuration:");
+          console.log("\nTuhnr Configuration:");
           console.log(`  storage: ${settings.storage || "local"}`);
           console.log(`  continuous-sync: ${settings.continuousSync || false}`);
           console.log(`  analytics-opt-in: ${settings.analyticsOptIn || false}`);
@@ -80,11 +80,11 @@ export function registerConfigCommands(program: Command): void {
     .action(async (options) => {
       try {
         const storagePath = ensureGlobalStorageDir();
-        const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+        const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
         if (options.optIn || options.optOut) {
           const home = process.env.HOME || "";
-          const configPath = path.join(home, ".cogcommit", "settings.json");
+          const configPath = path.join(home, ".tuhnr", "settings.json");
           const fs = require("fs");
 
           let settings: Record<string, unknown> = {};
@@ -129,7 +129,7 @@ export function registerConfigCommands(program: Command): void {
 
         db.close();
 
-        console.log("\nCogCommit Analytics (Local)\n");
+        console.log("\nTuhnr Analytics (Local)\n");
         console.log(`Total Commits: ${commitCount}`);
         console.log(`Projects: ${projects.length}`);
         console.log(`\nRecent Activity (last 100 commits):`);
@@ -149,7 +149,7 @@ export function registerConfigCommands(program: Command): void {
 
         console.log("\n---");
         console.log("Analytics are computed locally. No data is uploaded.");
-        console.log("Run 'cogcommit analytics --opt-in' to help improve CogCommit.");
+        console.log("Run 'tuhnr analytics --opt-in' to help improve Tuhnr.");
       } catch (error) {
         console.error(`Analytics error: ${(error as Error).message}`);
         process.exit(1);

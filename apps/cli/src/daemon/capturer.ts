@@ -1,5 +1,5 @@
 /**
- * Screenshot capturer for CogCommit
+ * Screenshot capturer for Tuhnr
  * Uses Puppeteer to capture screenshots of dev servers
  */
 

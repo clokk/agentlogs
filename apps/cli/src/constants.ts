@@ -1,5 +1,5 @@
 /**
- * CogCommit CLI Constants
+ * Tuhnr CLI Constants
  *
  * Centralized constants used across the CLI application.
  */

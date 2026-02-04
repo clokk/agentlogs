@@ -19,14 +19,14 @@ export function registerAuthCommands(program: Command): void {
       try {
         if (!isCloudAvailable()) {
           console.error("Cloud sync is not configured.");
-          console.error("Set COGCOMMIT_SUPABASE_URL and COGCOMMIT_SUPABASE_ANON_KEY environment variables.");
+          console.error("Set TUHNR_SUPABASE_URL and TUHNR_SUPABASE_ANON_KEY environment variables.");
           process.exit(1);
         }
 
         if (isAuthenticated()) {
           const user = getCurrentUser();
           console.log(`Already logged in as ${user?.githubUsername}`);
-          console.log("Use 'cogcommit logout' to switch accounts.");
+          console.log("Use 'tuhnr logout' to switch accounts.");
           return;
         }
 
@@ -34,9 +34,9 @@ export function registerAuthCommands(program: Command): void {
         const user = await login();
         console.log(`\nLogged in as ${user.githubUsername}`);
         console.log("\nYou can now sync your conversations:");
-        console.log("  cogcommit push    # Push local commits to cloud");
-        console.log("  cogcommit pull    # Pull commits from cloud");
-        console.log("  cogcommit sync    # Bidirectional sync");
+        console.log("  tuhnr push    # Push local commits to cloud");
+        console.log("  tuhnr pull    # Pull commits from cloud");
+        console.log("  tuhnr sync    # Bidirectional sync");
       } catch (error) {
         console.error(`Login failed: ${(error as Error).message}`);
         process.exit(1);
@@ -68,7 +68,7 @@ export function registerAuthCommands(program: Command): void {
     .action(() => {
       if (!isAuthenticated()) {
         console.log("Not logged in.");
-        console.log("Run 'cogcommit login' to authenticate with GitHub.");
+        console.log("Run 'tuhnr login' to authenticate with GitHub.");
         return;
       }
 

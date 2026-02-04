@@ -6,7 +6,7 @@
 import { Command } from "commander";
 import * as readline from "readline";
 import { ensureGlobalStorageDir } from "../config";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 
 export function registerPruneCommand(program: Command): void {
   program
@@ -28,7 +28,7 @@ export function registerPruneCommand(program: Command): void {
       }
 
       const storagePath = ensureGlobalStorageDir();
-      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+      const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
       try {
         const beforeDate = parseDate(options.before);

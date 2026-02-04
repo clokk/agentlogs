@@ -4,7 +4,7 @@
 
 import { getAuthenticatedClient, loadAuthTokens, getMachineId, refreshTokenIfNeeded } from "./client";
 import cliProgress from "cli-progress";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import type { CognitiveCommit, Session, Turn } from "../models/types";
 import type { SyncResult } from "./types";
 
@@ -12,7 +12,7 @@ import type { SyncResult } from "./types";
  * Pull commits from cloud that are newer than local
  */
 export async function pullFromCloud(
-  db: CogCommitDB,
+  db: TuhnrDB,
   options: { verbose?: boolean } = {}
 ): Promise<SyncResult> {
   const result: SyncResult = {
@@ -163,7 +163,7 @@ export async function pullFromCloud(
  * Create a new local commit from cloud data
  */
 async function createLocalCommit(
-  db: CogCommitDB,
+  db: TuhnrDB,
   cloudCommit: CloudCommitWithRelations
 ): Promise<void> {
   const commit: CognitiveCommit = {
@@ -210,7 +210,7 @@ async function createLocalCommit(
  * Update an existing local commit with cloud data
  */
 async function updateLocalCommit(
-  db: CogCommitDB,
+  db: TuhnrDB,
   localId: string,
   cloudCommit: CloudCommitWithRelations
 ): Promise<void> {
@@ -258,7 +258,7 @@ async function updateLocalCommit(
  * Pull soft-deleted commits from cloud
  */
 async function pullDeletedCommits(
-  db: CogCommitDB,
+  db: TuhnrDB,
   supabase: ReturnType<typeof getAuthenticatedClient>,
   userId: string,
   lastSyncAt: string,
@@ -291,7 +291,7 @@ async function pullDeletedCommits(
  * Download visuals from cloud storage
  */
 export async function pullVisuals(
-  db: CogCommitDB,
+  db: TuhnrDB,
   commitId: string,
   options: { verbose?: boolean } = {}
 ): Promise<{ downloaded: number; errors: string[] }> {

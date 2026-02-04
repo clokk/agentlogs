@@ -1,10 +1,10 @@
 {
-  "name": "cogcommit",
+  "name": "tuhnr",
   "version": "0.1.0",
-  "description": "Document your AI-assisted development with cognitive commits",
+  "description": "Track your AI coding sessions",
   "main": "dist/index.js",
   "bin": {
-    "cogcommit": "./dist/index.js"
+    "tuhnr": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc && npm run build:studio",

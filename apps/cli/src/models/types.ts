@@ -1,5 +1,5 @@
 /**
- * Output types for CogCommit
+ * Output types for Tuhnr
  * Represents the structured cognitive commit data
  */
 

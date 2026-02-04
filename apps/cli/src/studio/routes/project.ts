@@ -4,7 +4,7 @@
 
 import { Hono } from "hono";
 import { loadConfig } from "../../config";
-import { CogCommitDB } from "../../storage/db";
+import { TuhnrDB } from "../../storage/db";
 import { countTurns } from "../../utils/turns";
 
 interface ProjectRouteOptions {
@@ -17,7 +17,7 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
 
   // GET /api/project - Get project info and stats
   app.get("/", async (c) => {
-    const db = new CogCommitDB(storagePath, dbOptions);
+    const db = new TuhnrDB(storagePath, dbOptions);
 
     try {
       const commits = db.commits.getAll();
@@ -70,7 +70,7 @@ export function createProjectRoutes(storagePath: string, options: ProjectRouteOp
       return c.json({ projects: [] });
     }
 
-    const db = new CogCommitDB(storagePath, dbOptions);
+    const db = new TuhnrDB(storagePath, dbOptions);
 
     try {
       const projects = db.commits.getDistinctProjects();

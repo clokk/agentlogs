@@ -1,13 +1,13 @@
 /**
- * Configuration management for CogCommit
- * Handles project-level config stored in .cogcommit/config.json
+ * Configuration management for Tuhnr
+ * Handles project-level config stored in .tuhnr/config.json
  */
 
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 
-export interface CogCommitConfig {
+export interface TuhnrConfig {
   projectName: string;
   projectPath: string;
   claudeProjectPath: string;
@@ -16,12 +16,12 @@ export interface CogCommitConfig {
   storage: "local" | "cloud";
 }
 
-const CONFIG_DIR = ".cogcommit";
+const CONFIG_DIR = ".tuhnr";
 const CONFIG_FILE = "config.json";
 const DAEMON_PID_FILE = "daemon.pid";
 
 /**
- * Get the .cogcommit directory path for a project
+ * Get the .tuhnr directory path for a project
  */
 export function getConfigDir(projectPath: string): string {
   return path.join(projectPath, CONFIG_DIR);
@@ -51,17 +51,17 @@ export function isInitialized(projectPath: string): boolean {
 /**
  * Load config from project directory
  */
-export function loadConfig(projectPath: string): CogCommitConfig {
+export function loadConfig(projectPath: string): TuhnrConfig {
   const configPath = getConfigPath(projectPath);
 
   if (!fs.existsSync(configPath)) {
     throw new Error(
-      `Project not initialized. Run 'cogcommit init' first.`
+      `Project not initialized. Run 'tuhnr init' first.`
     );
   }
 
   const content = fs.readFileSync(configPath, "utf-8");
-  return JSON.parse(content) as CogCommitConfig;
+  return JSON.parse(content) as TuhnrConfig;
 }
 
 /**
@@ -69,7 +69,7 @@ export function loadConfig(projectPath: string): CogCommitConfig {
  */
 export function saveConfig(
   projectPath: string,
-  config: CogCommitConfig
+  config: TuhnrConfig
 ): void {
   const configDir = getConfigDir(projectPath);
   const configPath = getConfigPath(projectPath);
@@ -160,8 +160,8 @@ export function detectDevServerPort(projectPath: string): number | undefined {
  */
 export function initializeProject(
   projectPath: string,
-  options: Partial<CogCommitConfig> = {}
-): CogCommitConfig {
+  options: Partial<TuhnrConfig> = {}
+): TuhnrConfig {
   const resolvedPath = path.resolve(projectPath);
   const projectName = options.projectName || path.basename(resolvedPath);
   const claudeProjectPath =
@@ -173,7 +173,7 @@ export function initializeProject(
     );
   }
 
-  const config: CogCommitConfig = {
+  const config: TuhnrConfig = {
     projectName,
     projectPath: resolvedPath,
     claudeProjectPath,
@@ -184,14 +184,14 @@ export function initializeProject(
 
   saveConfig(resolvedPath, config);
 
-  // Add .cogcommit to .gitignore if not already
+  // Add .tuhnr to .gitignore if not already
   addToGitignore(resolvedPath);
 
   return config;
 }
 
 /**
- * Add .cogcommit to .gitignore
+ * Add .tuhnr to .gitignore
  */
 function addToGitignore(projectPath: string): void {
   const gitignorePath = path.join(projectPath, ".gitignore");
@@ -203,7 +203,7 @@ function addToGitignore(projectPath: string): void {
   const content = fs.readFileSync(gitignorePath, "utf-8");
 
   if (!content.includes(CONFIG_DIR)) {
-    fs.appendFileSync(gitignorePath, `\n# CogCommit\n${CONFIG_DIR}/\n`);
+    fs.appendFileSync(gitignorePath, `\n# Tuhnr\n${CONFIG_DIR}/\n`);
   }
 }
 
@@ -218,7 +218,7 @@ export function getStorageDir(projectPath: string): string {
     .update(projectPath)
     .digest("hex")
     .substring(0, 12);
-  return path.join(home, ".cogcommit", hash);
+  return path.join(home, ".tuhnr", hash);
 }
 
 /**
@@ -301,7 +301,7 @@ export function isDaemonRunning(projectPath: string): boolean {
  */
 export function getGlobalStorageDir(): string {
   const home = process.env.HOME || "";
-  return path.join(home, ".cogcommit", "global");
+  return path.join(home, ".tuhnr", "global");
 }
 
 /**

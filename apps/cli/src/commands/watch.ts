@@ -13,8 +13,8 @@ import {
   removeDaemonPid,
   getStorageDir,
 } from "../config";
-import { CogCommitDB } from "../storage/db";
-import { CogCommitDaemon } from "../daemon";
+import { TuhnrDB } from "../storage/db";
+import { TuhnrDaemon } from "../daemon";
 import { captureScreenshot } from "../daemon/capturer";
 import { getBestCaptureUrl } from "../utils/server-detect";
 
@@ -31,14 +31,14 @@ export function registerWatchCommands(program: Command): void {
         const projectPath = process.cwd();
 
         if (!isInitialized(projectPath)) {
-          console.error("Project not initialized. Run 'cogcommit init' first.");
+          console.error("Project not initialized. Run 'tuhnr init' first.");
           process.exit(1);
         }
 
         if (isDaemonRunning(projectPath)) {
           const pid = readDaemonPid(projectPath);
           console.log(`Daemon already running (PID: ${pid})`);
-          console.log("Use 'cogcommit stop' to stop it first.");
+          console.log("Use 'tuhnr stop' to stop it first.");
           process.exit(1);
         }
 
@@ -46,7 +46,7 @@ export function registerWatchCommands(program: Command): void {
           // Run in foreground
           console.log("Starting daemon in foreground (Ctrl+C to stop)...\n");
 
-          const daemon = new CogCommitDaemon(projectPath, {
+          const daemon = new TuhnrDaemon(projectPath, {
             verbose: options.verbose,
             captureEnabled: options.capture !== false,
           });
@@ -76,8 +76,8 @@ export function registerWatchCommands(program: Command): void {
           child.unref();
 
           console.log(`Daemon started in background (PID: ${child.pid})`);
-          console.log("Use 'cogcommit status' to check status");
-          console.log("Use 'cogcommit stop' to stop the daemon");
+          console.log("Use 'tuhnr status' to check status");
+          console.log("Use 'tuhnr stop' to stop the daemon");
         }
       } catch (error) {
         console.error(`Error: ${(error as Error).message}`);
@@ -149,7 +149,7 @@ export function registerWatchCommands(program: Command): void {
         const projectPath = process.cwd();
 
         if (!isInitialized(projectPath)) {
-          console.error("Project not initialized. Run 'cogcommit init' first.");
+          console.error("Project not initialized. Run 'tuhnr init' first.");
           process.exit(1);
         }
 
@@ -157,7 +157,7 @@ export function registerWatchCommands(program: Command): void {
         const running = isDaemonRunning(projectPath);
         const pid = readDaemonPid(projectPath);
 
-        console.log(`\nCogCommit Status`);
+        console.log(`\nTuhnr Status`);
         console.log(`${"─".repeat(40)}`);
         console.log(`Project: ${config.projectName}`);
         console.log(`Status: ${running ? "Running" : "Stopped"}`);
@@ -167,7 +167,7 @@ export function registerWatchCommands(program: Command): void {
         }
 
         // Open DB to get stats
-        const db = new CogCommitDB(projectPath);
+        const db = new TuhnrDB(projectPath);
         const commitCount = db.commits.getCount();
         const lastActivity = db.daemonState.getLastActivity();
         db.close();
@@ -204,7 +204,7 @@ export function registerWatchCommands(program: Command): void {
         const projectPath = process.cwd();
 
         if (!isInitialized(projectPath)) {
-          console.error("Project not initialized. Run 'cogcommit init' first.");
+          console.error("Project not initialized. Run 'tuhnr init' first.");
           process.exit(1);
         }
 
@@ -242,7 +242,7 @@ export function registerWatchCommands(program: Command): void {
 
         // If daemon is running and we have a current commit, attach the visual
         if (isDaemonRunning(projectPath)) {
-          const db = new CogCommitDB(projectPath);
+          const db = new TuhnrDB(projectPath);
           const currentCommitId = db.daemonState.getCurrentCommitId();
           if (currentCommitId) {
             db.visuals.create(currentCommitId, "screenshot", outputPath, "Manual capture");

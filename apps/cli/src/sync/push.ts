@@ -3,7 +3,7 @@
  */
 
 import { getAuthenticatedClient, getMachineId, loadAuthTokens, refreshTokenIfNeeded } from "./client";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import type { CognitiveCommit } from "../models/types";
 import type { SyncResult } from "./types";
 import { v5 as uuidv5 } from "uuid";
@@ -53,7 +53,7 @@ function toUuid(id: string): string {
  * Push pending local commits to cloud
  */
 export async function pushToCloud(
-  db: CogCommitDB,
+  db: TuhnrDB,
   options: PushOptions = {}
 ): Promise<SyncResult> {
   const result: SyncResult = {
@@ -142,7 +142,7 @@ export async function pushToCloud(
   if (pendingCommits.length > remainingSlots && usage.tier === "free") {
     if (remainingSlots === 0) {
       console.log(`\n  Cloud full (${usage.commitCount}/${usage.commitLimit} commits)`);
-      console.log(`   Upgrade at cogcommit.com/pro for unlimited sync\n`);
+      console.log(`   Upgrade at tuhnr.com/pro for unlimited sync\n`);
       return result;
     }
 
@@ -362,7 +362,7 @@ async function pushSession(
  * Push visuals to cloud storage
  */
 export async function pushVisuals(
-  db: CogCommitDB,
+  db: TuhnrDB,
   commitId: string,
   options: { verbose?: boolean } = {}
 ): Promise<{ uploaded: number; errors: string[] }> {

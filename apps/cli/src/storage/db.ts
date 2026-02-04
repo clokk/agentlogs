@@ -1,5 +1,5 @@
 /**
- * SQLite database wrapper for CogCommit
+ * SQLite database wrapper for Tuhnr
  * Uses repository pattern for organized data access
  */
 
@@ -22,7 +22,7 @@ export interface DBOptions {
   rawStoragePath?: boolean;
 }
 
-export class CogCommitDB {
+export class TuhnrDB {
   private db: Database.Database;
   private projectPath: string;
 

@@ -1,5 +1,5 @@
 /**
- * CogCommit Studio - Web-based curation interface
+ * Tuhnr Studio - Web-based curation interface
  */
 
 import { serve } from "@hono/node-server";
@@ -40,7 +40,7 @@ export async function startStudio(
     port,
   });
 
-  console.log(`\nCogCommit Studio`);
+  console.log(`\nTuhnr Studio`);
   console.log(`${"─".repeat(40)}`);
   console.log(`Mode: ${options.global ? "Global" : "Project"}`);
   console.log(`Project: ${projectName}`);

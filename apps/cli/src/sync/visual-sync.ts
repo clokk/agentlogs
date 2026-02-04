@@ -5,7 +5,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { getAuthenticatedClient, loadAuthTokens, isAuthenticated } from "./client";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 
 // Cache TTL for downloaded visuals (24 hours)
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
@@ -24,7 +24,7 @@ interface VisualInfo {
  * Upload a visual to cloud storage
  */
 export async function uploadVisual(
-  db: CogCommitDB,
+  db: TuhnrDB,
   visualId: string
 ): Promise<string | null> {
   const tokens = loadAuthTokens();
@@ -130,7 +130,7 @@ export async function downloadVisual(
  * Get a visual, downloading from cloud if necessary
  */
 export async function getVisual(
-  db: CogCommitDB,
+  db: TuhnrDB,
   visualId: string
 ): Promise<{ path: string; fromCloud: boolean }> {
   const visual = db.visuals.get(visualId);
@@ -166,7 +166,7 @@ export async function getVisual(
  * Sync all visuals for a commit
  */
 export async function syncVisualsForCommit(
-  db: CogCommitDB,
+  db: TuhnrDB,
   commitId: string,
   direction: "push" | "pull" | "both" = "both"
 ): Promise<{ uploaded: number; downloaded: number; errors: string[] }> {
@@ -208,9 +208,9 @@ export async function syncVisualsForCommit(
 /**
  * Clean up old cached visuals
  */
-export function cleanupVisualCache(db: CogCommitDB, maxAgeDays = 30): number {
+export function cleanupVisualCache(db: TuhnrDB, maxAgeDays = 30): number {
   const home = process.env.HOME || "";
-  const cacheDir = path.join(home, ".cogcommit", "visual-cache");
+  const cacheDir = path.join(home, ".tuhnr", "visual-cache");
 
   if (!fs.existsSync(cacheDir)) {
     return 0;
@@ -257,7 +257,7 @@ function getMimeType(ext: string): string {
  * Check if visuals need syncing
  */
 export function getVisualSyncStatus(
-  db: CogCommitDB,
+  db: TuhnrDB,
   commitId: string
 ): { pending: number; synced: number; missing: number } {
   const visuals = db.visuals.getForCommit(commitId);

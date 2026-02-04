@@ -1,5 +1,5 @@
 /**
- * Entry processor for CogCommit daemon
+ * Entry processor for Tuhnr daemon
  * Processes new log entries, detects commits, triggers captures
  */
 
@@ -27,9 +27,9 @@ import {
   extractEditFilePath,
   extractWriteFilePath,
 } from "../utils/git";
-import type { CogCommitDB } from "../storage/db";
+import type { TuhnrDB } from "../storage/db";
 import type { ScreenshotCapturer } from "./capturer";
-import type { CogCommitConfig } from "../config";
+import type { TuhnrConfig } from "../config";
 import type { SyncQueue } from "../sync/queue";
 
 export interface ProcessorOptions {
@@ -51,15 +51,15 @@ interface ProcessorState {
 }
 
 export class EntryProcessor {
-  private db: CogCommitDB;
+  private db: TuhnrDB;
   private capturer: ScreenshotCapturer | null;
-  private config: CogCommitConfig;
+  private config: TuhnrConfig;
   private options: ProcessorOptions;
   private state: ProcessorState;
 
   constructor(
-    db: CogCommitDB,
-    config: CogCommitConfig,
+    db: TuhnrDB,
+    config: TuhnrConfig,
     capturer: ScreenshotCapturer | null,
     options: ProcessorOptions = {}
   ) {

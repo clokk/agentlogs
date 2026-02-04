@@ -1,5 +1,5 @@
 /**
- * SQLite schema definitions for CogCommit
+ * SQLite schema definitions for Tuhnr
  */
 
 export const SCHEMA_VERSION = 10;

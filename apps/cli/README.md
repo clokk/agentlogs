@@ -1,6 +1,6 @@
-# CogCommit CLI
+# Tuhnr CLI
 
-The command-line interface for CogCommit.
+The command-line interface for Tuhnr - track your AI coding sessions.
 
 ## Development
 
@@ -13,7 +13,7 @@ The command-line interface for CogCommit.
 
 ```bash
 # From repo root
-pnpm build --filter=cogcommit
+pnpm build --filter=tuhnr
 
 # Or from this directory
 pnpm build
@@ -30,7 +30,7 @@ This runs two build steps:
 node dist/index.js --help
 
 # Or use pnpm dev from repo root
-pnpm dev --filter=cogcommit
+pnpm dev --filter=tuhnr
 ```
 
 ### Testing the Studio Dashboard
@@ -77,7 +77,7 @@ src/
 Uses the repository pattern for data access:
 
 ```typescript
-const db = new CogCommitDB(projectPath);
+const db = new TuhnrDB(projectPath);
 
 // Commits
 db.commits.get(id);
@@ -118,36 +118,43 @@ These don't count against your limit and aren't synced to cloud.
 
 ### Push Options
 
+The `push` command now automatically imports from Claude Code before pushing to cloud:
+
 ```bash
-# Push with progress bar (default)
-cogcommit push
+# Import from Claude and push to cloud (default behavior)
+tuhnr push
 
 # Verbose mode (shows each commit, disables progress bar)
-cogcommit push --verbose
+tuhnr push --verbose
 
 # Preview what would be pushed
-cogcommit push --dry-run
+tuhnr push --dry-run
 
 # Force re-push all commits (resets sync status)
-cogcommit push --force
+tuhnr push --force
 
 # Retry previously failed commits
-cogcommit push --retry
+tuhnr push --retry
+
+# Skip import step (push existing commits only)
+tuhnr push --skip-import
 ```
 
 ### Cloud Management
 
 ```bash
 # Delete all your cloud data (requires confirmation)
-cogcommit cloud clear
+tuhnr cloud clear
 
 # Skip confirmation (for scripts)
-cogcommit cloud clear --yes
+tuhnr cloud clear --yes
 ```
 
 ## Import Command
 
-The import command reads Claude Code session logs and converts them to cognitive commits.
+The import command reads Claude Code session logs and converts them to cognitive commits in the local database.
+
+Use `tuhnr push` to both import and push to cloud, or `tuhnr import` for local-only import.
 
 ### Smart Project Detection
 
@@ -159,15 +166,15 @@ Commits are automatically assigned to projects based on where file operations ac
 - Highest-scoring project wins
 - Falls back to Claude session directory if no file operations
 
-**Example:** A session started in `claudeverse` but with most edits in `cogcommit` will be correctly tagged as a `cogcommit` commit.
+**Example:** A session started in `claudeverse` but with most edits in `tuhnr` will be correctly tagged as a `tuhnr` commit.
 
 ### Import Options
 
 ```bash
-cogcommit import                   # Import all Claude Code projects (default)
-cogcommit import --project         # Import current project only (requires init)
-cogcommit import --clear           # Clear existing commits before importing
-cogcommit import --redetect        # Re-run project detection on existing commits
+tuhnr import                   # Import all Claude Code projects (default)
+tuhnr import --project         # Import current project only (requires init)
+tuhnr import --clear           # Clear existing commits before importing
+tuhnr import --redetect        # Re-run project detection on existing commits
 ```
 
 ### Re-detecting Projects
@@ -175,7 +182,7 @@ cogcommit import --redetect        # Re-run project detection on existing commit
 If you have existing commits with incorrect project assignments, use `--redetect` to re-run the smart detection algorithm:
 
 ```bash
-cogcommit import --redetect
+tuhnr import --redetect
 ```
 
 This scans all existing commits and updates their project assignments based on the file operations recorded in each commit.
@@ -187,35 +194,35 @@ This scans all existing commits and updates their project assignments based on t
 ### Statistics
 
 ```bash
-cogcommit stats                    # Overall statistics
-cogcommit stats --project myproj   # Project-specific stats
-cogcommit stats --json             # JSON output
+tuhnr stats                    # Overall statistics
+tuhnr stats --project myproj   # Project-specific stats
+tuhnr stats --json             # JSON output
 ```
 
 ### Export
 
 ```bash
-cogcommit export                           # JSON to stdout
-cogcommit export -o backup.json            # Save to file
-cogcommit export --format=markdown         # Markdown format
-cogcommit export --project myproj --limit 10
+tuhnr export                           # JSON to stdout
+tuhnr export -o backup.json            # Save to file
+tuhnr export --format=markdown         # Markdown format
+tuhnr export --project myproj --limit 10
 ```
 
 ### Search
 
 ```bash
-cogcommit search "keyword"                 # Search all content
-cogcommit search "error" --project myproj  # Filter by project
-cogcommit search "API" --limit 50          # Limit results
+tuhnr search "keyword"                 # Search all content
+tuhnr search "error" --project myproj  # Filter by project
+tuhnr search "API" --limit 50          # Limit results
 ```
 
 ### Prune
 
 ```bash
-cogcommit prune --before 30d --dry-run     # Preview deletions
-cogcommit prune --before 2024-01-01        # Delete before date
-cogcommit prune --before 7d --project old  # Project-specific
-cogcommit prune --before 90d --yes         # Skip confirmation
+tuhnr prune --before 30d --dry-run     # Preview deletions
+tuhnr prune --before 2024-01-01        # Delete before date
+tuhnr prune --before 7d --project old  # Project-specific
+tuhnr prune --before 90d --yes         # Skip confirmation
 ```
 
 ## Publishing
@@ -226,4 +233,4 @@ pnpm build
 npm publish
 ```
 
-The package is published as `cogcommit` on npm.
+The package is published as `tuhnr` on npm.

@@ -5,7 +5,7 @@
 
 import { Command } from "commander";
 import { ensureGlobalStorageDir } from "../config";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 
 export function registerStatsCommand(program: Command): void {
   program
@@ -15,7 +15,7 @@ export function registerStatsCommand(program: Command): void {
     .option("--json", "Output as JSON")
     .action(async (options) => {
       const storagePath = ensureGlobalStorageDir();
-      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+      const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
       try {
         const stats = db.commits.getStats(options.project);
@@ -23,7 +23,7 @@ export function registerStatsCommand(program: Command): void {
         if (options.json) {
           console.log(JSON.stringify(stats, null, 2));
         } else {
-          console.log("\nCogCommit Statistics\n");
+          console.log("\nTuhnr Statistics\n");
           console.log(`Total commits:     ${stats.totalCommits}`);
           console.log(`Total sessions:    ${stats.totalSessions}`);
           console.log(`Total turns:       ${stats.totalTurns}`);

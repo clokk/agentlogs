@@ -8,9 +8,10 @@ import * as path from "path";
 import type { AuthTokens, UserProfile } from "./types";
 
 // Supabase project configuration
-// Default to production cogcommit.com backend, can be overridden for development
-export const SUPABASE_URL = process.env.COGCOMMIT_SUPABASE_URL || "https://wiucvdinjmrcveoqbhjd.supabase.co";
-export const SUPABASE_ANON_KEY = process.env.COGCOMMIT_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdWN2ZGluam1yY3Zlb3FiaGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4OTgwNjIsImV4cCI6MjA4NTQ3NDA2Mn0.z_GJGe6sZ2GOB68ukUmujA_H5DPxX1DXp5TGN3jZ94Y";
+// Default to production tuhnr.com backend, can be overridden for development
+// Supports both TUHNR_* (preferred) and COGCOMMIT_* (legacy) env vars
+export const SUPABASE_URL = process.env.TUHNR_SUPABASE_URL || process.env.COGCOMMIT_SUPABASE_URL || "https://wiucvdinjmrcveoqbhjd.supabase.co";
+export const SUPABASE_ANON_KEY = process.env.TUHNR_SUPABASE_ANON_KEY || process.env.COGCOMMIT_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdWN2ZGluam1yY3Zlb3FiaGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4OTgwNjIsImV4cCI6MjA4NTQ3NDA2Mn0.z_GJGe6sZ2GOB68ukUmujA_H5DPxX1DXp5TGN3jZ94Y";
 
 const AUTH_FILE = "auth.json";
 
@@ -19,7 +20,7 @@ const AUTH_FILE = "auth.json";
  */
 export function getAuthFilePath(): string {
   const home = process.env.HOME || "";
-  return path.join(home, ".cogcommit", AUTH_FILE);
+  return path.join(home, ".tuhnr", AUTH_FILE);
 }
 
 /**
@@ -98,7 +99,7 @@ let supabaseClient: SupabaseClient | null = null;
 export function getSupabaseClient(): SupabaseClient {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     throw new Error(
-      "Supabase not configured. Set COGCOMMIT_SUPABASE_URL and COGCOMMIT_SUPABASE_ANON_KEY environment variables."
+      "Supabase not configured. Set TUHNR_SUPABASE_URL and TUHNR_SUPABASE_ANON_KEY environment variables."
     );
   }
 
@@ -128,7 +129,7 @@ export function getAuthenticatedClient(): SupabaseClient {
   const tokens = loadAuthTokens();
 
   if (!tokens) {
-    throw new Error("Not authenticated. Run 'cogcommit login' first.");
+    throw new Error("Not authenticated. Run 'tuhnr login' first.");
   }
 
   return getSupabaseClient();
@@ -158,7 +159,7 @@ export { refreshTokenIfNeeded } from "./auth";
  */
 export function getMachineId(): string {
   const home = process.env.HOME || "";
-  const machineIdPath = path.join(home, ".cogcommit", "machine-id");
+  const machineIdPath = path.join(home, ".tuhnr", "machine-id");
 
   if (fs.existsSync(machineIdPath)) {
     return fs.readFileSync(machineIdPath, "utf-8").trim();

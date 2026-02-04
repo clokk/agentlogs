@@ -18,7 +18,7 @@ export function registerCloudCommands(program: Command): void {
     .action(async (options) => {
       const tokens = loadAuthTokens();
       if (!tokens) {
-        console.error("Not logged in. Run 'cogcommit login' first.");
+        console.error("Not logged in. Run 'tuhnr login' first.");
         process.exit(1);
       }
 

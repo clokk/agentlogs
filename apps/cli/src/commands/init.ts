@@ -1,5 +1,5 @@
 /**
- * Init command - Initialize CogCommit for a project
+ * Init command - Initialize Tuhnr for a project
  */
 
 import { Command } from "commander";
@@ -14,7 +14,7 @@ import {
 export function registerInitCommand(program: Command): void {
   program
     .command("init")
-    .description("Initialize CogCommit for this project")
+    .description("Initialize Tuhnr for this project")
     .option("-n, --name <name>", "Project name (defaults to directory name)")
     .option("-c, --claude-path <path>", "Claude project path (auto-detected if not specified)")
     .option("-p, --port <port>", "Dev server port", parseInt)
@@ -50,8 +50,8 @@ export function registerInitCommand(program: Command): void {
           captureEnabled: options.capture !== false,
         });
 
-        console.log(`Initialized CogCommit for: ${config.projectName}`);
-        console.log(`\nConfig created at: .cogcommit/config.json`);
+        console.log(`Initialized Tuhnr for: ${config.projectName}`);
+        console.log(`\nConfig created at: .tuhnr/config.json`);
         console.log(`\nSettings:`);
         console.log(`  Claude path: ${config.claudeProjectPath}`);
         console.log(`  Dev server port: ${config.devServerPort || "auto-detect"}`);
@@ -59,7 +59,7 @@ export function registerInitCommand(program: Command): void {
         console.log(`\nStorage directory: ${getStorageDir(projectPath)}`);
         console.log(`\nNext steps:`);
         console.log(`  1. Start your dev server`);
-        console.log(`  2. Run: cogcommit watch`);
+        console.log(`  2. Run: tuhnr watch`);
       } catch (error) {
         console.error(`Error: ${(error as Error).message}`);
         process.exit(1);

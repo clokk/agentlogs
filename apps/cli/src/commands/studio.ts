@@ -26,7 +26,7 @@ export function registerStudioCommand(program: Command): void {
           const projectPath = process.cwd();
 
           if (!isInitialized(projectPath)) {
-            console.error("Project not initialized. Run 'cogcommit init' first.");
+            console.error("Project not initialized. Run 'tuhnr init' first.");
             console.error("\nTip: Run without --project to see all your cognitive commits.");
             process.exit(1);
           }

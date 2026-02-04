@@ -1,18 +1,18 @@
 /**
- * CogCommit Daemon
+ * Tuhnr Daemon
  * Main daemon module that orchestrates watching, processing, and capturing
  */
 
 import { SessionWatcher, createWatcher } from "./watcher";
 import { EntryProcessor } from "./processor";
 import { ScreenshotCapturer } from "./capturer";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import {
   loadConfig,
   writeDaemonPid,
   removeDaemonPid,
   isDaemonRunning,
-  type CogCommitConfig,
+  type TuhnrConfig,
 } from "../config";
 import type { LogEntry } from "../parser/types";
 
@@ -21,9 +21,9 @@ export interface DaemonOptions {
   captureEnabled?: boolean;
 }
 
-export class CogCommitDaemon {
-  private config: CogCommitConfig;
-  private db: CogCommitDB;
+export class TuhnrDaemon {
+  private config: TuhnrConfig;
+  private db: TuhnrDB;
   private watcher: SessionWatcher | null = null;
   private processor: EntryProcessor;
   private capturer: ScreenshotCapturer | null = null;
@@ -35,7 +35,7 @@ export class CogCommitDaemon {
     this.options = options;
 
     // Initialize storage
-    this.db = new CogCommitDB(this.config.projectPath);
+    this.db = new TuhnrDB(this.config.projectPath);
 
     // Initialize capturer if enabled
     const captureEnabled =
@@ -193,7 +193,7 @@ export class CogCommitDaemon {
   /**
    * Get database instance (for CLI status commands)
    */
-  getDb(): CogCommitDB {
+  getDb(): TuhnrDB {
     return this.db;
   }
 
@@ -222,7 +222,7 @@ export async function runDaemon(
   projectPath: string,
   options: DaemonOptions = {}
 ): Promise<void> {
-  const daemon = new CogCommitDaemon(projectPath, options);
+  const daemon = new TuhnrDaemon(projectPath, options);
   await daemon.start();
 
   // Keep process alive

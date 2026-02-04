@@ -1,5 +1,5 @@
 /**
- * API client for CogCommit Studio
+ * API client for Tuhnr Studio
  */
 
 import type { CognitiveCommit, UsageData, WeeklySummaryStats } from "@cogcommit/types";

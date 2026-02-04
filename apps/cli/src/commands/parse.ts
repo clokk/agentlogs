@@ -145,7 +145,7 @@ function outputSummary(result: ParseResult): void {
 
 function outputPretty(result: ParseResult): void {
   console.log(`\n╔════════════════════════════════════════════════════════════╗`);
-  console.log(`║  COGCOMMIT: ${result.project.padEnd(42)}║`);
+  console.log(`║  TUHNR: ${result.project.padEnd(42)}║`);
   console.log(`╚════════════════════════════════════════════════════════════╝\n`);
 
   console.log(`📊 Summary`);

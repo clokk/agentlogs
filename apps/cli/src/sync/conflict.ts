@@ -2,14 +2,14 @@
  * Conflict detection and resolution for sync
  */
 
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import { getAuthenticatedClient, loadAuthTokens } from "./client";
 import type { ConflictInfo, SyncResult } from "./types";
 
 /**
  * Get all commits with conflicts
  */
-export function getConflicts(db: CogCommitDB): ConflictInfo[] {
+export function getConflicts(db: TuhnrDB): ConflictInfo[] {
   const conflictCommits = db.commits.getBySyncStatus("conflict");
 
   return conflictCommits.map((commit) => ({
@@ -27,7 +27,7 @@ export function getConflicts(db: CogCommitDB): ConflictInfo[] {
  * Resolve a conflict by keeping local changes
  */
 export async function resolveKeepLocal(
-  db: CogCommitDB,
+  db: TuhnrDB,
   localId: string
 ): Promise<void> {
   const commit = db.commits.get(localId);
@@ -46,7 +46,7 @@ export async function resolveKeepLocal(
  * Resolve a conflict by accepting cloud changes
  */
 export async function resolveKeepCloud(
-  db: CogCommitDB,
+  db: TuhnrDB,
   localId: string
 ): Promise<void> {
   const tokens = loadAuthTokens();
@@ -107,7 +107,7 @@ export async function resolveKeepCloud(
  * Compares updated_at timestamps and keeps the newer version
  */
 export async function autoResolveConflicts(
-  db: CogCommitDB,
+  db: TuhnrDB,
   options: { verbose?: boolean } = {}
 ): Promise<SyncResult> {
   const result: SyncResult = {
@@ -176,13 +176,13 @@ export async function autoResolveConflicts(
 /**
  * Get conflict count
  */
-export function getConflictCount(db: CogCommitDB): number {
+export function getConflictCount(db: TuhnrDB): number {
   return db.commits.getBySyncStatus("conflict").length;
 }
 
 /**
  * Check if there are any conflicts
  */
-export function hasConflicts(db: CogCommitDB): boolean {
+export function hasConflicts(db: TuhnrDB): boolean {
   return getConflictCount(db) > 0;
 }

@@ -4,7 +4,7 @@
 
 import { Command } from "commander";
 import { ensureGlobalStorageDir } from "../config";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import {
   isAuthenticated,
   sync,
@@ -12,25 +12,37 @@ import {
   pushToCloud,
   pullFromCloud,
 } from "../sync";
+import { importSessions } from "./import";
 
 export function registerSyncCommands(program: Command): void {
   program
     .command("push")
-    .description("Push local commits to cloud")
+    .description("Import Claude sessions and push to cloud")
     .option("-v, --verbose", "Show verbose output (disables progress bar)")
     .option("-f, --force", "Reset sync status and re-push all commits")
     .option("-n, --dry-run", "Show what would be pushed without pushing")
     .option("-r, --retry", "Retry previously failed commits")
+    .option("--skip-import", "Skip automatic import (push existing commits only)")
     .action(async (options) => {
       try {
         if (!isAuthenticated()) {
-          console.error("Not logged in. Run 'cogcommit login' first.");
+          console.error("Not logged in. Run 'tuhnr login' first.");
           process.exit(1);
         }
 
         const storagePath = ensureGlobalStorageDir();
-        const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+        const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
+        // Step 1: Import from Claude Code (unless --skip-import)
+        if (!options.skipImport) {
+          console.log("Importing from Claude Code...\n");
+          const importResult = await importSessions(db, { verbose: options.verbose });
+
+          console.log("─".repeat(40));
+          console.log(`Import: ${importResult.imported} new, ${importResult.skipped} existing\n`);
+        }
+
+        // Step 2: Push to cloud
         if (!options.dryRun) {
           console.log("Pushing to cloud...");
         }
@@ -48,7 +60,7 @@ export function registerSyncCommands(program: Command): void {
           console.log(`\nPush complete:`);
           console.log(`  Pushed: ${result.pushed} commits`);
           if (result.conflicts > 0) {
-            console.log(`  Conflicts: ${result.conflicts} (run 'cogcommit sync' to resolve)`);
+            console.log(`  Conflicts: ${result.conflicts} (run 'tuhnr sync' to resolve)`);
           }
           if (result.errors.length > 0) {
             console.log(`  Errors: ${result.errors.length}`);
@@ -70,12 +82,12 @@ export function registerSyncCommands(program: Command): void {
     .action(async (options) => {
       try {
         if (!isAuthenticated()) {
-          console.error("Not logged in. Run 'cogcommit login' first.");
+          console.error("Not logged in. Run 'tuhnr login' first.");
           process.exit(1);
         }
 
         const storagePath = ensureGlobalStorageDir();
-        const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+        const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
         console.log("Pulling from cloud...");
         const result = await pullFromCloud(db, { verbose: options.verbose });
@@ -85,7 +97,7 @@ export function registerSyncCommands(program: Command): void {
         console.log(`\nPull complete:`);
         console.log(`  Pulled: ${result.pulled} commits`);
         if (result.conflicts > 0) {
-          console.log(`  Conflicts: ${result.conflicts} (run 'cogcommit sync' to resolve)`);
+          console.log(`  Conflicts: ${result.conflicts} (run 'tuhnr sync' to resolve)`);
         }
         if (result.errors.length > 0) {
           console.log(`  Errors: ${result.errors.length}`);
@@ -107,7 +119,7 @@ export function registerSyncCommands(program: Command): void {
     .action(async (options) => {
       try {
         const storagePath = ensureGlobalStorageDir();
-        const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+        const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
         if (options.status) {
           const status = getSyncStatus(db);
@@ -124,7 +136,7 @@ export function registerSyncCommands(program: Command): void {
         }
 
         if (!isAuthenticated()) {
-          console.error("Not logged in. Run 'cogcommit login' first.");
+          console.error("Not logged in. Run 'tuhnr login' first.");
           db.close();
           process.exit(1);
         }

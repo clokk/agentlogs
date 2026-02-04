@@ -10,9 +10,120 @@ import {
   discoverAllClaudeProjects,
   getProjectNameFromClaudePath,
 } from "../config";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import { parseProject, analyzeSentiment, analyzeTurn } from "../parser/index";
 import { detectPrimaryProject } from "../utils/project";
+
+export interface ImportResult {
+  imported: number;
+  skipped: number;
+  projectCount: number;
+}
+
+/**
+ * Core import logic - imports Claude Code sessions into the database.
+ * Used by both `import` command and `push` command.
+ */
+export async function importSessions(
+  db: TuhnrDB,
+  options: { verbose?: boolean; quiet?: boolean } = {}
+): Promise<ImportResult> {
+  const claudePaths = discoverAllClaudeProjects();
+
+  if (!options.quiet) {
+    console.log(`Found ${claudePaths.length} Claude Code projects\n`);
+  }
+
+  if (claudePaths.length === 0) {
+    return { imported: 0, skipped: 0, projectCount: 0 };
+  }
+
+  let totalImported = 0;
+  let totalSkipped = 0;
+
+  for (const claudePath of claudePaths) {
+    const claudeProjectName = getProjectNameFromClaudePath(claudePath);
+
+    if (!options.quiet) {
+      console.log(`Importing: ${claudeProjectName}`);
+      if (options.verbose) {
+        console.log(`  Path: ${claudePath}`);
+      }
+    }
+
+    // Parse the sessions
+    const result = await parseProject(claudePath, { verbose: false });
+
+    if (result.cognitiveCommits.length === 0) {
+      if (!options.quiet) {
+        console.log("  No commits found\n");
+      }
+      continue;
+    }
+
+    if (!options.quiet) {
+      console.log(`  Found ${result.cognitiveCommits.length} commits, ${result.totalTurns} turns`);
+    }
+
+    // Import commits
+    let imported = 0;
+    let skipped = 0;
+
+    for (const commit of result.cognitiveCommits) {
+      // Check if commit already exists
+      const existing = db.commits.get(commit.id) ||
+        (commit.gitHash ? db.commits.getByGitHash(commit.gitHash) : null);
+
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      // Detect primary project from file operations
+      commit.projectName = detectPrimaryProject(
+        commit.filesRead,
+        commit.filesChanged,
+        claudeProjectName
+      );
+
+      // Calculate turn-level sentiment and add to turns
+      for (const session of commit.sessions) {
+        for (const turn of session.turns) {
+          if (turn.role === "user") {
+            const turnSentiment = analyzeTurn(turn.content);
+            turn.hasRejection = turnSentiment.hasRejection;
+            turn.hasApproval = turnSentiment.hasApproval;
+            turn.isQuestion = turnSentiment.isQuestion;
+            turn.hasCodeBlock = turnSentiment.hasCodeBlock;
+            turn.charCount = turnSentiment.charCount;
+          }
+        }
+      }
+
+      // Calculate commit-level sentiment from turns
+      const allTurns = commit.sessions.flatMap((s) => s.turns);
+      const sentiment = analyzeSentiment(allTurns);
+      commit.rejectionCount = sentiment.rejectionCount;
+      commit.approvalCount = sentiment.approvalCount;
+      commit.sentimentLabel = sentiment.label;
+
+      db.commits.insert(commit);
+      imported++;
+    }
+
+    if (!options.quiet) {
+      console.log(`  Imported: ${imported}, Skipped: ${skipped}\n`);
+    }
+    totalImported += imported;
+    totalSkipped += skipped;
+  }
+
+  return {
+    imported: totalImported,
+    skipped: totalSkipped,
+    projectCount: claudePaths.length,
+  };
+}
 
 export function registerImportCommand(program: Command): void {
   program
@@ -33,7 +144,7 @@ export function registerImportCommand(program: Command): void {
           const projectPath = process.cwd();
 
           if (!isInitialized(projectPath)) {
-            console.error("Project not initialized. Run 'cogcommit init' first.");
+            console.error("Project not initialized. Run 'tuhnr init' first.");
             console.error("\nTip: Run without --project to import all your Claude history.");
             process.exit(1);
           }
@@ -55,7 +166,7 @@ export function registerImportCommand(program: Command): void {
         }
 
         // Open database (global mode is default, project mode uses rawStoragePath: false)
-        const db = new CogCommitDB(storagePath, { rawStoragePath: !options.project });
+        const db = new TuhnrDB(storagePath, { rawStoragePath: !options.project });
 
         // Handle --redetect: re-run project detection on existing commits
         if (options.redetect) {
@@ -189,9 +300,9 @@ export function registerImportCommand(program: Command): void {
         console.log();
 
         if (options.project) {
-          console.log("Import complete! Run 'cogcommit dashboard --project' to view.");
+          console.log("Import complete! Run 'tuhnr dashboard --project' to view.");
         } else {
-          console.log("Import complete! Run 'cogcommit dashboard' to view.");
+          console.log("Import complete! Run 'tuhnr dashboard' to view.");
         }
       } catch (error) {
         console.error(`Error: ${(error as Error).message}`);

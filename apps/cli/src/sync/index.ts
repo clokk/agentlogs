@@ -1,5 +1,5 @@
 /**
- * Cloud sync module for CogCommit
+ * Cloud sync module for Tuhnr
  *
  * Provides:
  * - GitHub OAuth authentication
@@ -68,7 +68,7 @@ export {
  * Performs a full bidirectional sync
  */
 export async function sync(
-  db: import("../storage/db").CogCommitDB,
+  db: import("../storage/db").TuhnrDB,
   options: { verbose?: boolean } = {}
 ): Promise<import("./types").SyncResult> {
   const { pushToCloud } = await import("./push");
@@ -108,7 +108,7 @@ export async function sync(
  * Get sync status summary
  */
 export function getSyncStatus(
-  db: import("../storage/db").CogCommitDB
+  db: import("../storage/db").TuhnrDB
 ): import("./types").SyncState {
   const { isAuthenticated: checkAuth } = require("./client");
 

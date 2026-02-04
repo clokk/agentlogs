@@ -3,7 +3,7 @@
  */
 
 import { EventEmitter } from "events";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 import { pushToCloud, pushVisuals } from "./push";
 import { pullFromCloud } from "./pull";
 import { autoResolveConflicts, hasConflicts } from "./conflict";
@@ -26,7 +26,7 @@ export interface SyncQueueOptions {
 }
 
 export class SyncQueue extends EventEmitter {
-  private db: CogCommitDB;
+  private db: TuhnrDB;
   private options: SyncQueueOptions;
   private syncTimeout: NodeJS.Timeout | null = null;
   private isRunning = false;
@@ -34,7 +34,7 @@ export class SyncQueue extends EventEmitter {
   private retryCount = 0;
   private lastSyncResult: SyncResult | null = null;
 
-  constructor(db: CogCommitDB, options: SyncQueueOptions = {}) {
+  constructor(db: TuhnrDB, options: SyncQueueOptions = {}) {
     super();
     this.db = db;
     this.options = {
@@ -259,7 +259,7 @@ export class SyncQueue extends EventEmitter {
 let syncQueueInstance: SyncQueue | null = null;
 
 export function getSyncQueue(
-  db: CogCommitDB,
+  db: TuhnrDB,
   options?: SyncQueueOptions
 ): SyncQueue {
   if (!syncQueueInstance) {

@@ -5,7 +5,7 @@
 
 import { Command } from "commander";
 import { ensureGlobalStorageDir } from "../config";
-import { CogCommitDB } from "../storage/db";
+import { TuhnrDB } from "../storage/db";
 
 export function registerSearchCommand(program: Command): void {
   program
@@ -15,7 +15,7 @@ export function registerSearchCommand(program: Command): void {
     .option("--limit <n>", "Limit results", parseInt, 20)
     .action(async (query, options) => {
       const storagePath = ensureGlobalStorageDir();
-      const db = new CogCommitDB(storagePath, { rawStoragePath: true });
+      const db = new TuhnrDB(storagePath, { rawStoragePath: true });
 
       try {
         const results = db.turns.search(query, {

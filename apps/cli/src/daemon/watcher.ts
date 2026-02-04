@@ -7,7 +7,7 @@ import * as chokidar from "chokidar";
 import * as fs from "fs";
 import * as readline from "readline";
 import type { LogEntry } from "../parser/types";
-import type { CogCommitDB } from "../storage/db";
+import type { TuhnrDB } from "../storage/db";
 
 export interface WatcherOptions {
   onNewEntries: (entries: LogEntry[], filePath: string) => void;
@@ -18,13 +18,13 @@ export interface WatcherOptions {
 export class SessionWatcher {
   private watcher: chokidar.FSWatcher | null = null;
   private claudeProjectPath: string;
-  private db: CogCommitDB;
+  private db: TuhnrDB;
   private options: WatcherOptions;
   private filePositions: Map<string, number> = new Map();
 
   constructor(
     claudeProjectPath: string,
-    db: CogCommitDB,
+    db: TuhnrDB,
     options: WatcherOptions
   ) {
     this.claudeProjectPath = claudeProjectPath;
@@ -236,7 +236,7 @@ export class SessionWatcher {
  */
 export function createWatcher(
   claudeProjectPath: string,
-  db: CogCommitDB,
+  db: TuhnrDB,
   options: WatcherOptions
 ): SessionWatcher {
   const watcher = new SessionWatcher(claudeProjectPath, db, options);
