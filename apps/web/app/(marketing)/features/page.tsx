@@ -17,7 +17,7 @@ export default function FeaturesPage() {
             </h2>
             <div className="bg-panel rounded-lg p-6 border border-border">
               <p className="text-primary mb-4">
-                The CogCommit CLI automatically discovers and imports your
+                The Tuhnr CLI automatically discovers and imports your
                 Claude Code conversation logs. Just point it at your project
                 directory and it handles the rest.
               </p>
@@ -124,7 +124,7 @@ export default function FeaturesPage() {
               <ul className="space-y-2 text-muted">
                 <li className="flex items-start gap-2">
                   <span className="text-chronicle-green mt-1">-</span>
-                  Run {`\`cogcommit dashboard\``} to launch locally
+                  Run {`\`tuhnr dashboard\``} to launch locally
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-chronicle-green mt-1">-</span>

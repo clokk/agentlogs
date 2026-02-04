@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPublicCommit } from "@cogcommit/supabase/queries";
 
 export const runtime = "nodejs";
-export const alt = "CogCommit - AI-assisted development conversation";
+export const alt = "Tuhnr - AI-assisted development conversation";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -290,7 +290,7 @@ export default async function OgImage({ params }: Props) {
             </div>
           </div>
 
-          {/* CogCommit branding */}
+          {/* Tuhnr branding */}
           <div
             style={{
               display: "flex",
@@ -306,7 +306,7 @@ export default async function OgImage({ params }: Props) {
                 color: colors.primary,
               }}
             >
-              CogCommit
+              Tuhnr
             </span>
           </div>
         </div>

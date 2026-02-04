@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPublicCommit } from "@cogcommit/supabase/queries";
 
 export const runtime = "nodejs";
-export const alt = "CogCommit - AI-assisted development conversation";
+export const alt = "Tuhnr - AI-assisted development conversation";
 // Twitter uses 2:1 aspect ratio for summary_large_image
 export const size = { width: 1200, height: 600 };
 export const contentType = "image/png";
@@ -285,7 +285,7 @@ export default async function TwitterImage({ params }: Props) {
             </div>
           </div>
 
-          {/* CogCommit branding */}
+          {/* Tuhnr branding */}
           <div
             style={{
               display: "flex",
@@ -301,7 +301,7 @@ export default async function TwitterImage({ params }: Props) {
                 color: colors.primary,
               }}
             >
-              CogCommit
+              Tuhnr
             </span>
           </div>
         </div>

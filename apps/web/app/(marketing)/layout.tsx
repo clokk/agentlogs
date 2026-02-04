@@ -67,7 +67,7 @@ export default async function MarketingLayout({
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 bg-chronicle-blue text-black rounded-lg font-medium hover:bg-chronicle-blue/90 transition-colors"
+                className="px-4 py-2 bg-panel text-primary rounded-lg font-medium border border-border hover:bg-panel-alt transition-colors"
               >
                 Sign In
               </Link>

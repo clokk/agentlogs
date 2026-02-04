@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPublicProfile } from "@cogcommit/supabase/queries";
 
 export const runtime = "nodejs";
-export const alt = "CogCommit - User Profile";
+export const alt = "Tuhnr - User Profile";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -143,7 +143,7 @@ export default async function OgImage({ params }: Props) {
                   color: colors.muted,
                 }}
               >
-                CogCommit Profile
+                Tuhnr Profile
               </div>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default async function OgImage({ params }: Props) {
               color: colors.primary,
             }}
           >
-            CogCommit
+            Tuhnr
           </span>
         </div>
       </div>

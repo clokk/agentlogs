@@ -30,7 +30,7 @@ export default function CommitListView({ commits }: CommitListViewProps) {
         </div>
         <h2 className="text-lg font-medium text-primary mb-2">No commits yet</h2>
         <p className="text-muted max-w-md mx-auto mb-6">
-          Install the CogCommit CLI and sync your Claude Code conversations to
+          Install the Tuhnr CLI and sync your Claude Code conversations to
           see them here.
         </p>
         <a

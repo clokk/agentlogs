@@ -28,9 +28,9 @@ function LoginContent() {
     <div className="min-h-screen flex items-center justify-center bg-panel-alt">
       <div className="w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">CogCommit</h1>
+          <h1 className="text-3xl font-bold text-primary mb-2">Tuhnr</h1>
           <p className="text-muted">
-            Document your AI-assisted development
+            Track your AI coding journey
           </p>
         </div>
 
@@ -64,7 +64,7 @@ function LoginContent() {
         </div>
 
         <p className="mt-6 text-sm text-muted text-center">
-          New to CogCommit?{" "}
+          New to Tuhnr?{" "}
           <a href="/" className="text-chronicle-blue hover:underline">
             Learn more
           </a>

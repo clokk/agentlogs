@@ -39,7 +39,7 @@ export default function PublicPageHeader({ user }: PublicPageHeaderProps) {
     <header className="border-b border-border">
       <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold text-primary">
-          CogCommit
+          Tuhnr
         </Link>
 
         {user ? (

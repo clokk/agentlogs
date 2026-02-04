@@ -4,7 +4,7 @@ export default function DocsPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-primary mb-4">Documentation</h1>
         <p className="text-xl text-muted mb-12">
-          Get started with CogCommit in minutes.
+          Get started with Tuhnr in minutes.
         </p>
 
         {/* Quick Start */}
@@ -19,12 +19,12 @@ export default function DocsPage() {
               </h3>
               <div className="bg-bg rounded-lg p-4 font-mono text-sm">
                 <span className="text-chronicle-green">$</span>{" "}
-                <span className="text-primary">npm install -g cogcommit</span>
+                <span className="text-primary">npm install -g tuhnr</span>
               </div>
               <p className="text-muted mt-2">
                 Or use npx to run without installing:{" "}
                 <code className="bg-panel px-1 rounded">
-                  npx cogcommit --help
+                  npx tuhnr --help
                 </code>
               </p>
             </div>
@@ -36,7 +36,7 @@ export default function DocsPage() {
               </h3>
               <div className="bg-bg rounded-lg p-4 font-mono text-sm">
                 <span className="text-chronicle-green">$</span>{" "}
-                <span className="text-primary">cogcommit import</span>
+                <span className="text-primary">tuhnr import</span>
               </div>
               <p className="text-muted mt-2">
                 This scans for Claude Code sessions and imports them into your
@@ -51,7 +51,7 @@ export default function DocsPage() {
               </h3>
               <div className="bg-bg rounded-lg p-4 font-mono text-sm">
                 <span className="text-chronicle-green">$</span>{" "}
-                <span className="text-primary">cogcommit dashboard</span>
+                <span className="text-primary">tuhnr dashboard</span>
               </div>
               <p className="text-muted mt-2">
                 Opens the local dashboard in your browser at{" "}
@@ -69,11 +69,11 @@ export default function DocsPage() {
               <div className="bg-bg rounded-lg p-4 font-mono text-sm space-y-2">
                 <p>
                   <span className="text-chronicle-green">$</span>{" "}
-                  <span className="text-primary">cogcommit login</span>
+                  <span className="text-primary">tuhnr login</span>
                 </p>
                 <p>
                   <span className="text-chronicle-green">$</span>{" "}
-                  <span className="text-primary">cogcommit push</span>
+                  <span className="text-primary">tuhnr push</span>
                 </p>
               </div>
               <p className="text-muted mt-2">
@@ -92,7 +92,7 @@ export default function DocsPage() {
 
           <div className="space-y-6">
             <CommandDoc
-              command="cogcommit import"
+              command="tuhnr import"
               description="Import Claude Code sessions from all projects"
               options={[
                 { flag: "--clear", desc: "Clear existing commits before importing" },
@@ -101,7 +101,7 @@ export default function DocsPage() {
             />
 
             <CommandDoc
-              command="cogcommit dashboard"
+              command="tuhnr dashboard"
               description="Launch the local web UI to browse your commits"
               options={[
                 { flag: "--port <port>", desc: "Port to run on (default: 4747)" },
@@ -109,19 +109,19 @@ export default function DocsPage() {
             />
 
             <CommandDoc
-              command="cogcommit login"
+              command="tuhnr login"
               description="Authenticate with GitHub for cloud sync"
               options={[]}
             />
 
             <CommandDoc
-              command="cogcommit logout"
+              command="tuhnr logout"
               description="Clear stored authentication tokens"
               options={[]}
             />
 
             <CommandDoc
-              command="cogcommit push"
+              command="tuhnr push"
               description="Push local commits to the cloud"
               options={[
                 { flag: "-v, --verbose", desc: "Show verbose output" },
@@ -132,7 +132,7 @@ export default function DocsPage() {
             />
 
             <CommandDoc
-              command="cogcommit pull"
+              command="tuhnr pull"
               description="Pull commits from the cloud"
               options={[
                 { flag: "-v, --verbose", desc: "Show verbose output" },
@@ -140,7 +140,7 @@ export default function DocsPage() {
             />
 
             <CommandDoc
-              command="cogcommit stats"
+              command="tuhnr stats"
               description="View commit statistics"
               options={[
                 { flag: "--project <name>", desc: "Filter by project" },
@@ -149,7 +149,7 @@ export default function DocsPage() {
             />
 
             <CommandDoc
-              command="cogcommit search <query>"
+              command="tuhnr search <query>"
               description="Search through your conversations"
               options={[
                 { flag: "--project <name>", desc: "Filter by project" },
@@ -158,7 +158,7 @@ export default function DocsPage() {
             />
 
             <CommandDoc
-              command="cogcommit export"
+              command="tuhnr export"
               description="Export commits to JSON or Markdown"
               options={[
                 { flag: "-o, --output <file>", desc: "Output file path" },
@@ -211,17 +211,17 @@ export default function DocsPage() {
 
           <div className="bg-panel rounded-lg p-6 border border-border">
             <p className="text-primary mb-4">
-              CogCommit stores its data in{" "}
-              <code className="bg-panel px-1 rounded">~/.cogcommit/</code>:
+              Tuhnr stores its data in{" "}
+              <code className="bg-panel px-1 rounded">~/.tuhnr/</code>:
             </p>
 
             <div className="bg-bg rounded-lg p-4 font-mono text-sm">
               <p className="text-muted"># Data storage</p>
-              <p className="text-primary">~/.cogcommit/global/data.db</p>
+              <p className="text-primary">~/.tuhnr/global/data.db</p>
               <p className="text-muted mt-4"># Authentication</p>
-              <p className="text-primary">~/.cogcommit/auth.json</p>
+              <p className="text-primary">~/.tuhnr/auth.json</p>
               <p className="text-muted mt-4"># Machine ID</p>
-              <p className="text-primary">~/.cogcommit/machine-id</p>
+              <p className="text-primary">~/.tuhnr/machine-id</p>
             </div>
           </div>
         </section>

@@ -84,19 +84,19 @@ export default async function SettingsPage() {
           <h2 className="text-lg font-medium text-primary mb-4">CLI Setup</h2>
           <div className="bg-panel rounded-lg p-6">
             <p className="text-primary mb-4">
-              Use the CogCommit CLI to sync your local cognitive commits
+              Use the Tuhnr CLI to sync your local cognitive commits
               to the cloud.
             </p>
 
             <div className="bg-bg rounded-lg p-4 font-mono text-sm">
               <p className="text-muted mb-2"># Install the CLI</p>
               <p className="text-chronicle-green">
-                npm install -g cogcommit
+                npm install -g tuhnr
               </p>
               <p className="text-muted mt-4 mb-2"># Login with GitHub</p>
-              <p className="text-chronicle-green">cogcommit login</p>
+              <p className="text-chronicle-green">tuhnr login</p>
               <p className="text-muted mt-4 mb-2"># Push your commits</p>
-              <p className="text-chronicle-green">cogcommit push</p>
+              <p className="text-chronicle-green">tuhnr push</p>
             </div>
           </div>
         </section>

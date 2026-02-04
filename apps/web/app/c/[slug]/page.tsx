@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const result = await getPublicCommit(supabase, slug);
     if (!result) {
       return {
-        title: "Commit Not Found | CogCommit",
+        title: "Commit Not Found | Tuhnr",
       };
     }
 
@@ -28,24 +28,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const description = `AI-assisted development conversation by ${author.username}`;
 
     return {
-      title: `${title} | CogCommit`,
+      title: `${title} | Tuhnr`,
       description,
       openGraph: {
-        title: `${title} | CogCommit`,
+        title: `${title} | Tuhnr`,
         description,
         type: "article",
-        siteName: "CogCommit",
+        siteName: "Tuhnr",
         url: `/c/${slug}`,
       },
       twitter: {
         card: "summary_large_image",
-        title: `${title} | CogCommit`,
+        title: `${title} | Tuhnr`,
         description,
       },
     };
   } catch {
     return {
-      title: "Commit Not Found | CogCommit",
+      title: "Commit Not Found | Tuhnr",
     };
   }
 }
@@ -93,12 +93,12 @@ export default async function PublicCommitPage({ params }: Props) {
             <p className="text-muted text-sm">
               Document your AI-assisted development with{" "}
               <Link href="/" className="text-chronicle-blue hover:underline">
-                CogCommit
+                Tuhnr
               </Link>
             </p>
             <div className="flex items-center gap-4 text-muted text-sm">
               <a
-                href="https://github.com/clokk/cogcommit"
+                href="https://github.com/clokk/tuhnr"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"

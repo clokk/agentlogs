@@ -3,10 +3,10 @@ import { NextResponse } from "next/server";
 import { getPublicCommit } from "@cogcommit/supabase/queries";
 
 /**
- * oEmbed endpoint for CogCommit commits
+ * oEmbed endpoint for Tuhnr commits
  *
  * Supports URLs like:
- * - https://cogcommit.com/c/{slug}
+ * - https://tuhnr.com/c/{slug}
  *
  * Query params:
  * - url: The URL to get oEmbed data for (required)
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
 
   if (!pathMatch) {
     return NextResponse.json(
-      { error: "Invalid CogCommit URL. Expected format: https://cogcommit.com/c/{slug}" },
+      { error: "Invalid Tuhnr URL. Expected format: https://tuhnr.com/c/{slug}" },
       { status: 400 }
     );
   }
@@ -73,15 +73,15 @@ export async function GET(request: Request) {
     const oembedResponse = {
       version: "1.0",
       type: "rich",
-      provider_name: "CogCommit",
-      provider_url: "https://cogcommit.com",
+      provider_name: "Tuhnr",
+      provider_url: "https://tuhnr.com",
       title,
       author_name: author.username,
-      author_url: `https://cogcommit.com/u/${author.username}`,
+      author_url: `https://tuhnr.com/u/${author.username}`,
       width,
       height,
-      html: `<iframe src="https://cogcommit.com/embed/${slug}?view=card&theme=dark" width="${width}" height="200" frameborder="0" style="border-radius: 8px; overflow: hidden;"></iframe>`,
-      thumbnail_url: `https://cogcommit.com/c/${slug}/opengraph-image`,
+      html: `<iframe src="https://tuhnr.com/embed/${slug}?view=card&theme=dark" width="${width}" height="200" frameborder="0" style="border-radius: 8px; overflow: hidden;"></iframe>`,
+      thumbnail_url: `https://tuhnr.com/c/${slug}/opengraph-image`,
       thumbnail_width: 1200,
       thumbnail_height: 630,
     };

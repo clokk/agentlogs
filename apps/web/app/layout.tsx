@@ -15,10 +15,10 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "CogCommit - Document Your AI-Assisted Development",
+  title: "Tuhnr - Track Your AI Coding",
   description:
-    "Track, visualize, and share your cognitive commits. A cognitive commit captures the reasoning, exploration, and decisions that led to the code.",
-  keywords: ["AI", "coding", "cognitive commits", "Claude", "development", "documentation"],
+    "The free, fun way to track your AI coding. Build streaks, hit goals, and see your progress over time.",
+  keywords: ["AI", "coding", "tracking", "Claude", "Cursor", "streaks", "analytics"],
 };
 
 export default function RootLayout({

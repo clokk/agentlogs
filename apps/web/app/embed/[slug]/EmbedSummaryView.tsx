@@ -34,7 +34,7 @@ export default function EmbedSummaryView({
   const preview = getFirstUserMessage(commit);
 
   const handleClick = () => {
-    window.open(`https://cogcommit.com/c/${slug}`, "_blank");
+    window.open(`https://tuhnr.com/c/${slug}`, "_blank");
   };
 
   return (
@@ -158,7 +158,7 @@ export default function EmbedSummaryView({
             transform: "rotate(180deg)",
           }}
         >
-          CogCommit
+          Tuhnr
         </span>
       </div>
     </div>

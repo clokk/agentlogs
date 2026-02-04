@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPublicProfile } from "@cogcommit/supabase/queries";
 
 export const runtime = "nodejs";
-export const alt = "CogCommit - User Profile";
+export const alt = "Tuhnr - User Profile";
 export const size = { width: 1200, height: 600 };
 export const contentType = "image/png";
 
@@ -161,7 +161,7 @@ export default async function TwitterImage({ params }: Props) {
                 color: colors.primary,
               }}
             >
-              CogCommit
+              Tuhnr
             </span>
           </div>
         </div>

@@ -388,7 +388,7 @@ export default function DashboardClient({
                   </div>
                   <h2 className="text-lg font-medium text-primary mb-2">No commits yet</h2>
                   <p className="text-muted max-w-md mx-auto mb-6">
-                    Install the CogCommit CLI and sync your Claude Code conversations to see them here.
+                    Install the Tuhnr CLI and sync your Claude Code conversations to see them here.
                   </p>
                   <a href="/docs" className="inline-flex px-4 py-2 bg-chronicle-blue text-black rounded-lg font-medium hover:bg-chronicle-blue/90 transition-colors">
                     Get Started

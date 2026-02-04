@@ -1,9 +1,9 @@
 /**
- * CogCommit Embed Script
+ * Tuhnr Embed Script
  *
  * Usage:
  * <div class="cogcommit-embed" data-slug="abc12345" data-view="card" data-theme="dark"></div>
- * <script src="https://cogcommit.com/embed.js" async></script>
+ * <script src="https://tuhnr.com/embed.js" async></script>
  *
  * Attributes:
  * - data-slug: The commit slug (required)
@@ -11,11 +11,13 @@
  * - data-theme: Theme - "dark" (default), "light", "auto"
  * - data-height: Height in pixels (for "full" view, default 400)
  * - data-show-author: Show author info - "true" (default), "false"
+ *
+ * Note: The class name "cogcommit-embed" is kept for backwards compatibility.
  */
 (function () {
   "use strict";
 
-  const EMBED_BASE_URL = "https://cogcommit.com/embed";
+  const EMBED_BASE_URL = "https://tuhnr.com/embed";
 
   function initEmbeds() {
     const containers = document.querySelectorAll(".cogcommit-embed");
@@ -28,7 +30,7 @@
 
       const slug = container.dataset.slug;
       if (!slug) {
-        console.error("CogCommit embed: missing data-slug attribute");
+        console.error("Tuhnr embed: missing data-slug attribute");
         return;
       }
 
@@ -80,7 +82,7 @@
         "sandbox",
         "allow-scripts allow-same-origin allow-popups"
       );
-      iframe.setAttribute("title", "CogCommit Embed");
+      iframe.setAttribute("title", "Tuhnr Embed");
 
       // Clear container and add iframe
       container.innerHTML = "";

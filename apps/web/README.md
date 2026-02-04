@@ -1,6 +1,6 @@
-# CogCommit Web
+# Tuhnr Web
 
-The web platform for CogCommit, built with Next.js 14.
+The web platform for Tuhnr, built with Next.js 14.
 
 ## Development
 

@@ -33,7 +33,7 @@ export default function EmbedCardView({
   const title = commit.title || getFirstUserMessage(commit) || "Untitled";
 
   const handleClick = () => {
-    window.open(`https://cogcommit.com/c/${slug}`, "_blank");
+    window.open(`https://tuhnr.com/c/${slug}`, "_blank");
   };
 
   return (
@@ -177,7 +177,7 @@ export default function EmbedCardView({
                 color: "var(--embed-subtle)",
               }}
             >
-              CogCommit
+              Tuhnr
             </span>
           </div>
         </div>

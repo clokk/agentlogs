@@ -90,7 +90,7 @@ export default function EmbedFullView({
   }
 
   const handleOpenFull = () => {
-    window.open(`https://cogcommit.com/c/${slug}`, "_blank");
+    window.open(`https://tuhnr.com/c/${slug}`, "_blank");
   };
 
   return (
@@ -228,7 +228,7 @@ export default function EmbedFullView({
             color: "var(--embed-subtle)",
           }}
         >
-          Powered by CogCommit
+          Powered by Tuhnr
         </span>
       </div>
     </div>
