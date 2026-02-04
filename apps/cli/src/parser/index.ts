@@ -150,5 +150,5 @@ export function discoverProjects(
 
 export { readJsonlFile, listSessionFiles, extractProjectName, extractSessionId } from "./reader";
 export { extractCognitiveCommits, mergeCommitsFromSessions } from "./extractor";
-export { analyzeSentiment, hasRejection, hasApproval, getSentimentLabel } from "./sentiment";
-export type { SentimentResult } from "./sentiment";
+export { analyzeSentiment, analyzeTurn, hasRejection, hasApproval, getSentimentLabel } from "./sentiment";
+export type { SentimentResult, TurnSentiment } from "./sentiment";

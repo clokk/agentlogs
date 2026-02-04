@@ -2,7 +2,7 @@
  * SQLite schema definitions for CogCommit
  */
 
-export const SCHEMA_VERSION = 9;
+export const SCHEMA_VERSION = 10;
 
 export const CREATE_TABLES = `
 -- Cognitive commits (persisted)
@@ -157,6 +157,17 @@ export const MIGRATIONS: { version: number; sql: string }[] = [
       ALTER TABLE cognitive_commits ADD COLUMN rejection_count INTEGER DEFAULT 0;
       ALTER TABLE cognitive_commits ADD COLUMN approval_count INTEGER DEFAULT 0;
       ALTER TABLE cognitive_commits ADD COLUMN sentiment_label TEXT;
+    `,
+  },
+  {
+    version: 10,
+    sql: `
+      -- Turn-level sentiment flags
+      ALTER TABLE turns ADD COLUMN has_rejection INTEGER DEFAULT 0;
+      ALTER TABLE turns ADD COLUMN has_approval INTEGER DEFAULT 0;
+      ALTER TABLE turns ADD COLUMN is_question INTEGER DEFAULT 0;
+      ALTER TABLE turns ADD COLUMN has_code_block INTEGER DEFAULT 0;
+      ALTER TABLE turns ADD COLUMN char_count INTEGER DEFAULT 0;
     `,
   },
 ];

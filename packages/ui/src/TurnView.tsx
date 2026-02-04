@@ -115,6 +115,19 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
           >
             {formatRelativeTime(turn.timestamp)}
           </span>
+          {/* Sentiment indicators */}
+          {turn.hasRejection && (
+            <span
+              className="w-2 h-2 rounded-full bg-red-500"
+              title="Contains rejection"
+            />
+          )}
+          {turn.hasApproval && (
+            <span
+              className="w-2 h-2 rounded-full bg-chronicle-green"
+              title="Contains approval"
+            />
+          )}
           {/* Copy button */}
           <button
             onClick={handleCopy}

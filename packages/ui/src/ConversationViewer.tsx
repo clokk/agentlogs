@@ -306,6 +306,21 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
         .map(({ index }) => index);
     }, [renderItems]);
 
+    // Build arrays of rejection and approval turn indices
+    const rejectionIndices = useMemo(() => {
+      return renderItems
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.type === "turn" && item.turn.hasRejection)
+        .map(({ index }) => index);
+    }, [renderItems]);
+
+    const approvalIndices = useMemo(() => {
+      return renderItems
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.type === "turn" && item.turn.hasApproval)
+        .map(({ index }) => index);
+    }, [renderItems]);
+
     // Track which prompt the user is currently on
     const currentPromptPosition = useMemo(() => {
       for (let i = userPromptIndices.length - 1; i >= 0; i--) {
@@ -399,6 +414,49 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
       scrollToItem(searchMatchIndices[prevIdx]);
     }, [currentMatchIndex, searchMatchIndices, scrollToItem]);
 
+    // Sentiment navigation
+    const goToNextRejection = useCallback(() => {
+      if (rejectionIndices.length === 0) return;
+      const nextIdx = rejectionIndices.find((idx) => idx > currentItemIndex);
+      if (nextIdx !== undefined) {
+        scrollToItem(nextIdx, true);
+      } else {
+        scrollToItem(rejectionIndices[0], true);
+      }
+    }, [rejectionIndices, currentItemIndex, scrollToItem]);
+
+    const goToPrevRejection = useCallback(() => {
+      if (rejectionIndices.length === 0) return;
+      const reversed = [...rejectionIndices].reverse();
+      const prevIdx = reversed.find((idx) => idx < currentItemIndex);
+      if (prevIdx !== undefined) {
+        scrollToItem(prevIdx, true);
+      } else {
+        scrollToItem(rejectionIndices[rejectionIndices.length - 1], true);
+      }
+    }, [rejectionIndices, currentItemIndex, scrollToItem]);
+
+    const goToNextApproval = useCallback(() => {
+      if (approvalIndices.length === 0) return;
+      const nextIdx = approvalIndices.find((idx) => idx > currentItemIndex);
+      if (nextIdx !== undefined) {
+        scrollToItem(nextIdx, true);
+      } else {
+        scrollToItem(approvalIndices[0], true);
+      }
+    }, [approvalIndices, currentItemIndex, scrollToItem]);
+
+    const goToPrevApproval = useCallback(() => {
+      if (approvalIndices.length === 0) return;
+      const reversed = [...approvalIndices].reverse();
+      const prevIdx = reversed.find((idx) => idx < currentItemIndex);
+      if (prevIdx !== undefined) {
+        scrollToItem(prevIdx, true);
+      } else {
+        scrollToItem(approvalIndices[approvalIndices.length - 1], true);
+      }
+    }, [approvalIndices, currentItemIndex, scrollToItem]);
+
     // Update current item based on scroll position
     useEffect(() => {
       const container = conversationRef.current;
@@ -448,12 +506,24 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
           return;
         }
 
-        if (e.key === "j") {
+        if (e.key === "j" && !e.shiftKey) {
           e.preventDefault();
           goToNextItem();
-        } else if (e.key === "k") {
+        } else if (e.key === "k" && !e.shiftKey) {
           e.preventDefault();
           goToPrevItem();
+        } else if (e.key === "J" && e.shiftKey) {
+          e.preventDefault();
+          goToNextRejection();
+        } else if (e.key === "K" && e.shiftKey) {
+          e.preventDefault();
+          goToPrevRejection();
+        } else if (e.key === "H" && e.shiftKey) {
+          e.preventDefault();
+          goToPrevApproval();
+        } else if (e.key === "L" && e.shiftKey) {
+          e.preventDefault();
+          goToNextApproval();
         } else if (e.key === "/" && !e.metaKey && !e.ctrlKey) {
           e.preventDefault();
           const searchInput = document.querySelector<HTMLInputElement>('[data-search-input]');
@@ -463,7 +533,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
 
       window.addEventListener("keydown", handleKeyDown);
       return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [goToNextItem, goToPrevItem]);
+    }, [goToNextItem, goToPrevItem, goToNextRejection, goToPrevRejection, goToNextApproval, goToPrevApproval]);
 
     // Title save handler
     const handleSaveTitle = async () => {
@@ -843,6 +913,52 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
             </button>
           </div>
 
+          {/* Sentiment navigation */}
+          {(rejectionIndices.length > 0 || approvalIndices.length > 0) && (
+            <div className="flex items-center gap-3 border-l border-border pl-4">
+              {rejectionIndices.length > 0 && (
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-red-500" title="Rejections" />
+                  <button
+                    onClick={goToPrevRejection}
+                    className="text-muted hover:text-red-400 transition-colors px-1"
+                    title="Previous rejection (Shift+K)"
+                  >
+                    ◀
+                  </button>
+                  <span className="text-xs text-muted font-mono">{rejectionIndices.length}</span>
+                  <button
+                    onClick={goToNextRejection}
+                    className="text-muted hover:text-red-400 transition-colors px-1"
+                    title="Next rejection (Shift+J)"
+                  >
+                    ▶
+                  </button>
+                </div>
+              )}
+              {approvalIndices.length > 0 && (
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-chronicle-green" title="Approvals" />
+                  <button
+                    onClick={goToPrevApproval}
+                    className="text-muted hover:text-chronicle-green transition-colors px-1"
+                    title="Previous approval (Shift+H)"
+                  >
+                    ◀
+                  </button>
+                  <span className="text-xs text-muted font-mono">{approvalIndices.length}</span>
+                  <button
+                    onClick={goToNextApproval}
+                    className="text-muted hover:text-chronicle-green transition-colors px-1"
+                    title="Next approval (Shift+L)"
+                  >
+                    ▶
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex-1" />
 
           {/* Font size controls */}
@@ -867,7 +983,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
           </div>
 
           <span className="text-xs text-subtle">
-            j/k: prompts · /: search
+            j/k: prompts · J/K: rejections · H/L: approvals · /: search
           </span>
         </div>
 

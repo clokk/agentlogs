@@ -39,6 +39,12 @@ export interface Turn {
   model?: string;
   toolCalls?: ToolCall[];
   triggersVisualUpdate?: boolean;
+  // Turn-level sentiment flags
+  hasRejection?: boolean;
+  hasApproval?: boolean;
+  isQuestion?: boolean;
+  hasCodeBlock?: boolean;
+  charCount?: number;
 }
 
 export interface Session {
@@ -326,6 +332,12 @@ export interface DbTurn {
   version: number;
   updated_at: string;
   deleted_at: string | null;
+  // Turn-level sentiment flags
+  has_rejection: boolean | null;
+  has_approval: boolean | null;
+  is_question: boolean | null;
+  has_code_block: boolean | null;
+  char_count: number | null;
 }
 
 // ============================================

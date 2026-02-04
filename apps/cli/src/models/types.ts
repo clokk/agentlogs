@@ -35,6 +35,12 @@ export interface Turn {
   model?: string;
   toolCalls?: ToolCall[];
   triggersVisualUpdate?: boolean;
+  // Turn-level sentiment flags
+  hasRejection?: boolean;
+  hasApproval?: boolean;
+  isQuestion?: boolean;
+  hasCodeBlock?: boolean;
+  charCount?: number;
 }
 
 export interface Session {

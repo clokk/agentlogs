@@ -88,6 +88,11 @@ export function transformTurn(db: DbTurn): Turn {
     model: db.model ?? undefined,
     toolCalls,
     triggersVisualUpdate: db.triggers_visual,
+    hasRejection: db.has_rejection ?? undefined,
+    hasApproval: db.has_approval ?? undefined,
+    isQuestion: db.is_question ?? undefined,
+    hasCodeBlock: db.has_code_block ?? undefined,
+    charCount: db.char_count ?? undefined,
   };
 }
 

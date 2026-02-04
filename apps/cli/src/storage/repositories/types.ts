@@ -52,6 +52,12 @@ export interface TurnRow {
   tool_calls: string | null;
   triggers_visual: number;
   model: string | null;
+  // Turn-level sentiment flags (v10)
+  has_rejection: number | null;
+  has_approval: number | null;
+  is_question: number | null;
+  has_code_block: number | null;
+  char_count: number | null;
 }
 
 export interface VisualRow {

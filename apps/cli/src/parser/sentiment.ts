@@ -56,6 +56,17 @@ export interface SentimentResult {
 }
 
 /**
+ * Turn-level sentiment analysis result
+ */
+export interface TurnSentiment {
+  hasRejection: boolean;
+  hasApproval: boolean;
+  isQuestion: boolean;
+  hasCodeBlock: boolean;
+  charCount: number;
+}
+
+/**
  * Check if a message matches any rejection pattern
  */
 export function hasRejection(content: string): boolean {
@@ -67,6 +78,19 @@ export function hasRejection(content: string): boolean {
  */
 export function hasApproval(content: string): boolean {
   return APPROVAL_PATTERNS.some((p) => p.test(content));
+}
+
+/**
+ * Analyze a single turn for sentiment flags
+ */
+export function analyzeTurn(content: string): TurnSentiment {
+  return {
+    hasRejection: hasRejection(content),
+    hasApproval: hasApproval(content),
+    isQuestion: /\?/.test(content),
+    hasCodeBlock: /```/.test(content),
+    charCount: content.length,
+  };
 }
 
 /**

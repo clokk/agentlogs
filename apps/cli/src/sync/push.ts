@@ -332,6 +332,11 @@ async function pushSession(
       tool_calls: turn.toolCalls ? JSON.stringify(turn.toolCalls) : null,
       triggers_visual: turn.triggersVisualUpdate || false,
       model: turn.model,
+      has_rejection: turn.hasRejection || false,
+      has_approval: turn.hasApproval || false,
+      is_question: turn.isQuestion || false,
+      has_code_block: turn.hasCodeBlock || false,
+      char_count: turn.charCount || 0,
       version: 1,
       updated_at: new Date().toISOString(),
     }));

@@ -19,8 +19,9 @@ export class TurnsRepository {
   insert(turn: Turn, sessionId: string): void {
     const stmt = this.db.prepare(`
       INSERT OR REPLACE INTO turns
-      (id, session_id, role, content, timestamp, tool_calls, triggers_visual, model)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (id, session_id, role, content, timestamp, tool_calls, triggers_visual, model,
+       has_rejection, has_approval, is_question, has_code_block, char_count)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -31,7 +32,12 @@ export class TurnsRepository {
       turn.timestamp,
       turn.toolCalls ? JSON.stringify(turn.toolCalls) : null,
       turn.triggersVisualUpdate ? 1 : 0,
-      turn.model || null
+      turn.model || null,
+      turn.hasRejection ? 1 : 0,
+      turn.hasApproval ? 1 : 0,
+      turn.isQuestion ? 1 : 0,
+      turn.hasCodeBlock ? 1 : 0,
+      turn.charCount ?? 0
     );
   }
 
@@ -121,6 +127,11 @@ export class TurnsRepository {
       model: row.model || undefined,
       toolCalls: row.tool_calls ? JSON.parse(row.tool_calls) : undefined,
       triggersVisualUpdate: row.triggers_visual === 1 ? true : undefined,
+      hasRejection: row.has_rejection === 1 ? true : undefined,
+      hasApproval: row.has_approval === 1 ? true : undefined,
+      isQuestion: row.is_question === 1 ? true : undefined,
+      hasCodeBlock: row.has_code_block === 1 ? true : undefined,
+      charCount: row.char_count ?? undefined,
     };
   }
 }

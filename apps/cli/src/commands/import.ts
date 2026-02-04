@@ -11,7 +11,7 @@ import {
   getProjectNameFromClaudePath,
 } from "../config";
 import { CogCommitDB } from "../storage/db";
-import { parseProject, analyzeSentiment } from "../parser/index";
+import { parseProject, analyzeSentiment, analyzeTurn } from "../parser/index";
 import { detectPrimaryProject } from "../utils/project";
 
 export function registerImportCommand(program: Command): void {
@@ -149,7 +149,21 @@ export function registerImportCommand(program: Command): void {
               );
             }
 
-            // Calculate sentiment from turns
+            // Calculate turn-level sentiment and add to turns
+            for (const session of commit.sessions) {
+              for (const turn of session.turns) {
+                if (turn.role === "user") {
+                  const turnSentiment = analyzeTurn(turn.content);
+                  turn.hasRejection = turnSentiment.hasRejection;
+                  turn.hasApproval = turnSentiment.hasApproval;
+                  turn.isQuestion = turnSentiment.isQuestion;
+                  turn.hasCodeBlock = turnSentiment.hasCodeBlock;
+                  turn.charCount = turnSentiment.charCount;
+                }
+              }
+            }
+
+            // Calculate commit-level sentiment from turns
             const allTurns = commit.sessions.flatMap((s) => s.turns);
             const sentiment = analyzeSentiment(allTurns);
             commit.rejectionCount = sentiment.rejectionCount;
