@@ -37,6 +37,8 @@ export default function DashboardClient({
 }: DashboardClientProps) {
   // Project filter state
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  // Sentiment filter state
+  const [selectedSentiment, setSelectedSentiment] = useState<string | null>(null);
 
   // React Query for lightweight commit list
   const {
@@ -45,6 +47,7 @@ export default function DashboardClient({
     isLoading: isListLoading,
   } = useCommitList({
     project: selectedProject,
+    sentiment: selectedSentiment,
   });
 
   // React Query for projects
@@ -121,6 +124,12 @@ export default function DashboardClient({
   const handleSelectProject = useCallback((project: string | null) => {
     setSelectedProject(project);
     setSelectedCommitId(null); // Reset selection when changing projects
+  }, []);
+
+  // Handle sentiment selection
+  const handleSelectSentiment = useCallback((sentiment: string | null) => {
+    setSelectedSentiment(sentiment);
+    setSelectedCommitId(null); // Reset selection when changing sentiment filter
   }, []);
 
   // Router for navigation after sign out
@@ -247,6 +256,8 @@ export default function DashboardClient({
         totalCount={totalCount}
         selectedProject={selectedProject}
         onSelectProject={handleSelectProject}
+        selectedSentiment={selectedSentiment}
+        onSelectSentiment={handleSelectSentiment}
         homeHref="/"
         user={{ userName, avatarUrl }}
         settingsHref="/dashboard/settings"

@@ -364,6 +364,7 @@ export interface WeeklySummaryStats {
   weeklyCommitCount: number;
   weeklyPromptCount: number;
   avgPromptsPerCommit: number;
+  weeklyRejectionCount: number;
 }
 
 // ============================================

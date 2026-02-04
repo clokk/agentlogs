@@ -21,8 +21,8 @@ interface CommitDetailResponse {
 export const commitKeys = {
   all: ["commits"] as const,
   lists: () => [...commitKeys.all, "list"] as const,
-  list: (project?: string | null) =>
-    [...commitKeys.lists(), { project: project ?? "all" }] as const,
+  list: (project?: string | null, sentiment?: string | null) =>
+    [...commitKeys.lists(), { project: project ?? "all", sentiment: sentiment ?? "all" }] as const,
   details: () => [...commitKeys.all, "detail"] as const,
   detail: (id: string) => [...commitKeys.details(), id] as const,
 };
@@ -37,6 +37,7 @@ export const usageKeys = {
 
 interface UseCommitListOptions {
   project?: string | null;
+  sentiment?: string | null;
 }
 
 /**
@@ -44,13 +45,15 @@ interface UseCommitListOptions {
  * Returns only summary fields needed for sidebar display.
  * Use useCommitDetail for full commit data with sessions/turns.
  */
-export function useCommitList({ project }: UseCommitListOptions = {}) {
+export function useCommitList({ project, sentiment }: UseCommitListOptions = {}) {
   return useQuery({
-    queryKey: commitKeys.list(project),
+    queryKey: commitKeys.list(project, sentiment),
     queryFn: async (): Promise<CommitListItem[]> => {
-      const url = project
-        ? `/api/commits/list?project=${encodeURIComponent(project)}`
-        : "/api/commits/list";
+      const params = new URLSearchParams();
+      if (project) params.set("project", project);
+      if (sentiment) params.set("sentiment", sentiment);
+      const queryString = params.toString();
+      const url = queryString ? `/api/commits/list?${queryString}` : "/api/commits/list";
       const res = await fetch(url);
       if (!res.ok) {
         throw new Error("Failed to fetch commits");

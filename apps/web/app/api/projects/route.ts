@@ -5,6 +5,7 @@ interface DbCommitMinimal {
   id: string;
   project_name: string | null;
   prompt_count: number | null;
+  rejection_count: number | null;
   closed_at: string;
 }
 
@@ -20,10 +21,10 @@ export async function GET() {
   }
 
   try {
-    // Fetch id, project_name, prompt_count, and closed_at for counting and weekly stats
+    // Fetch id, project_name, prompt_count, rejection_count, and closed_at for counting and weekly stats
     const { data: rawCommits, error } = await supabase
       .from("cognitive_commits")
-      .select(`id, project_name, prompt_count, closed_at`)
+      .select(`id, project_name, prompt_count, rejection_count, closed_at`)
       .eq("user_id", user.id)
       .is("deleted_at", null)
       .eq("hidden", false);
@@ -43,6 +44,7 @@ export async function GET() {
     const weekStartISO = oneWeekAgo.toISOString();
     let weeklyCommitCount = 0;
     let weeklyPromptCount = 0;
+    let weeklyRejectionCount = 0;
 
     for (const commit of (rawCommits as DbCommitMinimal[]) || []) {
       // Filter out 0-turn commits using stored prompt_count
@@ -57,6 +59,7 @@ export async function GET() {
       if (commit.closed_at >= weekStartISO) {
         weeklyCommitCount++;
         weeklyPromptCount += commit.prompt_count;
+        weeklyRejectionCount += commit.rejection_count || 0;
       }
     }
 
@@ -66,6 +69,7 @@ export async function GET() {
       avgPromptsPerCommit: weeklyCommitCount > 0
         ? weeklyPromptCount / weeklyCommitCount
         : 0,
+      weeklyRejectionCount,
     };
 
     // Convert to array and sort by count descending

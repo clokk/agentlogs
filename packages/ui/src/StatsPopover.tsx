@@ -101,6 +101,11 @@ export function StatsPopover({ stats, weeklySummary }: StatsPopoverProps) {
             <div className="text-xs text-muted mt-1">
               avg {weeklySummary.avgPromptsPerCommit.toFixed(1)} prompts/commit
             </div>
+            {weeklySummary.weeklyRejectionCount > 0 && (
+              <div className="text-sm text-red-400 mt-1">
+                {weeklySummary.weeklyRejectionCount} rejections
+              </div>
+            )}
           </div>
 
           {/* Divider */}

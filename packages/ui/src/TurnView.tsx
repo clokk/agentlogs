@@ -83,195 +83,221 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
     };
 
     // Flash highlight: appears instantly, fades out over 0.5s
-    const highlightShadow = "inset 4px 0 16px -2px rgba(61, 132, 168, 0.75)";
-    const noShadow = "inset 4px 0 16px -2px rgba(61, 132, 168, 0)";
+    const highlightShadow = isUser
+      ? "0 0 20px 4px rgba(61, 132, 168, 0.5)"
+      : "0 0 20px 4px rgba(61, 132, 168, 0.3)";
+    const noShadow = "0 0 20px 4px rgba(61, 132, 168, 0)";
 
     return (
       <motion.div
         ref={ref}
-        className={`group rounded-lg p-4 border-l-2 transition-opacity ${
-          isUser
-            ? "bg-chronicle-blue/5 border-chronicle-blue"
-            : "bg-bg/50 border-border"
-        } ${searchTerm && !isMatch ? "opacity-40" : ""}`}
-        animate={{ boxShadow: isHighlighted ? highlightShadow : noShadow }}
-        transition={{
-          duration: isHighlighted ? 0.1 : 0.5,
-          ease: isHighlighted ? "easeOut" : "easeIn",
-        }}
+        className={`flex ${isUser ? "justify-end" : "justify-start"} ${searchTerm && !isMatch ? "opacity-40" : ""}`}
       >
-        {/* Role indicator with model name */}
-        <div className="flex items-center gap-2 mb-2">
-          <span
-            className={`text-sm font-medium ${
-              isUser ? "text-chronicle-blue" : "text-muted"
-            }`}
-          >
-            {isUser ? "User" : formatModelName(turn.model)}
-          </span>
-          <span
-            className="text-xs text-subtle cursor-help"
-            title={formatAbsoluteTime(turn.timestamp)}
-          >
-            {formatRelativeTime(turn.timestamp)}
-          </span>
-          {/* Sentiment indicators */}
-          {turn.hasRejection && (
+        <motion.div
+          className={`group max-w-[80%] rounded-2xl px-4 py-3 ${
+            isUser
+              ? "bg-chronicle-blue text-black rounded-br-md"
+              : "bg-panel border border-border rounded-bl-md"
+          }`}
+          animate={{ boxShadow: isHighlighted ? highlightShadow : noShadow }}
+          transition={{
+            duration: isHighlighted ? 0.1 : 0.5,
+            ease: isHighlighted ? "easeOut" : "easeIn",
+          }}
+        >
+          {/* Role indicator with model name */}
+          <div className="flex items-center gap-2 mb-1">
             <span
-              className="w-2 h-2 rounded-full bg-red-500"
-              title="Contains rejection"
-            />
-          )}
-          {turn.hasApproval && (
-            <span
-              className="w-2 h-2 rounded-full bg-chronicle-green"
-              title="Contains approval"
-            />
-          )}
-          {/* Copy button */}
-          <button
-            onClick={handleCopy}
-            className="ml-auto p-1 text-muted hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
-            title="Copy prompt"
-          >
-            {copied ? (
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="text-chronicle-green"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            ) : (
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="9" y="9" width="13" height="13" rx="2" />
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-              </svg>
-            )}
-          </button>
-        </div>
-
-        {/* Content */}
-        {turn.content && (
-          <div className="relative">
-            <div
-              className="text-primary whitespace-pre-wrap leading-relaxed"
-              style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
+              className={`text-xs font-medium ${
+                isUser ? "text-black/70" : "text-muted"
+              }`}
             >
-              {searchTerm
-                ? highlightMatches(displayContent, searchTerm)
-                : displayContent}
-              {shouldCollapse && !expanded && "..."}
-            </div>
-            {shouldCollapse && !expanded && (
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-bg/80 to-transparent pointer-events-none" />
+              {isUser ? "You" : formatModelName(turn.model)}
+            </span>
+            <span
+              className={`text-xs cursor-help ${isUser ? "text-black/50" : "text-subtle"}`}
+              title={formatAbsoluteTime(turn.timestamp)}
+            >
+              {formatRelativeTime(turn.timestamp)}
+            </span>
+            {/* Sentiment indicators */}
+            {turn.hasRejection && (
+              <span
+                className="w-2 h-2 rounded-full bg-red-500"
+                title="Contains rejection"
+              />
             )}
-          </div>
-        )}
-
-        {/* Show more button */}
-        {shouldCollapse && (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="mt-2 text-chronicle-blue text-sm hover:text-chronicle-blue/80 transition-colors"
-          >
-            {expanded
-              ? "Show less"
-              : `Show more (${turn.content.length.toLocaleString()} chars)`}
-          </button>
-        )}
-
-        {/* Compact tool call pills */}
-        {hasToolCalls && (
-          <div className="mt-3">
-            <div className="flex flex-wrap gap-1">
-              {turn.toolCalls!.map((tc) => (
-                <button
-                  key={tc.id}
-                  title={getToolSummary(tc)}
-                  onClick={() =>
-                    setExpandedToolId(expandedToolId === tc.id ? null : tc.id)
-                  }
-                  className={`px-2 py-0.5 text-xs font-mono rounded cursor-pointer transition-colors
-                    ${
-                      tc.isError
-                        ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                        : "bg-panel text-muted hover:bg-panel-alt"
-                    }
-                    ${expandedToolId === tc.id ? "ring-1 ring-chronicle-blue" : ""}`}
+            {turn.hasApproval && (
+              <span
+                className={`w-2 h-2 rounded-full ${isUser ? "bg-green-600" : "bg-chronicle-green"}`}
+                title="Contains approval"
+              />
+            )}
+            {/* Copy button */}
+            <button
+              onClick={handleCopy}
+              className={`ml-auto p-1 transition-colors opacity-0 group-hover:opacity-100 ${
+                isUser ? "text-black/50 hover:text-black" : "text-muted hover:text-primary"
+              }`}
+              title="Copy prompt"
+            >
+              {copied ? (
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className={isUser ? "text-green-700" : "text-chronicle-green"}
                 >
-                  {tc.name}
-                </button>
-              ))}
-            </div>
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+              )}
+            </button>
+          </div>
 
-            {/* Expanded tool detail */}
-            {expandedToolId && (
-              <div className="mt-2 animate-expand">
-                {turn.toolCalls!
-                  .filter((tc) => tc.id === expandedToolId)
-                  .map((tc) => (
-                    <div
-                      key={tc.id}
-                      className="bg-panel/50 rounded p-3 text-xs font-mono"
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <span
-                          className={`font-medium ${
-                            tc.isError ? "text-red-400" : "text-chronicle-green"
-                          }`}
-                        >
-                          {tc.name}
-                        </span>
-                        {tc.isError && (
-                          <span className="px-1.5 py-0.5 text-xs rounded bg-red-400/20 text-red-400">
-                            error
+          {/* Content */}
+          {turn.content && (
+            <div className="relative">
+              <div
+                className={`whitespace-pre-wrap leading-relaxed ${isUser ? "text-black" : "text-primary"}`}
+                style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
+              >
+                {searchTerm
+                  ? highlightMatches(displayContent, searchTerm)
+                  : displayContent}
+                {shouldCollapse && !expanded && "..."}
+              </div>
+              {shouldCollapse && !expanded && (
+                <div className={`absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t pointer-events-none ${
+                  isUser ? "from-chronicle-blue/80" : "from-panel/80"
+                } to-transparent`} />
+              )}
+            </div>
+          )}
+
+          {/* Show more button */}
+          {shouldCollapse && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className={`mt-2 text-sm transition-colors ${
+                isUser
+                  ? "text-black/70 hover:text-black"
+                  : "text-chronicle-blue hover:text-chronicle-blue/80"
+              }`}
+            >
+              {expanded
+                ? "Show less"
+                : `Show more (${turn.content.length.toLocaleString()} chars)`}
+            </button>
+          )}
+
+          {/* Compact tool call pills */}
+          {hasToolCalls && (
+            <div className="mt-3">
+              <div className="flex flex-wrap gap-1">
+                {turn.toolCalls!.map((tc) => (
+                  <button
+                    key={tc.id}
+                    title={getToolSummary(tc)}
+                    onClick={() =>
+                      setExpandedToolId(expandedToolId === tc.id ? null : tc.id)
+                    }
+                    className={`px-2 py-0.5 text-xs font-mono rounded cursor-pointer transition-colors
+                      ${
+                        tc.isError
+                          ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
+                          : isUser
+                            ? "bg-black/10 text-black/70 hover:bg-black/20"
+                            : "bg-panel-alt text-muted hover:bg-bg"
+                      }
+                      ${expandedToolId === tc.id ? "ring-1 ring-chronicle-blue" : ""}`}
+                  >
+                    {tc.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Expanded tool detail */}
+              {expandedToolId && (
+                <div className="mt-2 animate-expand">
+                  {turn.toolCalls!
+                    .filter((tc) => tc.id === expandedToolId)
+                    .map((tc) => (
+                      <div
+                        key={tc.id}
+                        className={`rounded p-3 text-xs font-mono ${
+                          isUser ? "bg-black/10" : "bg-panel-alt/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className={`font-medium ${
+                              tc.isError
+                                ? "text-red-400"
+                                : isUser
+                                  ? "text-green-700"
+                                  : "text-chronicle-green"
+                            }`}
+                          >
+                            {tc.name}
                           </span>
+                          {tc.isError && (
+                            <span className="px-1.5 py-0.5 text-xs rounded bg-red-400/20 text-red-400">
+                              error
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Input */}
+                        {tc.input && Object.keys(tc.input).length > 0 && (
+                          <details className="mt-1" open>
+                            <summary className={`cursor-pointer ${isUser ? "text-black/60 hover:text-black/80" : "text-muted hover:text-muted"}`}>
+                              Input
+                            </summary>
+                            <pre className={`mt-1 p-2 rounded overflow-x-auto ${
+                              isUser ? "bg-black/10 text-black/70" : "bg-bg text-muted"
+                            }`}>
+                              {formatToolInput(tc.input)}
+                            </pre>
+                          </details>
+                        )}
+
+                        {/* Result */}
+                        {tc.result && (
+                          <details className="mt-1">
+                            <summary className={`cursor-pointer ${isUser ? "text-black/60 hover:text-black/80" : "text-muted hover:text-muted"}`}>
+                              Result
+                            </summary>
+                            <pre className={`mt-1 p-2 rounded overflow-x-auto max-h-40 ${
+                              isUser ? "bg-black/10 text-black/70" : "bg-bg text-muted"
+                            }`}>
+                              {tc.result.length > 500
+                                ? tc.result.substring(0, 500) + "..."
+                                : tc.result}
+                            </pre>
+                          </details>
                         )}
                       </div>
-
-                      {/* Input */}
-                      {tc.input && Object.keys(tc.input).length > 0 && (
-                        <details className="mt-1" open>
-                          <summary className="text-muted cursor-pointer hover:text-muted">
-                            Input
-                          </summary>
-                          <pre className="mt-1 p-2 bg-bg rounded text-muted overflow-x-auto">
-                            {formatToolInput(tc.input)}
-                          </pre>
-                        </details>
-                      )}
-
-                      {/* Result */}
-                      {tc.result && (
-                        <details className="mt-1">
-                          <summary className="text-muted cursor-pointer hover:text-muted">
-                            Result
-                          </summary>
-                          <pre className="mt-1 p-2 bg-bg rounded text-muted overflow-x-auto max-h-40">
-                            {tc.result.length > 500
-                              ? tc.result.substring(0, 500) + "..."
-                              : tc.result}
-                          </pre>
-                        </details>
-                      )}
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-        )}
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
       </motion.div>
     );
   }

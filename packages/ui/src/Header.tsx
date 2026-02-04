@@ -23,6 +23,9 @@ interface HeaderProps {
   totalCount?: number;
   selectedProject?: string | null;
   onSelectProject?: (project: string | null) => void;
+  // Sentiment filter props
+  selectedSentiment?: string | null;
+  onSelectSentiment?: (sentiment: string | null) => void;
   // Web dashboard auth props (optional - not used in local dashboard)
   user?: {
     userName: string;
@@ -46,6 +49,8 @@ export default function Header({
   totalCount,
   selectedProject,
   onSelectProject,
+  selectedSentiment,
+  onSelectSentiment,
   user,
   homeHref,
   settingsHref,
@@ -96,6 +101,27 @@ export default function Header({
                     {p.name} ({p.count})
                   </option>
                 ))}
+              </select>
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+          )}
+
+          {/* Sentiment filter dropdown */}
+          {isGlobal && onSelectSentiment && (
+            <div className="relative">
+              <select
+                value={selectedSentiment || ""}
+                onChange={(e) => onSelectSentiment(e.target.value || null)}
+                className="appearance-none bg-panel border border-border rounded-lg px-3 py-1.5 pr-8 text-sm text-primary focus:border-chronicle-blue focus:outline-none cursor-pointer"
+              >
+                <option value="">All Sentiment</option>
+                <option value="smooth">Smooth</option>
+                <option value="some-iteration">Some Iteration</option>
+                <option value="struggled">Struggled</option>
               </select>
               <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

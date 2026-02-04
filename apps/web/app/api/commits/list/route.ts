@@ -26,6 +26,7 @@ interface DbCommitListRow {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const project = searchParams.get("project");
+  const sentiment = searchParams.get("sentiment");
 
   const supabase = await createClient();
 
@@ -57,6 +58,10 @@ export async function GET(request: Request) {
 
     if (project) {
       query = query.eq("project_name", project);
+    }
+
+    if (sentiment) {
+      query = query.eq("sentiment_label", sentiment);
     }
 
     const { data: rawCommits, error } = await query;

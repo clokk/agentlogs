@@ -904,7 +904,7 @@ export const ConversationViewer = forwardRef<HTMLDivElement, ConversationViewerP
           className="p-6 pt-4"
           style={{ flex: '1 1 0%', minHeight: 0, overflowY: 'auto' }}
         >
-          <div className="space-y-4">
+          <div className="space-y-2">
             {renderItems.map((item, idx) => {
               if (item.type === "tool-group") {
                 const groupKey = item.turns.map((t) => t.id).join("-");
