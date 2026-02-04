@@ -31,7 +31,7 @@ module.exports = {
         },
 
         // Semantic colors
-        "chronicle-blue": "#3d84a8",
+        "chronicle-blue": "#5d8a9a",
         "chronicle-green": "#5fb88e",
         "chronicle-amber": "#d4a030",
         "chronicle-purple": "#9d7cd8",

@@ -85,9 +85,9 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
 
     // Flash highlight: appears instantly, fades out over 0.5s
     const highlightShadow = isUser
-      ? "0 0 20px 4px rgba(61, 132, 168, 0.5)"
-      : "0 0 20px 4px rgba(61, 132, 168, 0.3)";
-    const noShadow = "0 0 20px 4px rgba(61, 132, 168, 0)";
+      ? "0 0 20px 4px rgba(93, 138, 154, 0.5)"
+      : "0 0 20px 4px rgba(93, 138, 154, 0.3)";
+    const noShadow = "0 0 20px 4px rgba(93, 138, 154, 0)";
 
     return (
       <motion.div
@@ -97,7 +97,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
         <motion.div
           className={`group max-w-[80%] rounded-2xl px-4 py-3 ${
             isUser
-              ? "bg-chronicle-blue text-black rounded-br-md shadow-[0_2px_8px_rgba(61,132,168,0.15)]"
+              ? "bg-chronicle-blue text-primary rounded-br-md shadow-[0_2px_8px_rgba(93,138,154,0.25)]"
               : "bg-panel border border-border rounded-bl-md shadow-[0_1px_3px_rgba(0,0,0,0.2)]"
           }`}
           animate={{ boxShadow: isHighlighted ? highlightShadow : noShadow }}
@@ -110,13 +110,13 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
           <div className="flex items-center gap-2 mb-1">
             <span
               className={`text-xs font-medium ${
-                isUser ? "text-black/70" : "text-muted"
+                isUser ? "text-primary/70" : "text-muted"
               }`}
             >
               {isUser ? (username || "You") : formatModelName(turn.model)}
             </span>
             <span
-              className={`text-xs cursor-help ${isUser ? "text-black/50" : "text-subtle"}`}
+              className={`text-xs cursor-help ${isUser ? "text-primary/50" : "text-subtle"}`}
               title={formatAbsoluteTime(turn.timestamp)}
             >
               {formatRelativeTime(turn.timestamp)}
@@ -130,7 +130,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
             )}
             {turn.hasApproval && (
               <span
-                className={`w-2 h-2 rounded-full ${isUser ? "bg-green-600" : "bg-chronicle-green"}`}
+                className="w-2 h-2 rounded-full bg-chronicle-green"
                 title="Contains approval"
               />
             )}
@@ -138,7 +138,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
             <button
               onClick={handleCopy}
               className={`ml-auto p-1 transition-colors opacity-0 group-hover:opacity-100 ${
-                isUser ? "text-black/50 hover:text-black" : "text-muted hover:text-primary"
+                isUser ? "text-primary/50 hover:text-primary" : "text-muted hover:text-primary"
               }`}
               title="Copy prompt"
             >
@@ -150,7 +150,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  className={isUser ? "text-green-700" : "text-chronicle-green"}
+                  className="text-chronicle-green"
                 >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
@@ -174,7 +174,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
           {turn.content && (
             <div className="relative">
               <div
-                className={`whitespace-pre-wrap leading-relaxed ${isUser ? "text-black" : "text-primary"}`}
+                className="whitespace-pre-wrap leading-relaxed text-primary"
                 style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
               >
                 {searchTerm
@@ -196,7 +196,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
               onClick={() => setExpanded(!expanded)}
               className={`mt-2 text-sm transition-colors ${
                 isUser
-                  ? "text-black/70 hover:text-black"
+                  ? "text-primary/70 hover:text-primary"
                   : "text-chronicle-blue hover:text-chronicle-blue/80"
               }`}
             >
@@ -222,7 +222,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                         tc.isError
                           ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
                           : isUser
-                            ? "bg-black/10 text-black/70 hover:bg-black/20"
+                            ? "bg-white/10 text-primary/70 hover:bg-white/15"
                             : "bg-panel-alt text-muted hover:bg-bg"
                       }
                       ${expandedToolId === tc.id ? "ring-1 ring-chronicle-blue" : ""}`}
@@ -241,7 +241,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                       <div
                         key={tc.id}
                         className={`rounded p-3 text-xs font-mono ${
-                          isUser ? "bg-black/10" : "bg-panel-alt/50"
+                          isUser ? "bg-white/10" : "bg-panel-alt/50"
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-1">
@@ -249,9 +249,7 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                             className={`font-medium ${
                               tc.isError
                                 ? "text-red-400"
-                                : isUser
-                                  ? "text-green-700"
-                                  : "text-chronicle-green"
+                                : "text-chronicle-green"
                             }`}
                           >
                             {tc.name}
@@ -266,11 +264,11 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                         {/* Input */}
                         {tc.input && Object.keys(tc.input).length > 0 && (
                           <details className="mt-1" open>
-                            <summary className={`cursor-pointer ${isUser ? "text-black/60 hover:text-black/80" : "text-muted hover:text-muted"}`}>
+                            <summary className={`cursor-pointer ${isUser ? "text-primary/60 hover:text-primary/80" : "text-muted hover:text-muted"}`}>
                               Input
                             </summary>
                             <pre className={`mt-1 p-2 rounded overflow-x-auto ${
-                              isUser ? "bg-black/10 text-black/70" : "bg-bg text-muted"
+                              isUser ? "bg-white/10 text-primary/70" : "bg-bg text-muted"
                             }`}>
                               {formatToolInput(tc.input)}
                             </pre>
@@ -280,11 +278,11 @@ const TurnView = forwardRef<HTMLDivElement, TurnViewProps>(
                         {/* Result */}
                         {tc.result && (
                           <details className="mt-1">
-                            <summary className={`cursor-pointer ${isUser ? "text-black/60 hover:text-black/80" : "text-muted hover:text-muted"}`}>
+                            <summary className={`cursor-pointer ${isUser ? "text-primary/60 hover:text-primary/80" : "text-muted hover:text-muted"}`}>
                               Result
                             </summary>
                             <pre className={`mt-1 p-2 rounded overflow-x-auto max-h-40 ${
-                              isUser ? "bg-black/10 text-black/70" : "bg-bg text-muted"
+                              isUser ? "bg-white/10 text-primary/70" : "bg-bg text-muted"
                             }`}>
                               {tc.result.length > 500
                                 ? tc.result.substring(0, 500) + "..."
