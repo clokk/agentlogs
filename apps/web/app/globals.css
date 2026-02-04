@@ -27,6 +27,11 @@
   --border: #2a2520;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   color: var(--text);
   background: var(--bg);

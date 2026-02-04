@@ -1,4 +1,4 @@
-# CogCommit Style Guide
+# Tuhnr Style Guide
 
 ## Design Philosophy
 
@@ -19,12 +19,18 @@
 | `--panel` | #181614 | Cards, panels, left sidebar |
 | `--panel-alt` | #1e1b18 | Right pane, alternate panels |
 
-### Primary Accent
+### Primary Accent (Burnt Orange)
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| `--accent` | #e07b39 | Primary action buttons, links |
+| `--accent` | #e07b39 | Primary CTAs, links, flame highlights |
 | `--accent-hover` | #c66a2d | Hover state for accent |
+
+**Usage Guidelines:**
+- **Use sparingly** - Like the flame in the logo, burnt orange should attract attention to key actions
+- **Foreground only** - Never use as backgrounds; reserve for buttons, links, icons, and highlights
+- **One focal point** - Avoid multiple accent elements competing for attention on the same screen
+- **Pairs with cream** - Black text on accent buttons; accent text on dark backgrounds
 
 ### Semantic Colors (Dusty Variants)
 

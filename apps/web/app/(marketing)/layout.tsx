@@ -19,18 +19,18 @@ export default async function MarketingLayout({
     : null;
   const avatarUrl = user?.user_metadata?.avatar_url;
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
       {/* Navigation */}
-      <header className="border-b border-border">
-        <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-primary">
-            CogCommit
+      <header className="border-b border-border w-full">
+        <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+          <Link href="/" className="text-xl font-bold text-primary shrink-0">
+            Tuhnr
           </Link>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <Link
               href="/features"
-              className="text-muted hover:text-primary transition-colors"
+              className="text-muted hover:text-primary transition-colors hidden sm:block"
             >
               Features
             </Link>
@@ -80,15 +80,15 @@ export default async function MarketingLayout({
       <main className="flex-1 bg-panel-alt">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8">
+      <footer className="border-t border-border py-8 w-full">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-muted text-sm">
               Built for AI-assisted developers
             </p>
             <div className="flex items-center gap-4 text-muted text-sm">
               <a
-                href="https://github.com/clokk/cogcommit"
+                href="https://github.com/clokk/tuhnr"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
